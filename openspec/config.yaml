@@ -1,0 +1,66 @@
+schema: spec-driven
+
+context: |
+  Project: Engelsiz
+
+  Engelsiz is a local-first, offline-first application for accessing
+  previously downloaded knowledge without an internet connection.
+
+  v0.1 scope:
+  - Windows and Linux
+  - Go core/backend
+  - React + TypeScript + Vite frontend
+  - SQLite for application state/metadata
+  - Browser-based localhost UI
+  - Kiwix as the only content provider
+  - Turkish Wikipedia as the only content source
+  - Kiwix ZIM files: Mini, Nopic and Maxi
+  - kiwix-serve bundled with the application
+
+  Architecture:
+  - React communicates with the Engelsiz Go API, not directly with Kiwix.
+  - Kiwix-specific logic belongs in the Kiwix provider/runtime layer.
+  - The download manager must remain provider-independent.
+  - Wikipedia content must remain in ZIM files and must not be imported into SQLite.
+  - Services bind to loopback only by default.
+  - Prefer simple interfaces and minimum necessary abstraction.
+
+  v0.1 explicitly excludes:
+  local AI, RAG, embeddings, maps, Kolibri, EPUB/PDF readers,
+  mobile apps, cloud sync, LAN sharing, plugin systems and other
+  content providers.
+
+  main-spec.md is the source of truth for project-wide requirements.
+
+rules:
+  proposal:
+    - Keep the change focused on one independently reviewable capability.
+    - State the goal, scope, non-goals and acceptance criteria clearly.
+    - Do not add features that are not required by the change or main-spec.md.
+    - Preserve existing behavior unless the change explicitly requires modifying it.
+    - Prefer the simplest solution compatible with the existing architecture.
+
+  specs:
+    - Requirements must be testable and unambiguous.
+    - Do not introduce future providers or features as current requirements.
+    - Respect architectural boundaries defined in main-spec.md.
+
+  tasks:
+    - Break work into implementation-sized tasks in dependency order.
+    - Include relevant tests or verification in the same change.
+    - Do not create cleanup, refactor or architecture tasks unless required by the change.
+
+operations:
+  apply:
+    guidance:
+      - Implement only the active change scope.
+      - Do not perform unrelated refactors or add speculative features.
+      - Preserve existing working behavior.
+      - Run relevant tests and verify the change acceptance criteria before finishing.
+      - If implementation conflicts with main-spec.md, follow main-spec.md and report the conflict.
+
+  archive:
+    guidance:
+      - Archive only after implementation and acceptance criteria are complete.
+      - Ensure the change specs are synced before archiving.
+      - Keep the archive summary concise and mention any known unresolved issue.
