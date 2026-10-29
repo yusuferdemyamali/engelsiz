@@ -19,13 +19,17 @@ import (
 	"engelsiz/internal/api"
 	"engelsiz/internal/config"
 	"engelsiz/internal/database"
+	"engelsiz/internal/providers"
+	"engelsiz/internal/providers/kiwix"
 	"engelsiz/internal/web"
 )
 
 const PreferredPort = 17321
 
 type Options struct {
-	NoBrowser bool
+	NoBrowser       bool
+	KiwixBinary     string
+	ContentProvider providers.ContentProvider
 }
 
 func ListenLoopback(preferred int) (net.Listener, int, error) {
@@ -45,7 +49,7 @@ func ListenLoopback(preferred int) (net.Listener, int, error) {
 	return fallback, port, nil
 }
 
-func Run(ctx context.Context, opts Options) error {
+func Run(ctx context.Context, opts Options) (runErr error) {
 	ctx, stop := signal.NotifyContext(ctx, os.Interrupt, syscall.SIGTERM)
 	defer stop()
 	if ctx.Err() != nil {
@@ -62,7 +66,11 @@ func Run(ctx context.Context, opts Options) error {
 	if err != nil {
 		return fmt.Errorf("init logger: %w", err)
 	}
-	defer logFile.Close()
+	defer func() {
+		if err := logFile.Close(); err != nil {
+			runErr = errors.Join(runErr, fmt.Errorf("close log: %w", err))
+		}
+	}()
 	logger.Printf("startup: config=%s data=%s cache=%s", dirs.ConfigRoot, dirs.DataRoot, dirs.CacheRoot)
 
 	db, err := database.Open(dirs.DBPath)
@@ -73,13 +81,38 @@ func Run(ctx context.Context, opts Options) error {
 	defer func() {
 		if err := db.Close(); err != nil {
 			logger.Printf("db close: %v", err)
+			runErr = errors.Join(runErr, fmt.Errorf("close database: %w", err))
 		}
 		logger.Printf("shutdown complete")
+	}()
+	provider := opts.ContentProvider
+	if provider == nil {
+		provider, err = kiwix.New(kiwix.Options{BinaryPath: opts.KiwixBinary, Logger: logger})
+		if err != nil {
+			logger.Printf("content provider initialization failed: %v", err)
+			return fmt.Errorf("initialize content provider: %w", err)
+		}
+	}
+	defer func() {
+		cleanupCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		if err := provider.Stop(cleanupCtx); err != nil {
+			logger.Printf("content provider stop failed: %v", err)
+			runErr = errors.Join(runErr, fmt.Errorf("stop content provider: %w", err))
+		}
 	}()
 	if ctx.Err() != nil {
 		return nil
 	}
 	logger.Printf("database ready: %s", dirs.DBPath)
+	if err := provider.EnsureStarted(ctx); err != nil {
+		if ctx.Err() != nil && cancellationOnly(err, ctx.Err()) {
+			logger.Printf("shutdown: context done during content startup")
+			return nil
+		}
+		logger.Printf("content provider startup failed: %v", err)
+		return fmt.Errorf("start content provider: %w", err)
+	}
 
 	ln, port, err := ListenLoopback(PreferredPort)
 	if err != nil {
@@ -91,7 +124,11 @@ func Run(ctx context.Context, opts Options) error {
 	mux := api.NewMux()
 	mux.Handle("/", web.Handler())
 	server := &http.Server{Handler: mux, ReadHeaderTimeout: 5 * time.Second}
-	defer shutdown(server, logger)
+	defer func() {
+		if err := shutdown(server, logger); err != nil {
+			runErr = errors.Join(runErr, err)
+		}
+	}()
 
 	serverErr := make(chan error, 1)
 	go func() {
@@ -151,13 +188,35 @@ func Run(ctx context.Context, opts Options) error {
 	}
 }
 
-func shutdown(server *http.Server, logger *log.Logger) {
+// A cancelled startup can also include a cleanup failure. Only suppress the
+// cancellation itself; other errors must remain visible even during shutdown.
+func cancellationOnly(err, cause error) bool {
+	if joined, ok := err.(interface{ Unwrap() []error }); ok {
+		children := joined.Unwrap()
+		if len(children) == 0 {
+			return false
+		}
+		for _, child := range children {
+			if !cancellationOnly(child, cause) {
+				return false
+			}
+		}
+		return true
+	}
+	if wrapped := errors.Unwrap(err); wrapped != nil {
+		return cancellationOnly(wrapped, cause)
+	}
+	return errors.Is(err, cause)
+}
+
+func shutdown(server *http.Server, logger *log.Logger) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	if err := server.Shutdown(ctx); err != nil {
 		logger.Printf("server shutdown: %v", err)
-		_ = server.Close()
+		return errors.Join(fmt.Errorf("server shutdown: %w", err), server.Close())
 	}
+	return nil
 }
 
 func waitForHealth(ctx context.Context, url string, timeout time.Duration) error {
