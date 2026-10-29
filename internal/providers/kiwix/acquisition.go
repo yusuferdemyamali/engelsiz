@@ -3,6 +3,7 @@ package kiwix
 import (
 	"bytes"
 	"context"
+	"encoding/hex"
 	"encoding/xml"
 	"fmt"
 	"io"
@@ -55,7 +56,14 @@ func (p *KiwixProvider) ResolveDownload(ctx context.Context, packageID string) (
 	if !safeDownloadName(name) || !strings.HasSuffix(strings.ToLower(name), ".zim") || strings.HasSuffix(u.Path, "/") {
 		return providers.DownloadSource{}, fmt.Errorf("unsafe acquisition filename")
 	}
-	source := providers.DownloadSource{Provider: selected.Provider, ProviderPackageID: selected.ProviderPackageID, Title: selected.Title, Variant: selected.Variant, FileName: name}
+	source := providers.DownloadSource{
+		Provider: selected.Provider, ProviderPackageID: selected.ProviderPackageID,
+		Title: selected.Title, Variant: selected.Variant, FileName: name,
+		ContentType: "wikipedia", Language: selected.Language,
+	}
+	if selected.PublishedAt != nil {
+		source.Version = selected.PublishedAt.Format("2006-01-02")
+	}
 	switch selected.Download.Kind {
 	case "zim":
 		// Catalog length is approximate. The streaming response establishes the
@@ -83,11 +91,16 @@ func (p *KiwixProvider) ResolveDownload(ctx context.Context, packageID string) (
 		if len(body) > metalinkLimit {
 			return providers.DownloadSource{}, fmt.Errorf("metalink exceeds byte limit")
 		}
-		resolvedURL, size, err := decodeMetalink(ctx, body, name)
+		resolvedURL, size, checksum, err := decodeMetalinkMetadata(ctx, body, name)
 		if err != nil {
 			return providers.DownloadSource{}, err
 		}
 		source.SourceURL, source.TotalBytes = resolvedURL, &size
+		expectedSize := size
+		source.ExpectedSize = &expectedSize
+		if checksum != "" {
+			source.ChecksumAlgorithm, source.ChecksumValue = "sha256", checksum
+		}
 		return source, nil
 	default:
 		return providers.DownloadSource{}, fmt.Errorf("unsupported acquisition kind")
@@ -95,44 +108,56 @@ func (p *KiwixProvider) ResolveDownload(ctx context.Context, packageID string) (
 }
 
 type metalinkFile struct {
-	Sizes []string `xml:"urn:ietf:params:xml:ns:metalink size"`
-	URLs  []string `xml:"urn:ietf:params:xml:ns:metalink url"`
+	Sizes  []string       `xml:"urn:ietf:params:xml:ns:metalink size"`
+	URLs   []string       `xml:"urn:ietf:params:xml:ns:metalink url"`
+	Hashes []metalinkHash `xml:"urn:ietf:params:xml:ns:metalink hash"`
+}
+
+type metalinkHash struct {
+	Attributes []xml.Attr `xml:",any,attr"`
+	Value      string     `xml:",chardata"`
 }
 
 func decodeMetalink(ctx context.Context, body []byte, expected string) (string, int64, error) {
+	source, size, _, err := decodeMetalinkMetadata(ctx, body, expected)
+	return source, size, err
+}
+
+func decodeMetalinkMetadata(ctx context.Context, body []byte, expected string) (string, int64, string, error) {
 	decoder := xml.NewDecoder(bytes.NewReader(body))
 	opened, closed, matched := false, false, false
 	var source string
 	var size int64
+	var checksum string
 	for {
 		if err := ctx.Err(); err != nil {
-			return "", 0, err
+			return "", 0, "", err
 		}
 		token, err := decoder.Token()
 		if err == io.EOF {
 			if !closed || !matched {
-				return "", 0, fmt.Errorf("metalink missing expected file")
+				return "", 0, "", fmt.Errorf("metalink missing expected file")
 			}
-			return source, size, nil
+			return source, size, checksum, nil
 		}
 		if err != nil {
-			return "", 0, fmt.Errorf("metalink XML: %w", err)
+			return "", 0, "", fmt.Errorf("metalink XML: %w", err)
 		}
 		switch token := token.(type) {
 		case xml.StartElement:
 			if !opened {
 				if token.Name.Space != metalinkNS || token.Name.Local != "metalink" {
-					return "", 0, fmt.Errorf("expected Metalink document")
+					return "", 0, "", fmt.Errorf("expected Metalink document")
 				}
 				opened = true
 				continue
 			}
 			if closed {
-				return "", 0, fmt.Errorf("multiple Metalink roots")
+				return "", 0, "", fmt.Errorf("multiple Metalink roots")
 			}
 			if token.Name.Space != metalinkNS || token.Name.Local != "file" {
 				if err := decoder.Skip(); err != nil {
-					return "", 0, fmt.Errorf("metalink XML: %w", err)
+					return "", 0, "", fmt.Errorf("metalink XML: %w", err)
 				}
 				continue
 			}
@@ -143,25 +168,51 @@ func decodeMetalink(ctx context.Context, body []byte, expected string) (string, 
 				}
 			}
 			if count != 1 || !safeDownloadName(name) {
-				return "", 0, fmt.Errorf("unsafe Metalink filename")
+				return "", 0, "", fmt.Errorf("unsafe Metalink filename")
 			}
 			var file metalinkFile
 			if err := decoder.DecodeElement(&file, &token); err != nil {
-				return "", 0, fmt.Errorf("metalink XML: %w", err)
+				return "", 0, "", fmt.Errorf("metalink XML: %w", err)
 			}
 			if name != expected {
 				continue
 			}
 			if matched {
-				return "", 0, fmt.Errorf("ambiguous Metalink file")
+				return "", 0, "", fmt.Errorf("ambiguous Metalink file")
 			}
 			matched = true
 			if len(file.Sizes) != 1 {
-				return "", 0, fmt.Errorf("metalink requires one exact size")
+				return "", 0, "", fmt.Errorf("metalink requires one exact size")
 			}
 			size, err = strconv.ParseInt(strings.TrimSpace(file.Sizes[0]), 10, 64)
 			if err != nil || size <= 0 {
-				return "", 0, fmt.Errorf("invalid Metalink size")
+				return "", 0, "", fmt.Errorf("invalid Metalink size")
+			}
+			for _, hash := range file.Hashes {
+				supported, typeCount := false, 0
+				for _, attr := range hash.Attributes {
+					if attr.Name.Space == "" && attr.Name.Local == "type" {
+						typeCount++
+						algorithm := strings.ToLower(strings.TrimSpace(attr.Value))
+						supported = supported || algorithm == "sha-256" || algorithm == "sha256"
+					}
+				}
+				if !supported {
+					continue
+				}
+				if typeCount != 1 {
+					return "", 0, "", fmt.Errorf("ambiguous Metalink hash algorithm")
+				}
+				value := strings.TrimSpace(hash.Value)
+				decoded, err := hex.DecodeString(value)
+				if err != nil || len(value) != 64 || len(decoded) != 32 {
+					return "", 0, "", fmt.Errorf("invalid Metalink SHA-256")
+				}
+				value = strings.ToLower(value)
+				if checksum != "" && checksum != value {
+					return "", 0, "", fmt.Errorf("conflicting Metalink SHA-256")
+				}
+				checksum = value
 			}
 			for _, raw := range file.URLs {
 				u, err := url.Parse(strings.TrimSpace(raw))
@@ -171,7 +222,7 @@ func decodeMetalink(ctx context.Context, body []byte, expected string) (string, 
 				}
 			}
 			if source == "" {
-				return "", 0, fmt.Errorf("metalink has no safe transfer URL")
+				return "", 0, "", fmt.Errorf("metalink has no safe transfer URL")
 			}
 		case xml.EndElement:
 			if token.Name.Space == metalinkNS && token.Name.Local == "metalink" {
@@ -179,10 +230,10 @@ func decodeMetalink(ctx context.Context, body []byte, expected string) (string, 
 			}
 		case xml.CharData:
 			if (!opened || closed) && strings.TrimSpace(string(token)) != "" {
-				return "", 0, fmt.Errorf("text outside Metalink document")
+				return "", 0, "", fmt.Errorf("text outside Metalink document")
 			}
 		case xml.Directive:
-			return "", 0, fmt.Errorf("unsupported Metalink directive")
+			return "", 0, "", fmt.Errorf("unsupported Metalink directive")
 		}
 	}
 }

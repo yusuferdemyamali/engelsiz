@@ -130,7 +130,7 @@ func (m *Manager) recover() error {
 		return e
 	}
 	for _, r := range records {
-		if r.Status == "cancelled" {
+		if r.Status == "cancelled" || (r.Status == "completed" && r.ArtifactOwner != "" && (r.ArtifactState == "claimed" || r.ArtifactState == "consumed")) {
 			continue
 		}
 		n, e := m.stat(r)
@@ -191,7 +191,7 @@ func (m *Manager) Create(d Descriptor) (Snapshot, error) {
 		return Snapshot{}, ErrStorage
 	}
 	now := time.Now().UTC().Format(time.RFC3339Nano)
-	r := record{Snapshot: Snapshot{ID: hex.EncodeToString(id), Provider: d.Provider, ProviderPackageID: d.ProviderPackageID, Title: d.Title, Variant: d.Variant, FileName: d.FileName, Status: "queued", TotalBytes: d.TotalBytes, CreatedAt: now, UpdatedAt: now}, SourceURL: d.SourceURL}
+	r := record{Snapshot: Snapshot{ID: hex.EncodeToString(id), Provider: d.Provider, ProviderPackageID: d.ProviderPackageID, Title: d.Title, Variant: d.Variant, FileName: d.FileName, Status: "queued", TotalBytes: d.TotalBytes, CreatedAt: now, UpdatedAt: now}, SourceURL: d.SourceURL, ContentType: d.ContentType, Language: d.Language, Version: d.Version, ExpectedSize: d.ExpectedSize, ChecksumAlgorithm: d.ChecksumAlgorithm, ChecksumValue: d.ChecksumValue}
 	r.TempPath = m.path(r.ID)
 	if e := m.insert(&r); e != nil {
 		return Snapshot{}, ErrStorage

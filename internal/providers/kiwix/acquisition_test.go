@@ -44,8 +44,12 @@ func TestResolveDownloadMetalinkUsesTrustedCatalogAndFirstSafeMirror(t *testing.
 		if err != nil {
 			t.Fatal(err)
 		}
-		if source.Provider != "kiwix" || source.ProviderPackageID != "urn:uuid:selected" || source.Title != "Vikipedi" || source.Variant != "mini" || source.FileName != "selected.zim" || source.SourceURL != "http://mirror.example/payload.zim" || source.TotalBytes == nil || *source.TotalBytes != 7 {
+		if source.Provider != "kiwix" || source.ProviderPackageID != "urn:uuid:selected" || source.Title != "Vikipedi" || source.Variant != "mini" || source.FileName != "selected.zim" || source.SourceURL != "http://mirror.example/payload.zim" || source.TotalBytes == nil || *source.TotalBytes != 7 || source.ExpectedSize == nil || *source.ExpectedSize != 7 || source.ContentType != "wikipedia" || source.Language != "tr" || source.Version != "2026-01-01" {
 			t.Fatalf("source: %+v", source)
+		}
+		*source.TotalBytes = 8
+		if *source.ExpectedSize != 7 {
+			t.Fatal("transfer length aliases immutable expected size")
 		}
 	}
 	if catalogCalls != 2 || metadataCalls != 2 || payloadCalls != 0 {
@@ -63,8 +67,71 @@ func TestResolveDownloadDirectFileIgnoresApproximateCatalogSize(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if source.FileName != "selected.zim" || source.SourceURL != p.catalogURL.String()+"/selected.zim" || source.TotalBytes != nil || calls != 1 {
+	if source.FileName != "selected.zim" || source.SourceURL != p.catalogURL.String()+"/selected.zim" || source.TotalBytes != nil || source.ExpectedSize != nil || source.ChecksumAlgorithm != "" || source.ChecksumValue != "" || calls != 1 {
 		t.Fatalf("source=%+v calls=%d", source, calls)
+	}
+}
+
+func TestResolveDownloadCapturesOnlySelectedFileChecksum(t *testing.T) {
+	digest := strings.Repeat("ab", 32)
+	for _, tc := range []struct {
+		name, hashes, want string
+		wantError          bool
+	}{
+		{name: "uppercase", hashes: `<hash type="sha-256">` + strings.ToUpper(digest) + `</hash>`, want: digest},
+		{name: "algorithm alias", hashes: `<hash type="SHA256">` + digest + `</hash>`, want: digest},
+		{name: "same supported digest", hashes: `<hash type="sha-256">` + digest + `</hash><hash type="sha256">` + digest + `</hash>`, want: digest},
+		{name: "missing"},
+		{name: "unsupported", hashes: `<hash type="sha-1">irrelevant</hash>`},
+		{name: "short", hashes: `<hash type="sha-256">ab</hash>`, wantError: true},
+		{name: "non hex", hashes: `<hash type="sha-256">` + strings.Repeat("g", 64) + `</hash>`, wantError: true},
+		{name: "empty", hashes: `<hash type="sha-256"></hash>`, wantError: true},
+		{name: "duplicate algorithm", hashes: `<hash type="sha-256" type="sha-1">` + digest + `</hash>`, wantError: true},
+		{name: "conflicting", hashes: `<hash type="sha-256">` + digest + `</hash><hash type="sha256">` + strings.Repeat("cd", 32) + `</hash>`, wantError: true},
+		{name: "malformed additional supported", hashes: `<hash type="sha-256">` + digest + `</hash><hash type="sha256">invalid</hash>`, wantError: true},
+		{name: "foreign namespace", hashes: `<hash xmlns="urn:foreign" type="sha-256">` + digest + `</hash>`},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			p := testProvider(t, func(w http.ResponseWriter, r *http.Request) {
+				if r.URL.Path == "/" {
+					fmt.Fprint(w, feed(1, 0, 100, acquisitionEntry("/selected.zim.meta4")))
+					return
+				}
+				other := metalinkPayload("other.zim", "9", `<hash type="sha-256">malformed unrelated hash</hash><url>https://mirror.example/other.zim</url>`)
+				fmt.Fprint(w, metalink(other+metalinkPayload("selected.zim", "7", tc.hashes+`<url>https://mirror.example/selected.zim</url>`)))
+			}, nil)
+			source, err := p.ResolveDownload(context.Background(), "urn:uuid:selected")
+			if tc.wantError {
+				if err == nil || source.SourceURL != "" {
+					t.Fatalf("accepted source=%+v err=%v", source, err)
+				}
+				return
+			}
+			if err != nil {
+				t.Fatal(err)
+			}
+			algorithm := ""
+			if tc.want != "" {
+				algorithm = "sha256"
+			}
+			if source.ChecksumAlgorithm != algorithm || source.ChecksumValue != tc.want {
+				t.Fatalf("checksum=%q:%q", source.ChecksumAlgorithm, source.ChecksumValue)
+			}
+		})
+	}
+}
+
+func TestResolveDownloadDoesNotInventReleaseFromUpdatedDate(t *testing.T) {
+	p := testProvider(t, func(w http.ResponseWriter, r *http.Request) {
+		raw := strings.Replace(acquisitionEntry("/selected.zim"), "<dc:issued>2026-01-01</dc:issued>", "", 1)
+		fmt.Fprint(w, feed(1, 0, 100, raw))
+	}, nil)
+	source, err := p.ResolveDownload(context.Background(), "urn:uuid:selected")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if source.Version != "" {
+		t.Fatalf("invented version: %q", source.Version)
 	}
 }
 

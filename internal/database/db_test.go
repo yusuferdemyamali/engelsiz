@@ -2,6 +2,7 @@ package database
 
 import (
 	"bytes"
+	"database/sql"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -31,8 +32,8 @@ func TestMigrateFreshAndIdempotent(t *testing.T) {
 	if err := db2.QueryRow(`SELECT COUNT(*) FROM schema_migrations`).Scan(&count); err != nil {
 		t.Fatal(err)
 	}
-	if count != 2 {
-		t.Fatalf("expected 2 applied migrations, got %d", count)
+	if count != 3 {
+		t.Fatalf("expected 3 applied migrations, got %d", count)
 	}
 	db2.Close()
 }
@@ -112,7 +113,7 @@ func TestFailedMigrationRollsBack(t *testing.T) {
 }
 
 func TestRootMigrationMatchesEmbedded(t *testing.T) {
-	for _, name := range []string{"001_init.sql", "002_downloads.sql"} {
+	for _, name := range []string{"001_init.sql", "002_downloads.sql", "003_packages.sql"} {
 		root, err := os.ReadFile(filepath.Join("..", "..", "migrations", name))
 		if err != nil {
 			t.Fatal(err)
@@ -137,5 +138,71 @@ func TestWindowsDriveSQLiteURI(t *testing.T) {
 	}
 	if got := uri.Query()["_pragma"]; len(got) != 2 {
 		t.Fatalf("pragmas lost: %v", got)
+	}
+}
+
+func TestUpgradeLegacyDownloadPreservesHistoryWithoutInventingTrust(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "legacy.db")
+	legacy, err := sql.Open("sqlite", sqliteURI(path))
+	if err != nil {
+		t.Fatal(err)
+	}
+	oldMigrations := fstest.MapFS{}
+	for _, name := range []string{"001_init.sql", "002_downloads.sql"} {
+		body, err := embeddedMigrations.ReadFile("migrations/" + name)
+		if err != nil {
+			t.Fatal(err)
+		}
+		oldMigrations["migrations/"+name] = &fstest.MapFile{Data: body}
+	}
+	if err := Migrate(legacy, oldMigrations, "migrations"); err != nil {
+		t.Fatal(err)
+	}
+	_, err = legacy.Exec(`INSERT INTO downloads
+		(id,provider,provider_package_id,title,variant,file_name,source_url,temp_path,total_bytes,downloaded_bytes,status,created_at,updated_at)
+		VALUES ('legacy','kiwix','old-release','Eski Vikipedi','mini','old.zim','https://old.example/old.zim','/private/legacy.part',7,7,'completed','2026-01-01T00:00:00Z','2026-01-02T00:00:00Z')`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err = legacy.Exec(`INSERT INTO settings(key,value) VALUES('preserve_upgrade','yes')`); err != nil {
+		t.Fatal(err)
+	}
+	if err = legacy.Close(); err != nil {
+		t.Fatal(err)
+	}
+	upgraded, err := Open(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer upgraded.Close()
+	var status, title, source, temp, artifactState string
+	var total, transferred int64
+	var contentType, language, version, algorithm, checksum, owner sql.NullString
+	var expected sql.NullInt64
+	err = upgraded.QueryRow(`SELECT status,title,source_url,temp_path,total_bytes,downloaded_bytes,
+		content_type,language,version,expected_size,checksum_algorithm,checksum_value,artifact_owner,artifact_state
+		FROM downloads WHERE id='legacy'`).Scan(&status, &title, &source, &temp, &total, &transferred,
+		&contentType, &language, &version, &expected, &algorithm, &checksum, &owner, &artifactState)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if status != "completed" || title != "Eski Vikipedi" || source != "https://old.example/old.zim" || temp != "/private/legacy.part" || total != 7 || transferred != 7 || artifactState != "available" {
+		t.Fatalf("legacy history changed: status=%s title=%s source=%s temp=%s total=%d transferred=%d ownership=%s", status, title, source, temp, total, transferred, artifactState)
+	}
+	for name, value := range map[string]sql.NullString{"content_type": contentType, "language": language, "version": version, "checksum_algorithm": algorithm, "checksum_value": checksum, "artifact_owner": owner} {
+		if value.Valid {
+			t.Fatalf("migration invented %s=%q", name, value.String)
+		}
+	}
+	if expected.Valid {
+		t.Fatalf("migration treated historical transfer total as trusted expected size: %d", expected.Int64)
+	}
+	var count int
+	if err := upgraded.QueryRow(`SELECT COUNT(*) FROM content_packages`).Scan(&count); err != nil || count != 0 {
+		t.Fatalf("migration invented installed packages: count=%d err=%v", count, err)
+	}
+	var setting string
+	if err := upgraded.QueryRow(`SELECT value FROM settings WHERE key='preserve_upgrade'`).Scan(&setting); err != nil || setting != "yes" {
+		t.Fatalf("unrelated metadata lost: %q %v", setting, err)
 	}
 }
