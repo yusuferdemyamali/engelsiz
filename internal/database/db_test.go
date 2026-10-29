@@ -31,8 +31,8 @@ func TestMigrateFreshAndIdempotent(t *testing.T) {
 	if err := db2.QueryRow(`SELECT COUNT(*) FROM schema_migrations`).Scan(&count); err != nil {
 		t.Fatal(err)
 	}
-	if count != 1 {
-		t.Fatalf("expected 1 applied migration, got %d", count)
+	if count != 2 {
+		t.Fatalf("expected 2 applied migrations, got %d", count)
 	}
 	db2.Close()
 }
@@ -112,16 +112,18 @@ func TestFailedMigrationRollsBack(t *testing.T) {
 }
 
 func TestRootMigrationMatchesEmbedded(t *testing.T) {
-	root, err := os.ReadFile(filepath.Join("..", "..", "migrations", "001_init.sql"))
-	if err != nil {
-		t.Fatal(err)
-	}
-	embedded, err := embeddedMigrations.ReadFile("migrations/001_init.sql")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !bytes.Equal(root, embedded) {
-		t.Fatal("root and embedded migrations differ")
+	for _, name := range []string{"001_init.sql", "002_downloads.sql"} {
+		root, err := os.ReadFile(filepath.Join("..", "..", "migrations", name))
+		if err != nil {
+			t.Fatal(err)
+		}
+		embedded, err := embeddedMigrations.ReadFile("migrations/" + name)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !bytes.Equal(root, embedded) {
+			t.Fatalf("root and embedded migrations differ: %s", name)
+		}
 	}
 }
 

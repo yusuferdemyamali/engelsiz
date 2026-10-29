@@ -227,7 +227,7 @@ func normalizeEntry(e catalogEntry, base *url.URL) (providers.CatalogPackage, bo
 			continue
 		}
 		u = base.ResolveReference(u)
-		if u.Scheme != "https" || u.Hostname() == "" || u.User != nil || u.Fragment != "" {
+		if (u.Scheme != "https" && !(base.Scheme == "http" && u.Scheme == "http" && u.Host == base.Host)) || u.Hostname() == "" || u.User != nil || u.Fragment != "" {
 			continue
 		}
 		kind := ""

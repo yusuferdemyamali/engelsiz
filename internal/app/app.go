@@ -19,6 +19,7 @@ import (
 	"engelsiz/internal/api"
 	"engelsiz/internal/config"
 	"engelsiz/internal/database"
+	"engelsiz/internal/download"
 	"engelsiz/internal/providers"
 	"engelsiz/internal/providers/kiwix"
 	"engelsiz/internal/web"
@@ -101,6 +102,15 @@ func Run(ctx context.Context, opts Options) (runErr error) {
 			runErr = errors.Join(runErr, fmt.Errorf("stop content provider: %w", err))
 		}
 	}()
+	manager, err := download.New(db, dirs.DownloadDir, download.Options{})
+	if err != nil {
+		return fmt.Errorf("initialize downloads: %w", err)
+	}
+	defer func() {
+		if err := manager.Close(); err != nil {
+			runErr = errors.Join(runErr, fmt.Errorf("close downloads: %w", err))
+		}
+	}()
 	if ctx.Err() != nil {
 		return nil
 	}
@@ -123,6 +133,10 @@ func Run(ctx context.Context, opts Options) (runErr error) {
 
 	mux := api.NewMux()
 	mux.HandleFunc("/api/catalog", api.CatalogHandler(provider, logger))
+	resolver, _ := provider.(providers.AcquisitionResolver)
+	downloadsHandler := api.DownloadsHandler(manager, resolver)
+	mux.HandleFunc("/api/downloads", downloadsHandler)
+	mux.HandleFunc("/api/downloads/", downloadsHandler)
 	mux.Handle("/", web.Handler())
 	server := &http.Server{Handler: mux, ReadHeaderTimeout: 5 * time.Second}
 	defer func() {

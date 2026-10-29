@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react"
+import { buttonClass, downloadRequest, DownloadsView, type Download } from "./downloads"
 
 const variants = [
   { id: "mini", label: "Mini" },
@@ -75,8 +76,45 @@ function PackageMetadata({ item }: { item: CatalogPackage }) {
 }
 
 export default function App() {
+  const [view, setView] = useState<"catalog" | "downloads">("catalog")
   const [catalog, setCatalog] = useState<CatalogState>({ status: "loading" })
   const activeRequest = useRef<AbortController | null>(null)
+  const creationRequest = useRef<AbortController | null>(null)
+  const [creating, setCreating] = useState<string | null>(null)
+  const [creationError, setCreationError] = useState<{ id: string; message: string } | null>(null)
+  const [notice, setNotice] = useState("")
+  const [downloadRefresh, setDownloadRefresh] = useState(0)
+
+  useEffect(() => {
+    if (notice) document.getElementById("downloads-heading")?.focus()
+  }, [notice])
+
+  async function startDownload(item: CatalogPackage) {
+    if (creationRequest.current) return
+    const controller = new AbortController()
+    creationRequest.current = controller
+    setCreating(item.providerPackageId)
+    setCreationError(null)
+    setNotice("")
+    try {
+      await downloadRequest<{ download: Download }>("/api/downloads", controller.signal, {
+        provider: item.provider,
+        providerPackageId: item.providerPackageId,
+      })
+      if (!controller.signal.aborted) {
+        setDownloadRefresh((value) => value + 1)
+        setNotice("İndirme başlatıldı. İlerlemeyi İndirmeler bölümünden takip edebilirsiniz.")
+        setView("downloads")
+      }
+    } catch (failure) {
+      if (!controller.signal.aborted) {
+        setCreationError({ id: item.providerPackageId, message: failure instanceof Error ? failure.message : "İndirme başlatılamadı. Tekrar deneyin." })
+      }
+    } finally {
+      if (!controller.signal.aborted) setCreating(null)
+      if (creationRequest.current === controller) creationRequest.current = null
+    }
+  }
 
   const loadCatalog = useCallback(async () => {
     if (activeRequest.current) return
@@ -106,6 +144,8 @@ export default function App() {
     return () => {
       activeRequest.current?.abort()
       activeRequest.current = null
+      creationRequest.current?.abort()
+      creationRequest.current = null
     }
   }, [loadCatalog])
 
@@ -116,6 +156,21 @@ export default function App() {
         <p className="mt-2 text-muted-foreground">Bilginin erişim engeli olmaz.</p>
       </header>
 
+      <nav aria-label="Ana menü" className="flex gap-2 border-b py-3">
+        {([{ id: "catalog", label: "Bilgi Paketleri" }, { id: "downloads", label: "İndirmeler" }] as const).map((entry) => (
+          <button
+            key={entry.id}
+            type="button"
+            aria-current={view === entry.id ? "page" : undefined}
+            className={`min-h-11 rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${view === entry.id ? "bg-muted text-foreground" : "text-muted-foreground"}`}
+            onClick={() => { setView(entry.id); setNotice("") }}
+          >
+            {entry.label}
+          </button>
+        ))}
+      </nav>
+      <p role="status" className={notice ? "mt-6 text-sm leading-6 text-muted-foreground" : "sr-only"}>{notice}</p>
+      {view === "downloads" ? <DownloadsView refreshKey={downloadRefresh} /> : (
       <section aria-labelledby="catalog-heading" className="pt-8 sm:pt-10">
         <h2 id="catalog-heading" className="text-2xl font-semibold tracking-tight">Bilgi Paketleri</h2>
         <p className="mt-2 text-lg">Türkçe Wikipedia</p>
@@ -174,7 +229,23 @@ export default function App() {
                   <li key={variant.id} className="grid gap-4 py-6 sm:grid-cols-[4rem_minmax(0,1fr)] sm:gap-6">
                     <h3 className="font-semibold">{variant.label}</h3>
                     <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_auto] md:gap-8">
-                      {item ? <PackageMetadata item={item} /> : (
+                      {item ? <>
+                        <PackageMetadata item={item} />
+                        <div className="md:col-span-2">
+                          <button
+                            type="button"
+                            className={buttonClass}
+                            disabled={creating !== null}
+                            aria-label={`${variant.label} indir`}
+                            onClick={() => void startDownload(item)}
+                          >
+                            {creating === item.providerPackageId ? "Başlatılıyor…" : "İndir"}
+                          </button>
+                          {creationError?.id === item.providerPackageId && (
+                            <p role="alert" className="mt-3 max-w-prose text-sm leading-6">{creationError.message}</p>
+                          )}
+                        </div>
+                      </> : (
                         <p className="text-sm leading-6 text-muted-foreground">Şu anda katalogda yok</p>
                       )}
                     </div>
@@ -185,6 +256,7 @@ export default function App() {
           </div>
         )}
       </section>
+      )}
     </main>
   )
 }
