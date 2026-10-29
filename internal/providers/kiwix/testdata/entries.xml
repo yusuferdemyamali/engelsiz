@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"
+      xmlns:dc="http://purl.org/dc/terms/"
+      xmlns:opds="https://specs.opds.io/opds-1.2"
+      xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/">
+  <id>948405a1-c7c3-ed34-bbca-5792ed64d8fb</id>
+
+  <link rel="self"
+        href="/catalog/v2/entries?lang=tur&amp;q=wikipedia&amp;count=10"
+        type="application/atom+xml;profile=opds-catalog;kind=acquisition"/>
+  <link rel="start"
+        href="/catalog/v2/root.xml"
+        type="application/atom+xml;profile=opds-catalog;kind=navigation"/>
+  <link rel="up"
+        href="/catalog/v2/root.xml"
+        type="application/atom+xml;profile=opds-catalog;kind=navigation"/>
+
+  <title>Filtered Entries (lang=tur&amp;q=wikipedia&amp;count=10)</title>
+  <updated>2026-10-29T18:02:30Z</updated>
+  <totalResults>29</totalResults>
+  <startIndex>0</startIndex>
+  <itemsPerPage>10</itemsPerPage>
+  <entry>
+    <id>urn:uuid:9f98bce8-1286-5baf-a110-8de13cd2fc16</id>
+    <title>Vikipedi</title>
+    <updated>2026-09-18T00:00:00Z</updated>
+    <summary>Wikipedia &apos;nın çevrimdışı çevirisi</summary>
+    <language>tur</language>
+    <name>wikipedia_tr_all</name>
+    <flavour>mini</flavour>
+    <category>wikipedia</category>
+    <tags>wikipedia;_category:wikipedia;_pictures:no;_videos:no;_details:no;_ftindex:yes</tags>
+    <articleCount>1030901</articleCount>
+    <mediaCount>4439</mediaCount>
+    <link rel="http://opds-spec.org/image/thumbnail"
+          href="/catalog/v2/illustration/9f98bce8-1286-5baf-a110-8de13cd2fc16/?size=48"
+          type="image/png;width=48;height=48;scale=1"/>
+    <link type="text/html" href="https://browse.library.kiwix.org/content/wikipedia_tr_all_mini_2026-09" />
+    <author>
+      <name>Wikipedia</name>
+    </author>
+    <publisher>
+      <name>openZIM</name>
+    </publisher>
+    <dc:issued>2026-09-18T00:00:00Z</dc:issued>
+    <link rel="http://opds-spec.org/acquisition/open-access" type="application/x-zim" href="https://lb.download.kiwix.org/zim/wikipedia/wikipedia_tr_all_mini_2026-09.zim.meta4" length="1220962304" />
+  </entry>
+  <entry>
+    <id>urn:uuid:42eb5a4b-71c8-7c8d-0899-6282b19287e7</id>
+    <title>Vikipedi</title>
+    <updated>2026-09-18T00:00:00Z</updated>
+    <summary>Wikipedia &apos;nın çevrimdışı çevirisi</summary>
+    <language>tur</language>
+    <name>wikipedia_tr_all</name>
+    <flavour>nopic</flavour>
+    <category>wikipedia</category>
+    <tags>wikipedia;_category:wikipedia;_pictures:no;_videos:no;_details:yes;_ftindex:yes</tags>
+    <articleCount>1036886</articleCount>
+    <mediaCount>37369</mediaCount>
+    <link rel="http://opds-spec.org/image/thumbnail"
+          href="/catalog/v2/illustration/42eb5a4b-71c8-7c8d-0899-6282b19287e7/?size=48"
+          type="image/png;width=48;height=48;scale=1"/>
+    <link type="text/html" href="https://browse.library.kiwix.org/content/wikipedia_tr_all_nopic_2026-09" />
+    <author>
+      <name>Wikipedia</name>
+    </author>
+    <publisher>
+      <name>openZIM</name>
+    </publisher>
+    <dc:issued>2026-09-18T00:00:00Z</dc:issued>
+    <link rel="http://opds-spec.org/acquisition/open-access" type="application/x-zim" href="https://lb.download.kiwix.org/zim/wikipedia/wikipedia_tr_all_nopic_2026-09.zim.meta4" length="3746435072" />
+  </entry>
+  <entry>
+    <id>urn:uuid:b57a2b04-427f-1f53-bd84-3d7efffc2dc3</id>
+    <title>Vikipedi</title>
+    <updated>2026-09-18T00:00:00Z</updated>
+    <summary>Wikipedia &apos;nın çevrimdışı çevirisi</summary>
+    <language>tur</language>
+    <name>wikipedia_tr_all</name>
+    <flavour>maxi</flavour>
+    <category>wikipedia</category>
+    <tags>wikipedia;_category:wikipedia;_pictures:yes;_videos:no;_details:yes;_ftindex:yes</tags>
+    <articleCount>1036899</articleCount>
+    <mediaCount>758643</mediaCount>
+    <link rel="http://opds-spec.org/image/thumbnail"
+          href="/catalog/v2/illustration/b57a2b04-427f-1f53-bd84-3d7efffc2dc3/?size=48"
+          type="image/png;width=48;height=48;scale=1"/>
+    <link type="text/html" href="https://browse.library.kiwix.org/content/wikipedia_tr_all_maxi_2026-09" />
+    <author>
+      <name>Wikipedia</name>
+    </author>
+    <publisher>
+      <name>openZIM</name>
+    </publisher>
+    <dc:issued>2026-09-18T00:00:00Z</dc:issued>
+    <link rel="http://opds-spec.org/acquisition/open-access" type="application/x-zim" href="https://lb.download.kiwix.org/zim/wikipedia/wikipedia_tr_all_maxi_2026-09.zim.meta4" length="8907256832" />
+  </entry>
+  <entry>
+    <id>urn:uuid:82256a50-6e96-84eb-5902-d0004ebe30b6</id>
+    <title>Wikipedia tarafından Basketbol</title>
+    <updated>2026-09-17T00:00:00Z</updated>
+    <summary>basketbol Wikipedia makalelerden bir seçki</summary>
+    <language>tur</language>
+    <name>wikipedia_tr_basketball</name>
+    <flavour>maxi</flavour>
+    <category>wikipedia</category>
+    <tags>wikipedia;_category:wikipedia;_pictures:yes;_videos:no;_details:yes;_ftindex:yes</tags>
+    <articleCount>5417</articleCount>
+    <mediaCount>4691</mediaCount>
+    <link rel="http://opds-spec.org/image/thumbnail"
+          href="/catalog/v2/illustration/82256a50-6e96-84eb-5902-d0004ebe30b6/?size=48"
+          type="image/png;width=48;height=48;scale=1"/>
+    <link type="text/html" href="https://browse.library.kiwix.org/content/wikipedia_tr_basketball_maxi_2026-09" />
+    <author>
+      <name>Wikipedia</name>
+    </author>
+    <publisher>
+      <name>openZIM</name>
+    </publisher>
+    <dc:issued>2026-09-17T00:00:00Z</dc:issued>
+    <link rel="http://opds-spec.org/acquisition/open-access" type="application/x-zim" href="https://lb.download.kiwix.org/zim/wikipedia/wikipedia_tr_basketball_maxi_2026-09.zim.meta4" length="47734784" />
+  </entry>
+  <entry>
+    <id>urn:uuid:2e57b28b-07b7-2890-12b9-f26370525da7</id>
+    <title>Wikipedia tarafından Basketbol</title>
+    <updated>2026-09-17T00:00:00Z</updated>
+    <summary>basketbol Wikipedia makalelerden bir seçki</summary>
+    <language>tur</language>
+    <name>wikipedia_tr_basketball</name>
+    <flavour>nopic</flavour>
+    <category>wikipedia</category>
+    <tags>wikipedia;_category:wikipedia;_pictures:no;_videos:no;_details:yes;_ftindex:yes</tags>
+    <articleCount>5417</articleCount>
+    <mediaCount>231</mediaCount>
+    <link rel="http://opds-spec.org/image/thumbnail"
+          href="/catalog/v2/illustration/2e57b28b-07b7-2890-12b9-f26370525da7/?size=48"
+          type="image/png;width=48;height=48;scale=1"/>
+    <link type="text/html" href="https://browse.library.kiwix.org/content/wikipedia_tr_basketball_nopic_2026-09" />
+    <author>
+      <name>Wikipedia</name>
+    </author>
+    <publisher>
+      <name>openZIM</name>
+    </publisher>
+    <dc:issued>2026-09-17T00:00:00Z</dc:issued>
+    <link rel="http://opds-spec.org/acquisition/open-access" type="application/x-zim" href="https://lb.download.kiwix.org/zim/wikipedia/wikipedia_tr_basketball_nopic_2026-09.zim.meta4" length="22617088" />
+  </entry>
+  <entry>
+    <id>urn:uuid:15186965-9d42-4eca-645e-de154ca9dab8</id>
+    <title>Wikipedia tarafından Matematik</title>
+    <updated>2026-10-15T00:00:00Z</updated>
+    <summary>matematik Wikipedia makalelerden bir seçki</summary>
+    <language>tur</language>
+    <name>wikipedia_tr_mathematics</name>
+    <flavour>maxi</flavour>
+    <category>wikipedia</category>
+    <tags>wikipedia;_category:wikipedia;_pictures:yes;_videos:no;_details:yes;_ftindex:yes</tags>
+    <articleCount>5157</articleCount>
+    <mediaCount>26645</mediaCount>
+    <link rel="http://opds-spec.org/image/thumbnail"
+          href="/catalog/v2/illustration/15186965-9d42-4eca-645e-de154ca9dab8/?size=48"
+          type="image/png;width=48;height=48;scale=1"/>
+    <link type="text/html" href="https://browse.library.kiwix.org/content/wikipedia_tr_mathematics_maxi_2026-10" />
+    <author>
+      <name>Wikipedia</name>
+    </author>
+    <publisher>
+      <name>openZIM</name>
+    </publisher>
+    <dc:issued>2026-10-15T00:00:00Z</dc:issued>
+    <link rel="http://opds-spec.org/acquisition/open-access" type="application/x-zim" href="https://lb.download.kiwix.org/zim/wikipedia/wikipedia_tr_mathematics_maxi_2026-10.zim.meta4" length="86780928" />
+  </entry>
+  <entry>
+    <id>urn:uuid:632f17a2-6ebc-219b-77d5-28866df8940a</id>
+    <title>Wikipedia tarafından Matematik</title>
+    <updated>2026-10-15T00:00:00Z</updated>
+    <summary>matematik Wikipedia makalelerden bir seçki</summary>
+    <language>tur</language>
+    <name>wikipedia_tr_mathematics</name>
+    <flavour>mini</flavour>
+    <category>wikipedia</category>
+    <tags>wikipedia;_category:wikipedia;_pictures:no;_videos:no;_details:no;_ftindex:yes</tags>
+    <articleCount>5098</articleCount>
+    <mediaCount>2520</mediaCount>
+    <link rel="http://opds-spec.org/image/thumbnail"
+          href="/catalog/v2/illustration/632f17a2-6ebc-219b-77d5-28866df8940a/?size=48"
+          type="image/png;width=48;height=48;scale=1"/>
+    <link type="text/html" href="https://browse.library.kiwix.org/content/wikipedia_tr_mathematics_mini_2026-10" />
+    <author>
+      <name>Wikipedia</name>
+    </author>
+    <publisher>
+      <name>openZIM</name>
+    </publisher>
+    <dc:issued>2026-10-15T00:00:00Z</dc:issued>
+    <link rel="http://opds-spec.org/acquisition/open-access" type="application/x-zim" href="https://lb.download.kiwix.org/zim/wikipedia/wikipedia_tr_mathematics_mini_2026-10.zim.meta4" length="9021440" />
+  </entry>
+  <entry>
+    <id>urn:uuid:c541992f-29b9-5221-c0a3-b6f36b1b2bca</id>
+    <title>Wikipedia tarafından Matematik</title>
+    <updated>2026-10-15T00:00:00Z</updated>
+    <summary>matematik Wikipedia makalelerden bir seçki</summary>
+    <language>tur</language>
+    <name>wikipedia_tr_mathematics</name>
+    <flavour>nopic</flavour>
+    <category>wikipedia</category>
+    <tags>wikipedia;_category:wikipedia;_pictures:no;_videos:no;_details:yes;_ftindex:yes</tags>
+    <articleCount>5157</articleCount>
+    <mediaCount>21596</mediaCount>
+    <link rel="http://opds-spec.org/image/thumbnail"
+          href="/catalog/v2/illustration/c541992f-29b9-5221-c0a3-b6f36b1b2bca/?size=48"
+          type="image/png;width=48;height=48;scale=1"/>
+    <link type="text/html" href="https://browse.library.kiwix.org/content/wikipedia_tr_mathematics_nopic_2026-10" />
+    <author>
+      <name>Wikipedia</name>
+    </author>
+    <publisher>
+      <name>openZIM</name>
+    </publisher>
+    <dc:issued>2026-10-15T00:00:00Z</dc:issued>
+    <link rel="http://opds-spec.org/acquisition/open-access" type="application/x-zim" href="https://lb.download.kiwix.org/zim/wikipedia/wikipedia_tr_mathematics_nopic_2026-10.zim.meta4" length="31400960" />
+  </entry>
+  <entry>
+    <id>urn:uuid:cb8e4f8b-c8a3-ca3f-da70-cde150782bad</id>
+    <title>Wikipedia tarafından Futbol</title>
+    <updated>2026-10-13T00:00:00Z</updated>
+    <summary>futbol Vikipedi makalelerden bir seçki</summary>
+    <language>tur</language>
+    <name>wikipedia_tr_football</name>
+    <flavour>maxi</flavour>
+    <category>wikipedia</category>
+    <tags>wikipedia;_category:wikipedia;_pictures:yes;_videos:no;_details:yes;_ftindex:yes</tags>
+    <articleCount>64443</articleCount>
+    <mediaCount>48612</mediaCount>
+    <link rel="http://opds-spec.org/image/thumbnail"
+          href="/catalog/v2/illustration/cb8e4f8b-c8a3-ca3f-da70-cde150782bad/?size=48"
+          type="image/png;width=48;height=48;scale=1"/>
+    <link type="text/html" href="https://browse.library.kiwix.org/content/wikipedia_tr_football_maxi_2026-10" />
+    <author>
+      <name>Wikipedia</name>
+    </author>
+    <publisher>
+      <name>openZIM</name>
+    </publisher>
+    <dc:issued>2026-10-13T00:00:00Z</dc:issued>
+    <link rel="http://opds-spec.org/acquisition/open-access" type="application/x-zim" href="https://lb.download.kiwix.org/zim/wikipedia/wikipedia_tr_football_maxi_2026-10.zim.meta4" length="440745984" />
+  </entry>
+  <entry>
+    <id>urn:uuid:d63f085f-9752-a2f5-96c7-bcbcc5ec010e</id>
+    <title>Wikipedia tarafından Futbol</title>
+    <updated>2026-10-13T00:00:00Z</updated>
+    <summary>futbol Vikipedi makalelerden bir seçki</summary>
+    <language>tur</language>
+    <name>wikipedia_tr_football</name>
+    <flavour>nopic</flavour>
+    <category>wikipedia</category>
+    <tags>wikipedia;_category:wikipedia;_pictures:no;_videos:no;_details:yes;_ftindex:yes</tags>
+    <articleCount>64443</articleCount>
+    <mediaCount>267</mediaCount>
+    <link rel="http://opds-spec.org/image/thumbnail"
+          href="/catalog/v2/illustration/d63f085f-9752-a2f5-96c7-bcbcc5ec010e/?size=48"
+          type="image/png;width=48;height=48;scale=1"/>
+    <link type="text/html" href="https://browse.library.kiwix.org/content/wikipedia_tr_football_nopic_2026-10" />
+    <author>
+      <name>Wikipedia</name>
+    </author>
+    <publisher>
+      <name>openZIM</name>
+    </publisher>
+    <dc:issued>2026-10-13T00:00:00Z</dc:issued>
+    <link rel="http://opds-spec.org/acquisition/open-access" type="application/x-zim" href="https://lb.download.kiwix.org/zim/wikipedia/wikipedia_tr_football_nopic_2026-10.zim.meta4" length="212016128" />
+  </entry>
+</feed>
