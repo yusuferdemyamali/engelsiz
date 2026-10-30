@@ -201,6 +201,15 @@ func TestEmptyProfileInvalidKiwixBinaryKeepsFoundation(t *testing.T) {
 			t.Fatalf("foundation health changed: %s", body)
 		}
 	}
+	resp, err := client.Get(url + "api/search?q=wiki&packageId=0123456789abcdef0123456789abcdef")
+	if err != nil {
+		t.Fatal(err)
+	}
+	body, _ := io.ReadAll(resp.Body)
+	resp.Body.Close()
+	if resp.StatusCode != 409 || !strings.Contains(string(body), `"code":"content_unavailable"`) {
+		t.Fatalf("search registration/installed-first validation: %d %s", resp.StatusCode, body)
+	}
 	cancel()
 	if err := appResult(t, done); err != nil {
 		t.Fatal(err)

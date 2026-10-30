@@ -165,6 +165,8 @@ func Run(ctx context.Context, opts Options) (runErr error) {
 	mux := api.NewMux()
 	mux.HandleFunc("/api/catalog", api.CatalogHandler(provider, logger))
 	mux.HandleFunc("/api/packages", api.PackagesHandler(packageService))
+	searchProvider, _ := provider.(providers.SearchProvider)
+	mux.HandleFunc("/api/search", api.SearchHandler(searchProvider, packageService))
 	mux.HandleFunc("/api/runtime", api.RuntimeHandler(activation, false))
 	mux.HandleFunc("/api/runtime/retry", api.RuntimeHandler(activation, true))
 	resolver, _ := provider.(providers.AcquisitionResolver)
