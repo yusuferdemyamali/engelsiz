@@ -29,6 +29,8 @@ type config struct {
 	StderrBytes   int           `json:"stderr_bytes"`
 	IgnoreSIGTERM bool          `json:"ignore_sigterm"`
 	MarkerPath    string        `json:"marker_path"`
+	RequestMarker string        `json:"request_marker"`
+	StreamDelay   time.Duration `json:"stream_delay"`
 }
 
 type event struct {
@@ -45,6 +47,7 @@ func main() { os.Exit(run()) }
 func run() (code int) {
 	address := flag.String("address", "127.0.0.1", "listen address")
 	port := flag.Int("port", 0, "listen port")
+	urlRoot := flag.String("urlRootLocation", "", "URL root")
 	flag.Parse()
 	if flag.NArg() == 0 {
 		fmt.Fprintln(os.Stderr, "fixture requires a JSON config as its first ZIM path")
@@ -90,6 +93,11 @@ func run() (code int) {
 		exit = timer.C
 	}
 	server := &http.Server{Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if *urlRoot != "" && !strings.HasPrefix(r.URL.Path, *urlRoot+"/") {
+			http.NotFound(w, r)
+			return
+		}
+		_ = record(cfg.RequestMarker, event{Kind: r.URL.RequestURI(), PID: os.Getpid(), At: time.Now()})
 		status := cfg.StatusCode
 		if cfg.Redirect != "" {
 			w.Header().Set("Location", cfg.Redirect)
@@ -101,6 +109,14 @@ func run() (code int) {
 			status = http.StatusOK
 		}
 		w.WriteHeader(status)
+		if cfg.StreamDelay > 0 && r.URL.Path == "/content/stream" {
+			w.(http.Flusher).Flush()
+			select {
+			case <-time.After(cfg.StreamDelay):
+			case <-r.Context().Done():
+				return
+			}
+		}
 		_, _ = io.WriteString(w, "fixture\n")
 	})}
 	defer server.Close()

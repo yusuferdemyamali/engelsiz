@@ -13,6 +13,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"slices"
 	"strconv"
 	"sync"
 	"time"
@@ -37,6 +38,8 @@ type attempt struct {
 	started chan struct{} // startup result and cleanup are complete
 	err     error
 	child   *child
+	paths   []string // immutable complete launch inputs for this generation
+	proxy   *generationTransport
 }
 
 type child struct {
@@ -59,6 +62,7 @@ type Runtime struct {
 	selectPort    func() (int, error)
 	executable    func() (string, error)
 	listenerOwner func(int, int) (bool, error)
+	dialContent   func(context.Context, string, string) (net.Conn, error)
 }
 
 func New(opts Options) (*Runtime, error) {
@@ -85,7 +89,8 @@ func New(opts Options) (*Runtime, error) {
 	if opts.StopGrace <= 0 {
 		opts.StopGrace = 2 * time.Second
 	}
-	return &Runtime{opts: opts, status: providers.RuntimeStatus{State: providers.Stopped}, selectPort: availablePort, executable: os.Executable, listenerOwner: childOwnsListener}, nil
+	dialer := &net.Dialer{Timeout: 2 * time.Second, KeepAlive: 30 * time.Second}
+	return &Runtime{opts: opts, status: providers.RuntimeStatus{State: providers.Stopped}, selectPort: availablePort, executable: os.Executable, listenerOwner: childOwnsListener, dialContent: dialer.DialContext}, nil
 }
 
 func (r *Runtime) Status() providers.RuntimeStatus {
@@ -146,7 +151,7 @@ func (r *Runtime) ensureStarted(ctx context.Context, restartEpoch *uint64) error
 			return err
 		}
 		startCtx, cancel := context.WithTimeout(ctx, r.opts.StartupTimeout)
-		a = &attempt{ctx: startCtx, cancel: cancel, started: make(chan struct{})}
+		a = &attempt{ctx: startCtx, cancel: cancel, started: make(chan struct{}), paths: append([]string(nil), r.opts.ZIMPaths...)}
 		r.current = a
 		initiating = true
 		r.status = providers.RuntimeStatus{State: providers.Starting}
@@ -211,7 +216,7 @@ func (r *Runtime) launch(a *attempt) error {
 	if err != nil {
 		return err
 	}
-	for _, path := range r.opts.ZIMPaths {
+	for _, path := range a.paths {
 		info, err := os.Stat(path)
 		if err != nil {
 			return fmt.Errorf("stat local content %q: %w", path, err)
@@ -245,7 +250,7 @@ func (r *Runtime) launch(a *attempt) error {
 		return fmt.Errorf("kiwix port handoff %s: %w", address, err)
 	}
 	reservation.Close()
-	args := append([]string{"--address=127.0.0.1", "--port=" + strconv.Itoa(port)}, r.opts.ZIMPaths...)
+	args := append([]string{"--address=127.0.0.1", "--port=" + strconv.Itoa(port), "--urlRootLocation=/content"}, a.paths...)
 	c := &child{cmd: exec.Command(binary, args...), done: make(chan struct{})}
 	// Bound exec output draining even if an unexpected descendant inherits a pipe.
 	c.cmd.WaitDelay = 500 * time.Millisecond
@@ -291,6 +296,7 @@ func (r *Runtime) launch(a *attempt) error {
 	}
 	r.status.State = providers.Ready
 	r.status.LastError = ""
+	a.proxy = r.newGenerationTransport(a, c, address, port)
 	r.opts.Logger.Printf("kiwix ready: pid=%d", c.cmd.Process.Pid)
 	return nil
 }
@@ -300,6 +306,9 @@ func (r *Runtime) reap(a *attempt, c *child) {
 	r.opts.Logger.Printf("kiwix exit: pid=%d result=%v", c.cmd.Process.Pid, err)
 	r.mu.Lock()
 	c.err = err
+	if a.proxy != nil {
+		a.proxy.transport.CloseIdleConnections()
+	}
 	if r.current == a {
 		r.status.PID = 0
 		if !c.expected {
@@ -343,7 +352,7 @@ func (r *Runtime) waitReady(a *attempt, c *child, address string, port int) erro
 			ownershipErr = fmt.Errorf("child PID %d does not own listener at %s", c.cmd.Process.Pid, address)
 		} else {
 			ownershipErr = nil
-			req, err := http.NewRequestWithContext(a.ctx, http.MethodGet, "http://"+address+"/", nil)
+			req, err := http.NewRequestWithContext(a.ctx, http.MethodGet, "http://"+address+"/content/", nil)
 			if err != nil {
 				return err
 			}
@@ -400,6 +409,9 @@ func (r *Runtime) cancelCurrentLocked() {
 		r.status.State = providers.Stopping
 		if a.child != nil {
 			a.child.expected = true
+		}
+		if a.proxy != nil {
+			a.proxy.transport.CloseIdleConnections()
 		}
 		a.cancel()
 	}
@@ -505,6 +517,99 @@ func (r *Runtime) Restart(ctx context.Context) error {
 		return fmt.Errorf("kiwix restart interrupted by stop: %w", context.Canceled)
 	}
 	return r.ensureStarted(ctx, &epoch)
+}
+
+// ReplaceZIMPaths applies the complete trusted installed set. A failed equal set
+// is retried only by an explicit retry; changed committed sets activate normally.
+// The paths are copied and normalized before becoming immutable attempt inputs.
+func (r *Runtime) ReplaceZIMPaths(ctx context.Context, paths []string, retry bool) error {
+	r.mu.Lock()
+	epoch := r.stopEpoch
+	// A replacement's temporary startup barrier must queue other refreshes;
+	// only an actual Stop rejects a newly arriving refresh immediately.
+	stopping := r.stopRequests > 0
+	r.mu.Unlock()
+	if stopping {
+		return fmt.Errorf("kiwix refresh interrupted by stop: %w", context.Canceled)
+	}
+	next, err := normalizedPaths(paths)
+	if err != nil {
+		return err
+	}
+	r.operations.Lock()
+	defer r.operations.Unlock()
+	r.mu.Lock()
+	if r.stopping || epoch != r.stopEpoch {
+		r.mu.Unlock()
+		return fmt.Errorf("kiwix queued refresh interrupted by stop: %w", context.Canceled)
+	}
+	if err := ctx.Err(); err != nil {
+		r.mu.Unlock()
+		return err
+	}
+	previous, err := normalizedPaths(r.opts.ZIMPaths)
+	if err != nil {
+		r.mu.Unlock()
+		return err
+	}
+	if len(next) != 0 && slices.Equal(previous, next) {
+		state := r.status.State
+		if state == providers.Ready || state == providers.Starting || (state == providers.Failed && !retry) {
+			r.mu.Unlock()
+			return r.ensureStarted(ctx, &epoch)
+		}
+	}
+	r.stopping = true
+	r.cancelCurrentLocked()
+	r.mu.Unlock()
+	err = r.stop(ctx)
+	r.mu.Lock()
+	r.stopping = r.stopRequests > 0
+	interrupted := epoch != r.stopEpoch || r.stopping
+	if err == nil && !interrupted {
+		r.opts.ZIMPaths = next
+		r.status = providers.RuntimeStatus{State: providers.Stopped}
+	}
+	r.mu.Unlock()
+	if err != nil {
+		return fmt.Errorf("kiwix refresh stop: %w", err)
+	}
+	if interrupted {
+		return fmt.Errorf("kiwix refresh interrupted by stop: %w", context.Canceled)
+	}
+	return r.ensureStarted(ctx, &epoch)
+}
+
+func normalizedPaths(paths []string) ([]string, error) {
+	result := make([]string, len(paths))
+	for i, path := range paths {
+		if path == "" {
+			return nil, errors.New("empty local content path")
+		}
+		absolute, err := filepath.Abs(path)
+		if err != nil {
+			return nil, fmt.Errorf("absolute local content path: %w", err)
+		}
+		result[i] = absolute
+	}
+	slices.Sort(result)
+	return slices.Compact(result), nil
+}
+
+// Snapshot returns one atomic private status/loaded-input snapshot. Non-ready
+// generations never advertise content, including during replacement or failure.
+func (r *Runtime) Snapshot() (providers.RuntimeStatus, []string) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	if r.status.State != providers.Ready || r.current == nil || r.current.child == nil {
+		return r.status, nil
+	}
+	select {
+	case <-r.current.child.done:
+		return r.status, nil
+	default:
+		return r.status, append([]string(nil), r.current.paths...)
+	}
 }
 
 func availablePort() (int, error) {

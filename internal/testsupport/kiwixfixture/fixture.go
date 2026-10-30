@@ -27,6 +27,8 @@ type Config struct {
 	StderrBytes   int           `json:"stderr_bytes,omitempty"`
 	IgnoreSIGTERM bool          `json:"ignore_sigterm,omitempty"`
 	MarkerPath    string        `json:"marker_path,omitempty"`
+	RequestMarker string        `json:"request_marker,omitempty"`
+	StreamDelay   time.Duration `json:"stream_delay,omitempty"`
 }
 
 // Event records a fixture start or a voluntary exit. A killed process cannot

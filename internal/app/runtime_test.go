@@ -2,6 +2,9 @@ package app
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
+	"engelsiz/internal/database"
 	"errors"
 	"io"
 	"net"
@@ -94,6 +97,38 @@ func fixtureProvider(t *testing.T, cfg kiwixfixture.Config) (*kiwix.KiwixProvide
 	marker := filepath.Join(t.TempDir(), "events.jsonl")
 	cfg.MarkerPath = marker
 	content := kiwixfixture.WriteConfig(t, cfg)
+	// Seed the same durable registry used in production. Run must replace
+	// provider option paths with accepted installed files, not fixture shortcuts.
+	root := filepath.Join(os.Getenv("XDG_DATA_HOME"), "engelsiz")
+	if err := os.MkdirAll(filepath.Join(root, "content", "kiwix"), 0700); err != nil {
+		t.Fatal(err)
+	}
+	id := "0123456789abcdef0123456789abcdef"
+	body, err := os.ReadFile(content)
+	if err != nil {
+		t.Fatal(err)
+	}
+	local := filepath.Join(root, "content", "kiwix", id+".zim")
+	if err = os.WriteFile(local, body, 0600); err != nil {
+		t.Fatal(err)
+	}
+	db, err := database.Open(filepath.Join(root, "engelsiz.db"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	sum := sha256.Sum256(body)
+	stamp := time.Now().UTC().Format(time.RFC3339Nano)
+	_, err = db.Exec(`INSERT OR REPLACE INTO downloads(id,provider,provider_package_id,title,variant,file_name,source_url,temp_path,total_bytes,downloaded_bytes,status,created_at,updated_at,content_type,language,version,expected_size,checksum_algorithm,checksum_value,artifact_owner,artifact_state) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, id, "kiwix", "fixture", "Fixture", "nopic", "fixture.zim", "https://fixture.invalid/", filepath.Join(root, "downloads", id+".part"), len(body), len(body), "completed", stamp, stamp, "wikipedia", "tr", "v1", len(body), "sha256", hex.EncodeToString(sum[:]), id, "consumed")
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = db.Exec(`INSERT OR REPLACE INTO content_packages(id,download_id,provider,provider_package_id,content_type,language,variant,title,version,source_url,source_path,local_path,size_bytes,checksum_algorithm,checksum_value,status,error_code,error_message,created_at,updated_at,installed_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, id, id, "kiwix", "fixture", "wikipedia", "tr", "nopic", "Fixture", "v1", "https://fixture.invalid/", filepath.Join(root, "downloads", id+".part"), local, len(body), "sha256", hex.EncodeToString(sum[:]), "installed", "", "", stamp, stamp, stamp)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err = db.Close(); err != nil {
+		t.Fatal(err)
+	}
 	p, err := kiwix.New(kiwix.Options{
 		BinaryPath:     kiwixfixture.Build(t),
 		ZIMPaths:       []string{content},
@@ -176,18 +211,34 @@ func TestEmptyProfileInvalidKiwixBinaryKeepsFoundation(t *testing.T) {
 	}
 }
 
-func TestRuntimeStartupFailurePreventsBrowser(t *testing.T) {
+func TestRuntimeStartupFailureKeepsShellAndBrowser(t *testing.T) {
 	logPath, browserMarker := appProfile(t)
 	p, marker := fixtureProvider(t, kiwixfixture.Config{EarlyExit: true, ExitCode: 23})
-	err := Run(context.Background(), Options{ContentProvider: p})
-	if err == nil || !strings.Contains(err.Error(), "start content provider") {
-		t.Fatalf("startup error = %v", err)
+	cancel, done := runApp(t, Options{ContentProvider: p})
+	waitApp(t, "browser after content failure", func() bool { return readAppFile(browserMarker) != "" })
+	if p.Status().State != providers.Failed {
+		t.Fatalf("runtime=%+v", p.Status())
 	}
-	if readAppFile(browserMarker) != "" || strings.Contains(readAppFile(logPath), "browser helper started") {
-		t.Fatal("browser launched after runtime startup failure")
+	client := &http.Client{Timeout: time.Second, Transport: &http.Transport{Proxy: nil}}
+	defer client.CloseIdleConnections()
+	base := strings.TrimSpace(readAppFile(browserMarker))
+	for _, path := range []string{"api/health", "api/packages", "api/runtime", ""} {
+		resp, err := client.Get(base + path)
+		if err != nil {
+			t.Fatal(err)
+		}
+		body, _ := io.ReadAll(resp.Body)
+		resp.Body.Close()
+		if resp.StatusCode != 200 {
+			t.Fatalf("%s: %d %s", path, resp.StatusCode, body)
+		}
+	}
+	cancel()
+	if err := appResult(t, done); err != nil {
+		t.Fatal(err)
 	}
 	if !strings.Contains(readAppFile(logPath), "content provider startup failed") {
-		t.Fatal("runtime startup failure missing from app log")
+		t.Fatal("missing private diagnostics")
 	}
 	assertFixtureReleased(t, marker)
 }
@@ -295,8 +346,10 @@ func TestRuntimeCleanupErrorJoinedWithStartupError(t *testing.T) {
 	logPath, browserMarker := appProfile(t)
 	startupErr := errors.New("fixture startup failure")
 	cleanupErr := errors.New("fixture cleanup failure")
-	p := &cleanupFailureProvider{startupErr: startupErr, stopErr: cleanupErr}
-	err := Run(context.Background(), Options{ContentProvider: p})
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	p := &cleanupFailureProvider{startupErr: startupErr, stopErr: cleanupErr, cancel: cancel}
+	err := Run(ctx, Options{ContentProvider: p})
 	if !errors.Is(err, startupErr) || !errors.Is(err, cleanupErr) {
 		t.Fatalf("startup/cleanup errors were not retained: %v", err)
 	}

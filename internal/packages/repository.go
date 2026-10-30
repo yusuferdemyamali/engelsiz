@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"engelsiz/internal/download"
 	"errors"
+	"os"
 	"time"
 )
 
@@ -64,7 +65,7 @@ func (s *Service) save(r *record) error {
 	}
 	return e
 }
-func (s *Service) installed(r *record) error {
+func (s *Service) installed(r *record, verified os.FileInfo) error {
 	if !s.directoriesOwned() {
 		return s.fail(r, ErrUnsafe)
 	}
@@ -89,5 +90,14 @@ func (s *Service) installed(r *record) error {
 	if e != nil {
 		return e
 	}
-	return tx.Commit()
+	if e = tx.Commit(); e != nil {
+		return e
+	}
+	s.mu.Lock()
+	s.accepted[r.ID] = verified
+	s.mu.Unlock()
+	if s.opts.OnInstalled != nil {
+		s.opts.OnInstalled()
+	}
+	return nil
 }

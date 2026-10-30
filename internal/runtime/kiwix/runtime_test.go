@@ -140,7 +140,7 @@ func TestRelativeOverrideFrozenAndPathsSeparate(t *testing.T) {
 		t.Fatalf("events=%v", events)
 	}
 	args := events[0].Args
-	if len(args) != 4 || args[0] != "--address=127.0.0.1" || !strings.HasPrefix(args[1], "--port=") || args[2] != r.opts.ZIMPaths[0] || args[3] != extra {
+	if len(args) != 5 || args[0] != "--address=127.0.0.1" || !strings.HasPrefix(args[1], "--port=") || args[2] != "--urlRootLocation=/content" || args[3] != r.opts.ZIMPaths[0] || args[4] != extra {
 		t.Fatalf("argv=%q", args)
 	}
 	if s := r2.Status(); s.State != providers.Ready || s.PID != events[0].PID {
@@ -690,7 +690,7 @@ func TestCollisionWithSameExecutableForeignProcess(t *testing.T) {
 	if s := foreign.Status(); s.PID != foreignPID || s.State != providers.Ready {
 		t.Fatal("foreign process changed", s)
 	}
-	resp, err := http.Get(fmt.Sprintf("http://127.0.0.1:%d/", port))
+	resp, err := http.Get(fmt.Sprintf("http://127.0.0.1:%d/content/", port))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -718,7 +718,7 @@ func TestUnavailableListenerProofCannotBecomeReady(t *testing.T) {
 				if len(events) == 0 {
 					return false
 				}
-				resp, err := http.Get("http://" + events[0].Address + "/")
+				resp, err := http.Get("http://" + events[0].Address + "/content/")
 				if err != nil {
 					return false
 				}

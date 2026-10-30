@@ -71,3 +71,12 @@ func (p *KiwixProvider) EnsureStarted(ctx context.Context) error { return p.runt
 func (p *KiwixProvider) Stop(ctx context.Context) error          { return p.runtime.Stop(ctx) }
 func (p *KiwixProvider) Restart(ctx context.Context) error       { return p.runtime.Restart(ctx) }
 func (p *KiwixProvider) Status() providers.RuntimeStatus         { return p.runtime.Status() }
+
+// Private application integration; endpoints never enter RuntimeStatus or JSON.
+func (p *KiwixProvider) ReplaceZIMPaths(ctx context.Context, paths []string, retry bool) error {
+	return p.runtime.ReplaceZIMPaths(ctx, paths, retry)
+}
+func (p *KiwixProvider) Snapshot() (providers.RuntimeStatus, []string) { return p.runtime.Snapshot() }
+func (p *KiwixProvider) ContentTransport() (http.RoundTripper, *url.URL, error) {
+	return p.runtime.ContentTransport()
+}

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { buttonClass, downloadRequest, formatBytes, secondaryButtonClass, variantsLabel } from "./downloads"
+import { InstalledContent, RuntimeStatus, useRuntime } from "./runtime"
 
 export type Package = {
   id: string
@@ -155,12 +156,14 @@ export function PackageState({ item, downloadId, title, variant, manager }: {
 
 export function PackagesView() {
   const manager = usePackages()
+  const runtime = useRuntime()
   return (
     <section aria-labelledby="packages-heading" className="pt-8 sm:pt-10">
       <h2 id="packages-heading" className="text-2xl font-semibold tracking-tight">Yerel Paketler</h2>
       <p className="mt-2 max-w-prose text-sm leading-6 text-muted-foreground">
         Kurulumları ve doğrulanmış yerel paketleri çevrimdışıyken de takip edin. Yeni bir kurulum için İndirmeler bölümünü kullanın.
       </p>
+      <RuntimeStatus manager={runtime} installedCount={manager.loading ? null : manager.items.filter((item) => item.status === "installed").length} />
       {manager.error && (
         <div className="mt-6 border-y py-5">
           <p role="alert" className="text-sm leading-6">{manager.error}</p>
@@ -183,6 +186,7 @@ export function PackagesView() {
               </div>
               <p className="text-sm tabular-nums text-muted-foreground">{formatBytes(item.sizeBytes)}</p>
               <PackageState item={item} downloadId={item.downloadId} title={item.title} variant={item.variant} manager={manager} />
+              {item.status === "installed" && <InstalledContent packageId={item.id} title={item.title} variant={variantsLabel(item.variant)} manager={runtime} />}
             </li>
           ))}
         </ul>
