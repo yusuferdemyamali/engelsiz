@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { buttonClass, downloadRequest, DownloadsView, type Download } from "./downloads"
+import { PackagesView } from "./packages"
 
 const variants = [
   { id: "mini", label: "Mini" },
@@ -76,7 +77,7 @@ function PackageMetadata({ item }: { item: CatalogPackage }) {
 }
 
 export default function App() {
-  const [view, setView] = useState<"catalog" | "downloads">("catalog")
+  const [view, setView] = useState<"catalog" | "downloads" | "packages">("catalog")
   const [catalog, setCatalog] = useState<CatalogState>({ status: "loading" })
   const activeRequest = useRef<AbortController | null>(null)
   const creationRequest = useRef<AbortController | null>(null)
@@ -156,8 +157,8 @@ export default function App() {
         <p className="mt-2 text-muted-foreground">Bilginin erişim engeli olmaz.</p>
       </header>
 
-      <nav aria-label="Ana menü" className="flex gap-2 border-b py-3">
-        {([{ id: "catalog", label: "Bilgi Paketleri" }, { id: "downloads", label: "İndirmeler" }] as const).map((entry) => (
+      <nav aria-label="Ana menü" className="flex flex-wrap gap-2 border-b py-3">
+        {([{ id: "catalog", label: "Bilgi Paketleri" }, { id: "downloads", label: "İndirmeler" }, { id: "packages", label: "Yerel Paketler" }] as const).map((entry) => (
           <button
             key={entry.id}
             type="button"
@@ -170,7 +171,7 @@ export default function App() {
         ))}
       </nav>
       <p role="status" className={notice ? "mt-6 text-sm leading-6 text-muted-foreground" : "sr-only"}>{notice}</p>
-      {view === "downloads" ? <DownloadsView refreshKey={downloadRefresh} /> : (
+      {view === "downloads" ? <DownloadsView refreshKey={downloadRefresh} /> : view === "packages" ? <PackagesView /> : (
       <section aria-labelledby="catalog-heading" className="pt-8 sm:pt-10">
         <h2 id="catalog-heading" className="text-2xl font-semibold tracking-tight">Bilgi Paketleri</h2>
         <p className="mt-2 text-lg">Türkçe Wikipedia</p>

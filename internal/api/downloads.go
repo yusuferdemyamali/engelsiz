@@ -8,10 +8,11 @@ import (
 	"strings"
 
 	"engelsiz/internal/download"
+	"engelsiz/internal/packages"
 	"engelsiz/internal/providers"
 )
 
-func DownloadsHandler(manager *download.Manager, resolver providers.AcquisitionResolver) http.HandlerFunc {
+func DownloadsHandler(manager *download.Manager, resolver providers.AcquisitionResolver, installers ...*packages.Service) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.Header().Set("Cache-Control", "no-store")
@@ -100,7 +101,7 @@ func DownloadsHandler(manager *download.Manager, resolver providers.AcquisitionR
 				fail(download.ErrSource)
 				return
 			}
-			item, e := manager.Create(download.Descriptor{Provider: source.Provider, ProviderPackageID: source.ProviderPackageID, Title: source.Title, Variant: source.Variant, FileName: source.FileName, SourceURL: source.SourceURL, TotalBytes: source.TotalBytes})
+			item, e := manager.Create(download.Descriptor{Provider: source.Provider, ProviderPackageID: source.ProviderPackageID, Title: source.Title, Variant: source.Variant, FileName: source.FileName, SourceURL: source.SourceURL, TotalBytes: source.TotalBytes, ContentType: source.ContentType, Language: source.Language, Version: source.Version, ExpectedSize: source.ExpectedSize, ChecksumAlgorithm: source.ChecksumAlgorithm, ChecksumValue: source.ChecksumValue})
 			if e != nil {
 				fail(e)
 				return
@@ -123,6 +124,30 @@ func DownloadsHandler(manager *download.Manager, resolver providers.AcquisitionR
 				return
 			}
 			write(200, map[string]any{"download": item})
+			return
+		}
+		if parts[1] == "install" {
+			if !method(http.MethodPost) {
+				return
+			}
+			if len(installers) != 1 || installers[0] == nil {
+				fail(download.ErrStorage)
+				return
+			}
+			if !emptyObject(w, r) {
+				write(400, map[string]any{"error": download.ErrInvalid})
+				return
+			}
+			item, installed, e := installers[0].Install(manager, parts[0])
+			if e != nil {
+				packageFailure(w, e)
+				return
+			}
+			status := 202
+			if installed {
+				status = 200
+			}
+			write(status, map[string]any{"package": item})
 			return
 		}
 		switch parts[1] {

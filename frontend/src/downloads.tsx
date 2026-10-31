@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react"
+import { PackageState, usePackages } from "./packages"
 
 export type Download = {
   id: string
@@ -17,7 +18,7 @@ export type Download = {
 }
 
 export const buttonClass = "min-h-11 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 active:bg-primary/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-wait disabled:opacity-60"
-const secondaryButtonClass = "min-h-11 rounded-md border px-4 py-2 text-sm font-medium transition-colors hover:bg-muted active:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-wait disabled:opacity-60"
+export const secondaryButtonClass = "min-h-11 rounded-md border px-4 py-2 text-sm font-medium transition-colors hover:bg-muted active:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-wait disabled:opacity-60"
 const numberFormatter = new Intl.NumberFormat("tr-TR", { maximumFractionDigits: 1 })
 
 export function formatBytes(bytes: number) {
@@ -36,13 +37,13 @@ export async function downloadRequest<T>(path: string, signal: AbortSignal, body
       ...(body ? { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) } : {}),
     })
   } catch {
-    throw new Error("İndirme hizmetine ulaşılamadı. Bağlantınızı kontrol edip tekrar deneyin.")
+    throw new Error("Yerel hizmete ulaşılamadı. Uygulamanın çalıştığından emin olup tekrar deneyin.")
   }
   let result
   try {
     result = await response.json()
   } catch {
-    throw new Error("İndirme hizmetinden geçerli bir yanıt alınamadı. Tekrar deneyin.")
+    throw new Error("Yerel hizmetten geçerli bir yanıt alınamadı. Tekrar deneyin.")
   }
   if (!response.ok) {
     throw new Error(typeof result?.error?.message === "string" ? result.error.message : "İşlem tamamlanamadı. Tekrar deneyin.")
@@ -56,7 +57,7 @@ const statusLabels: Record<Download["status"], string> = {
   paused: "Duraklatıldı",
   failed: "İndirme başarısız",
   cancelled: "İptal edildi",
-  completed: "İndirme tamamlandı; doğrulama ve kurulum bekleniyor",
+  completed: "İndirme tamamlandı",
 }
 
 type Action = "pause" | "resume" | "cancel" | "retry"
@@ -75,6 +76,7 @@ function eligibleActions(status: Download["status"]): Action[] {
 }
 
 export function DownloadsView({ refreshKey }: { refreshKey: number }) {
+  const packages = usePackages(refreshKey)
   const [downloads, setDownloads] = useState<Download[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -156,8 +158,15 @@ export function DownloadsView({ refreshKey }: { refreshKey: number }) {
     <section aria-labelledby="downloads-heading" className="pt-8 sm:pt-10">
       <h2 id="downloads-heading" tabIndex={-1} className="text-2xl font-semibold tracking-tight">İndirmeler</h2>
       <p className="mt-2 max-w-prose text-sm leading-6 text-muted-foreground">
-        İndirme ilerlemesini takip edin ve yarım kalan indirmelerinize devam edin.
+        İndirmeleri takip edin. İndirme tamamlandığında dosyayı doğrulayıp kurabilirsiniz.
       </p>
+
+      {packages.error && (
+        <div className="mt-6 border-y py-5">
+          <p role="alert" className="text-sm leading-6">Paket durumları yenilenemedi. {packages.error}</p>
+          <button type="button" className={`${secondaryButtonClass} mt-3`} onClick={packages.reload}>Paket durumlarını yenile</button>
+        </div>
+      )}
 
       {error && (
         <div className="mt-6 border-y py-5">
@@ -176,6 +185,7 @@ export function DownloadsView({ refreshKey }: { refreshKey: number }) {
           {downloads.map((item) => {
             const percentage = item.percentage === null ? null : Math.max(0, Math.min(100, item.percentage))
             const actions = eligibleActions(item.status)
+            const localPackage = packages.items.find((entry) => entry.downloadId === item.id)
             return (
               <li key={item.id} className="space-y-4 py-6" aria-busy={pending?.id === item.id}>
                 <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
@@ -199,6 +209,15 @@ export function DownloadsView({ refreshKey }: { refreshKey: number }) {
                 </div>
                 {item.error && <p role="alert" className="max-w-prose text-sm leading-6">{item.error.message}</p>}
                 {actionError?.id === item.id && <p role="alert" className="max-w-prose text-sm leading-6">{actionError.message}</p>}
+                {item.status === "completed" && (
+                  <PackageState
+                    item={localPackage}
+                    downloadId={item.id}
+                    title={item.title}
+                    variant={item.variant}
+                    manager={packages}
+                  />
+                )}
                 {actions.length > 0 && (
                   <div className="flex flex-wrap gap-3">
                     {actions.map((action) => (
@@ -224,6 +243,6 @@ export function DownloadsView({ refreshKey }: { refreshKey: number }) {
   )
 }
 
-function variantsLabel(variant: string) {
+export function variantsLabel(variant: string) {
   return ({ mini: "Mini", nopic: "Nopic", maxi: "Maxi" } as Record<string, string>)[variant] ?? variant
 }

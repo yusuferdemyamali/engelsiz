@@ -20,6 +20,7 @@ import (
 	"engelsiz/internal/config"
 	"engelsiz/internal/database"
 	"engelsiz/internal/download"
+	"engelsiz/internal/packages"
 	"engelsiz/internal/providers"
 	"engelsiz/internal/providers/kiwix"
 	"engelsiz/internal/web"
@@ -102,11 +103,25 @@ func Run(ctx context.Context, opts Options) (runErr error) {
 			runErr = errors.Join(runErr, fmt.Errorf("stop content provider: %w", err))
 		}
 	}()
+	packageService, err := packages.New(ctx, db, dirs.DataRoot, packages.Options{Logger: logger})
+	if err != nil {
+		return fmt.Errorf("initialize packages: %w", err)
+	}
+	// This defer is registered before downloads; package workers need their
+	// completed roots and database until they have stopped and joined.
+	defer func() {
+		if err := packageService.Close(); err != nil {
+			runErr = errors.Join(runErr, fmt.Errorf("close packages: %w", err))
+		}
+	}()
 	manager, err := download.New(db, dirs.DownloadDir, download.Options{})
 	if err != nil {
 		return fmt.Errorf("initialize downloads: %w", err)
 	}
 	defer func() {
+		if err := packageService.Close(); err != nil {
+			runErr = errors.Join(runErr, fmt.Errorf("close packages: %w", err))
+		}
 		if err := manager.Close(); err != nil {
 			runErr = errors.Join(runErr, fmt.Errorf("close downloads: %w", err))
 		}
@@ -133,8 +148,9 @@ func Run(ctx context.Context, opts Options) (runErr error) {
 
 	mux := api.NewMux()
 	mux.HandleFunc("/api/catalog", api.CatalogHandler(provider, logger))
+	mux.HandleFunc("/api/packages", api.PackagesHandler(packageService))
 	resolver, _ := provider.(providers.AcquisitionResolver)
-	downloadsHandler := api.DownloadsHandler(manager, resolver)
+	downloadsHandler := api.DownloadsHandler(manager, resolver, packageService)
 	mux.HandleFunc("/api/downloads", downloadsHandler)
 	mux.HandleFunc("/api/downloads/", downloadsHandler)
 	mux.Handle("/", web.Handler())

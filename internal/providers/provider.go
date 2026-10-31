@@ -44,13 +44,20 @@ type Acquisition struct {
 	MediaType string `json:"mediaType"`
 }
 
-// DownloadSource is trusted transfer metadata resolved by a provider. TotalBytes
-// is nil when the provider cannot supply an exact payload length.
+// DownloadSource is trusted acquisition metadata resolved by a provider.
+// ExpectedSize is the immutable exact size used for verification; TotalBytes is
+// the initial transfer length and may later be established by an HTTP response.
 type DownloadSource struct {
 	Provider          string
 	ProviderPackageID string
 	Title             string
 	Variant           string
+	ContentType       string
+	Language          string
+	Version           string
+	ChecksumAlgorithm string
+	ChecksumValue     string
+	ExpectedSize      *int64
 	FileName          string
 	SourceURL         string
 	TotalBytes        *int64

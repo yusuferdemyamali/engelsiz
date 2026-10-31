@@ -10,6 +10,8 @@ import (
 type Descriptor struct {
 	Provider, ProviderPackageID, Title, Variant, FileName, SourceURL string
 	TotalBytes                                                       *int64
+	ContentType, Language, Version, ChecksumAlgorithm, ChecksumValue string
+	ExpectedSize                                                     *int64
 }
 
 type Error struct {
@@ -47,7 +49,10 @@ type Snapshot struct {
 
 type record struct {
 	Snapshot
-	SourceURL, TempPath, ETag, LastModified string
+	SourceURL, TempPath, ETag, LastModified                          string
+	ContentType, Language, Version, ChecksumAlgorithm, ChecksumValue string
+	ExpectedSize                                                     *int64
+	ArtifactOwner, ArtifactState                                     string
 }
 
 func (r record) snapshot() Snapshot {
