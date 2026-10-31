@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+     xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/"
+     xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Search: wiki</title>
+    <link>/content/search?pattern=wiki&amp;content=0123456789abcdef0123456789abcdef&amp;format=xml&amp;start=0&amp;pageLength=25</link>
+    <description>Search result for wiki</description>
+    <opensearch:totalResults>2</opensearch:totalResults>
+    <opensearch:startIndex>0</opensearch:startIndex>
+    <opensearch:itemsPerPage>25</opensearch:itemsPerPage>
+    <atom:link rel="search" type="application/opensearchdescription+xml" href="/content/search/searchdescription.xml"/>
+    <opensearch:Query role="request"
+      searchTerms="wiki"
+      startIndex="0"
+      count="25"
+    />
+    <item>
+      <title>FreedomBox for Communities/Offline Wikipedia - Wikibooks, open books for an open world</title>
+      <link>/content/content/0123456789abcdef0123456789abcdef/FreedomBox%20for%20Communities_Offline%20Wikipedia%20-%20Wikibooks%2C%20open%20books%20for%20an%20open%20world.html</link>
+        <description>...<b>wiki</b>! See Wikibooks:Strategy guides for the newly-created policy on strategy games. We're looking forward to your contributions. FreedomBox for Communities/Offline Wikipedia From Wikibooks, open books for an open world &lt; FreedomBox for Communities Jump to navigation Jump to search Offline availability of Wikipedia pages, Project Gutenberg, Stack Exchange and other content can be useful for education, especially in situations where Internet connectivity is intermittent or when the bandwidth is......</description>
+        <book>
+          <title>Wikibooks</title>
+        </book>
+        <wordCount>631</wordCount>
+    </item>
+    <item>
+      <title>Wikibooks</title>
+      <link>/content/content/0123456789abcdef0123456789abcdef/Wikibooks.html</link>
+        <description>...this <b>wiki</b>! See Wikibooks:Strategy guides for the newly-created policy on strategy games. We're looking forward to your contributions. Main Page From Wikibooks, open books for an open world Jump to navigation Jump to search Welcome • Browse • Help • Forum • Cookbook • Wikijunior • Using Wikibooks Computing Engineering Humanities Languages Mathematics Miscellaneous Recreational activities Science Social sciences Standard curricula Wikijunior All subjects Welcome to Wikibooks, the open-......</description>
+        <book>
+          <title>Wikibooks</title>
+        </book>
+        <wordCount>538</wordCount>
+    </item>
+  </channel>
+</rss>

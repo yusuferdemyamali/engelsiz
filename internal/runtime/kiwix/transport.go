@@ -30,13 +30,20 @@ var errContentUnavailable = errors.New("owned content generation unavailable")
 // upstream URL. The caller owns HTTP routing, response sanitization and streaming.
 // Saved transports cannot become transports for later replacement generations.
 func (r *Runtime) ContentTransport() (http.RoundTripper, *url.URL, error) {
+	transport, target, _, err := r.ContentSnapshotTransport()
+	return transport, target, err
+}
+
+// ContentSnapshotTransport atomically captures the ready generation and its loaded
+// paths. The returned paths are independent of the immutable launch inputs.
+func (r *Runtime) ContentSnapshotTransport() (http.RoundTripper, *url.URL, []string, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	a := r.current
 	if r.stopping || r.status.State != providers.Ready || a == nil || a.proxy == nil || !a.proxy.liveLocked() {
-		return nil, nil, errContentUnavailable
+		return nil, nil, nil, errContentUnavailable
 	}
-	return a.proxy, &url.URL{Scheme: "http", Host: a.proxy.address}, nil
+	return a.proxy, &url.URL{Scheme: "http", Host: a.proxy.address}, append([]string(nil), a.paths...), nil
 }
 
 func (r *Runtime) newGenerationTransport(a *attempt, c *child, address string, port int) *generationTransport {

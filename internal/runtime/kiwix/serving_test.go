@@ -216,7 +216,7 @@ func TestGenerationTransportChildExitPortReuseBeforeHTTP(t *testing.T) {
 	if err := r.EnsureStarted(t.Context()); err != nil {
 		t.Fatal(err)
 	}
-	transport, target, err := r.ContentTransport()
+	transport, target, _, err := r.ContentSnapshotTransport()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -242,7 +242,7 @@ func TestGenerationTransportChildExitPortReuseBeforeHTTP(t *testing.T) {
 		foreign.Start()
 		return (&net.Dialer{Timeout: time.Second}).DialContext(ctx, network, address)
 	}
-	req, _ := http.NewRequestWithContext(t.Context(), http.MethodGet, target.String()+"/content/article", nil)
+	req, _ := http.NewRequestWithContext(t.Context(), http.MethodGet, target.String()+"/content/search?content=old&pattern=wiki&format=xml&start=0&pageLength=25", nil)
 	if resp, err := transport.RoundTrip(req); err == nil {
 		resp.Body.Close()
 		t.Fatal("adopted reused port")
@@ -288,5 +288,65 @@ func TestContentStreamingDoesNotHoldLifecycleLock(t *testing.T) {
 		}
 	case <-time.After(500 * time.Millisecond):
 		t.Fatal("streaming held lifecycle mutex")
+	}
+}
+
+func TestContentSnapshotSearchGenerationAndMembershipStayTogether(t *testing.T) {
+	requests := filepath.Join(t.TempDir(), "search requests")
+	r, _ := setup(t, fixture.Config{RequestMarker: requests})
+	if _, _, paths, err := r.ContentSnapshotTransport(); err == nil || len(paths) != 0 {
+		t.Fatal("stopped generation returned loaded paths")
+	}
+	if err := r.EnsureStarted(t.Context()); err != nil {
+		t.Fatal(err)
+	}
+	transport, target, paths, err := r.ContentSnapshotTransport()
+	if err != nil || !slices.Equal(paths, r.opts.ZIMPaths) {
+		t.Fatalf("capture paths=%q err=%v", paths, err)
+	}
+	initial := paths[0]
+	paths[0] = "caller mutation"
+	_, _, copyPaths, err := r.ContentSnapshotTransport()
+	if err != nil || len(copyPaths) != 1 || copyPaths[0] != initial {
+		t.Fatal("capture exposed mutable generation paths")
+	}
+
+	// Keep an unissued search against the captured generation, then replace its
+	// complete loaded set. A saved search cannot use the new child or its paths.
+	req, _ := http.NewRequestWithContext(t.Context(), http.MethodGet, target.String()+"/content/search?content=old&pattern=wiki&format=xml&start=0&pageLength=25", nil)
+	changed := fixture.WriteConfig(t, fixture.Config{RequestMarker: requests})
+	if err := r.ReplaceZIMPaths(t.Context(), []string{changed}, false); err != nil {
+		t.Fatal(err)
+	}
+	before := len(fixture.ReadEvents(t, requests))
+	if resp, err := transport.RoundTrip(req); err == nil {
+		resp.Body.Close()
+		t.Fatal("pending search adopted replacement generation")
+	}
+	if len(fixture.ReadEvents(t, requests)) != before {
+		t.Fatal("saved search wrote HTTP to replacement")
+	}
+	current, currentTarget, currentPaths, err := r.ContentSnapshotTransport()
+	if err != nil || !slices.Equal(currentPaths, []string{changed}) {
+		t.Fatalf("replacement capture=%q err=%v", currentPaths, err)
+	}
+	req, _ = http.NewRequestWithContext(t.Context(), http.MethodGet, currentTarget.String()+"/content/search?content=new&pattern=wiki&format=xml&start=0&pageLength=25", nil)
+	// Search follows exactly the content transport's positive post-dial listener
+	// ownership proof, before any request bytes reach even the owned child.
+	owner := r.listenerOwner
+	r.listenerOwner = func(int, int) (bool, error) { return false, errors.New("proof lost") }
+	if resp, err := current.RoundTrip(req); err == nil {
+		resp.Body.Close()
+		t.Fatal("unproven search wrote HTTP")
+	}
+	r.listenerOwner = owner
+	if len(fixture.ReadEvents(t, requests)) != before {
+		t.Fatal("search bytes preceded ownership proof")
+	}
+	if err := r.Stop(t.Context()); err != nil {
+		t.Fatal(err)
+	}
+	if _, _, loaded, err := r.ContentSnapshotTransport(); err == nil || len(loaded) != 0 {
+		t.Fatal("stopped search capture returned loaded content")
 	}
 }
