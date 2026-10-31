@@ -56,7 +56,7 @@ def compliance(root, lock, project=ROOT):
     if not license_file.is_file() or license_file.is_symlink() or license_file.stat().st_size < 100:
         raise ValueError('Approved project LICENSE is missing; distribution blocked')
     manifest_file = checked(Path(root) / 'manifest.json', lock.get('complianceManifestSha256'))
-    data = json.loads(manifest_file.read_text())
+    data = json.loads(manifest_file.read_text(encoding='utf-8'))
     if data.get('runtimeSha256') != lock['sha256'] or data.get('runtimeVersion') != lock['version']:
         raise ValueError('Compliance inventory does not match pinned runtime')
     if not data.get('reviewedBy') or not data.get('reviewedAt') or data.get('completeCorrespondingSource') is not True:
@@ -88,7 +88,7 @@ def compliance(root, lock, project=ROOT):
 def application_notice_inventory(project):
     """Bind bundled attribution to the app inputs being packaged now."""
     inventory_path = owned_file(project, 'third_party/application-notices/inventory.json')
-    inventory = json.loads(inventory_path.read_text())
+    inventory = json.loads(inventory_path.read_text(encoding='utf-8'))
     if not isinstance(inventory, dict) or inventory.get('format') != 1 or not isinstance(inventory.get('inputs'), dict) or not isinstance(inventory.get('outputs'), dict):
         raise ValueError('Missing or malformed application notice inventory')
     for name in APPLICATION_NOTICE_INPUTS:
@@ -290,7 +290,7 @@ def main():
     if not re.fullmatch(r'\d+\.\d+\.\d+(?:-[A-Za-z0-9.]+)?', args.version):
         raise ValueError('Invalid release version')
     with ExitStack() as resources:
-        inventories = json.loads(args.runtime_lock.read_text())
+        inventories = json.loads(args.runtime_lock.read_text(encoding='utf-8'))
         if not isinstance(inventories, dict) or not isinstance(inventories.get(args.platform), dict):
             raise ValueError(f'Runtime lock has no inventory for {args.platform}')
         lock = inventories[args.platform]
@@ -337,7 +337,7 @@ def main():
                 static_elf(app)
                 static_elf(executable)
             if target_os == ('windows' if os.name == 'nt' else 'linux'):
-                result = subprocess.run([str(executable), '--version'], check=True, capture_output=True, text=True)
+                result = subprocess.run([str(executable), '--version'], check=True, capture_output=True, text=True, encoding='utf-8')
                 if f'kiwix-tools {lock["version"]}' not in result.stdout:
                     raise ValueError('Unexpected runtime version')
             shutil.copytree(args.compliance, stage / 'LICENSES/runtime-corresponding-source')

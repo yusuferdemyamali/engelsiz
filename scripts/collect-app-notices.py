@@ -56,13 +56,13 @@ def run_go(go, args, platform=None):
     env = {**os.environ, 'GOTOOLCHAIN': 'local', 'CGO_ENABLED': '0', 'GOARCH': 'amd64', 'GOAMD64': 'v1'}
     if platform:
         env['GOOS'] = platform
-    return subprocess.check_output([go, *args], cwd=ROOT, env=env, text=True)
+    return subprocess.check_output([go, *args], cwd=ROOT, env=env, text=True, encoding='utf-8')
 
 
 def go_components(go):
     goroot = Path(run_go(go, ['env', 'GOROOT']).strip())
     version = run_go(go, ['env', 'GOVERSION']).strip()
-    expected = re.search(r'^go (\S+)', (ROOT / 'go.mod').read_text(), re.M).group(1)
+    expected = re.search(r'^go (\S+)', (ROOT / 'go.mod').read_text(encoding='utf-8'), re.M).group(1)
     if version != 'go' + expected:
         raise ValueError(f'Collect with the release toolchain go{expected}, got {version}')
     modules, packages, per_platform = {}, {}, {}
@@ -132,7 +132,7 @@ def go_components(go):
 
 
 def frontend_components():
-    lock = json.loads((ROOT / 'frontend/package-lock.json').read_text())
+    lock = json.loads((ROOT / 'frontend/package-lock.json').read_text(encoding='utf-8'))
     components, excluded = [], []
     for location, info in sorted(lock['packages'].items()):
         if not location:
@@ -142,7 +142,7 @@ def frontend_components():
             excluded.append({'name': name, 'version': info['version'], 'reason': 'build-only dependency; not included by this notice scope'})
             continue
         directory = ROOT / 'frontend' / location
-        installed = json.loads((directory / 'package.json').read_text())
+        installed = json.loads((directory / 'package.json').read_text(encoding='utf-8'))
         if installed['name'] != name or installed['version'] != info['version']:
             raise ValueError(f'Installed frontend package differs from package-lock: {name}')
         notices = root_notices(directory)
@@ -152,7 +152,7 @@ def frontend_components():
         for relative in ('dist/index.js', 'index.js'):
             path = directory / relative
             if path.is_file():
-                for match in COMMENT.finditer(path.read_text()):
+                for match in COMMENT.finditer(path.read_text(encoding='utf-8')):
                     block = match.group(0)
                     if 'copyright' in block.lower():
                         notices.append({'path': relative + ' copyright header', 'sha256': sha(block.encode()), 'text': block})

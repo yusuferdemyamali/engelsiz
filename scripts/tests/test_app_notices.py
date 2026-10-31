@@ -4,6 +4,7 @@ import importlib.util
 import io
 from pathlib import Path
 import tarfile
+import sys
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -18,6 +19,11 @@ class ApplicationNoticeTests(unittest.TestCase):
         self.temporary = tempfile.TemporaryDirectory()
         self.addCleanup(self.temporary.cleanup)
         self.root = Path(self.temporary.name)
+
+    def test_go_output_is_decoded_as_utf8_on_every_platform(self):
+        expected = '{"notice": "Türkçe ’ attribution"}\n'
+        command = f'import sys; sys.stdout.buffer.write({expected.encode("utf-8")!r})'
+        self.assertEqual(notices.run_go(sys.executable, ['-c', command]), expected)
 
     def archive(self, content):
         stream = io.BytesIO()
