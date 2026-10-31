@@ -1,186 +1,71 @@
+<img src="frontend/public/logo.svg" alt="Engelsiz amblemi" width="72" height="72">
+
 # Engelsiz
 
-> **Bilginin erişim engeli olmaz.**
+**Türkçe Wikipedia’yı indir, cihazında ara ve internet olmadan oku.**
 
-**Offline Knowledge for When the Internet Isn't There.**
+An offline-first Wikipedia reader for Turkish Wikipedia, powered by Kiwix and ZIM archives.
 
-## Linux ön sürümü — v0.1.0-alpha.1
+**Türkçe** · [English](README.en.md)
 
-[Linux x86_64 paketini indir](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.1/engelsiz-linux-x64.tar.gz) · [SHA-256](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.1/engelsiz-linux-x64.tar.gz.sha256) · [Sürüm notları](https://github.com/yusuferdemyamali/engelsiz/releases/tag/v0.1.0-alpha.1)
+[![CI](https://github.com/yusuferdemyamali/engelsiz/actions/workflows/release.yml/badge.svg?branch=main)](https://github.com/yusuferdemyamali/engelsiz/actions/workflows/release.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Bu ilk Linux ön sürümü Türkçe Wikipedia katalog, indirme/devam ettirme, doğrulama, offline arama/okuma ve güvenli içerik güncellemesini içerir. Go, Node, SQLite veya Kiwix'i ayrıca kurmanız gerekmez. Linux x86_64, kernel 4.4+ ve bir masaüstü tarayıcısı/opener gerekir.
+[Linux paketini indir](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.1/engelsiz-linux-x64.tar.gz) · [Tüm sürümler](https://github.com/yusuferdemyamali/engelsiz/releases) · [Hata bildir / öneri paylaş](https://github.com/yusuferdemyamali/engelsiz/issues/new/choose)
 
-```sh
-sha256sum -c engelsiz-linux-x64.tar.gz.sha256
-tar -xzf engelsiz-linux-x64.tar.gz
-./engelsiz/engelsiz
-```
+Engelsiz, Wikipedia arşivlerini kendi bilgisayarında saklayan açık kaynaklı bir uygulamadır. İlk içerik indirmesinden sonra arama ve makale okuma yerel olarak çalışır. Go ile yazılmış uygulama, React arayüzünü varsayılan tarayıcında açar; içerikleri pakete dahil edilen Kiwix runtime’ı sunar.
 
-Wikipedia verisi pakete dahil değildir; ilk indirme için bağlantı ve yeterli disk alanı gerekir. Kurulu içerik daha sonra offline kullanılabilir. Paket, runtime kaynak kodu ve lisanslarını da içerdiği için büyüktür. Windows installer ve tam v0.1 platform kabul testleri üzerinde çalışma sürüyor. Ayrıntılar: [release doğrulaması](docs/release-validation.md).
+## Neler yapabilirsin?
 
-Engelsiz; internet bağlantısının olmadığı, kesildiği veya bilgiye erişimin teknik ya da idari nedenlerle kısıtlandığı durumlarda bilgiye erişimi sürdürebilmek için geliştirilen açık kaynaklı, offline-first bir projedir.
+- Türkçe Wikipedia’nın Mini, Nopic ve Maxi seçeneklerini katalogda inceleyebilirsin; seçeneklerin bulunabilirliği upstream kataloğa bağlıdır.
+- İndirmeleri duraklatıp sürdürebilir, boyut ve SHA-256 doğrulamasından geçen ZIM dosyalarını kurabilirsin.
+- Kurulu arşivde internet bağlantısı olmadan arama yapıp makale okuyabilirsin.
+- Yeni sürümü görüp güncellemeyi kendin başlatabilirsin. Yeni içerik doğrulanıp etkinleşene kadar önceki çalışan sürüm korunur.
 
-Amaç; Wikipedia, eğitim içerikleri, haritalar, acil durum kaynakları ve diğer açık bilgi arşivlerini yerel olarak saklayabilen, bunlar üzerinde arama yapabilen ve yerel çalışan yapay zekâ modelleriyle etkileşime geçebilen bağımsız bir sistem oluşturmaktır.
+Arayüz ve font dosyaları uygulamaya dahildir. Uygulama yalnızca `127.0.0.1` üzerinde dinler; arayüzü açmak için bir hesap gerekmez.
 
-**İnternet kesilebilir.**
+## İndir ve çalıştır
 
-**Platformlar kapanabilir.**
+| Platform | Durum |
+| --- | --- |
+| Linux x86_64 | [v0.1.0-alpha.1 ön sürümü hazır](https://github.com/yusuferdemyamali/engelsiz/releases/tag/v0.1.0-alpha.1) |
+| Windows x86_64 | [Kurulum paketi geliştiriliyor](https://github.com/yusuferdemyamali/engelsiz/issues/10); henüz yayımlanmış installer yok |
 
-**Kaynaklara erişim engellenebilir.**
+Linux için kernel 4.4+ ve bir masaüstü tarayıcısı/opener gerekir. Go, Node, SQLite veya Kiwix’i ayrıca kurman gerekmez. Bu bir alpha yayınıdır; [tam platform kabul testleri](docs/release-validation.md) sürüyor.
 
-**Bilgi kalır.**
+1. [Linux arşivini](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.1/engelsiz-linux-x64.tar.gz) ve [SHA-256 dosyasını](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.1/engelsiz-linux-x64.tar.gz.sha256) aynı klasöre indir.
+2. O klasörde doğrula, arşivi aç ve uygulamayı başlat:
 
----
+   ```sh
+   sha256sum -c engelsiz-linux-x64.tar.gz.sha256
+   tar -xzf engelsiz-linux-x64.tar.gz
+   ./engelsiz/engelsiz
+   ```
 
-## Neden Engelsiz?
+3. Açılan arayüzde **Bilgi Paketleri** bölümünden bir Wikipedia arşivi seçip indir ve kur. Kurulu içerikte **Ara** bölümünden arama yapabilirsin.
 
-İnternet bize tarihte hiç olmadığı kadar büyük bir bilgiye erişim imkânı sağlıyor.
+Wikipedia verisi uygulama paketine dahil değildir. İlk içerik indirmesi için internet ve seçtiğin arşiv boyutuna uygun boş disk alanı gerekir. Paket, Kiwix’in karşılık gelen kaynak kodlarını ve lisanslarını da içerdiği için yaklaşık 295 MiB’dir.
 
-Fakat bu erişim sandığımız kadar kalıcı değil.
+Terminalde yazdırılan yerel adresi gerektiğinde elle açabilirsin. Varsayılan port `17321`’dir; doluysa uygulama uygun başka bir loopback portu seçer. Uygulamayı terminalde `Ctrl+C` ile kapatabilirsin.
 
-Bir internet bağlantısı kesilebilir. Bir servis kullanılamaz hale gelebilir. Bir web sitesi kapanabilir. Bir alan adına veya platforma erişim kısıtlanabilir. Bir doğal afet iletişim altyapısını devre dışı bırakabilir.
+## Verilerin nerede tutulur?
 
-Böyle durumlarda bilgi hâlâ var olsa bile **ona ulaşma imkânımız olmayabilir.**
+Linux’ta içerik ve veritabanı varsayılan olarak `~/.local/share/engelsiz`, ayarlar `~/.config/engelsiz`, önbellek `~/.cache/engelsiz` altındadır. `XDG_DATA_HOME`, `XDG_CONFIG_HOME` ve `XDG_CACHE_HOME` değişkenleri desteklenir. Arşivden çıkardığın program klasörünü silmek bu kullanıcı verilerini silmez.
 
-Engelsiz'in çıkış noktası tam olarak burada:
+## Geliştirme ve katkı
 
-> **Bilgiye erişim, sürekli bir internet bağlantısının veya tek bir merkezi platformun varlığına bağlı olmamalı.**
+Hata raporları, kurulum testleri, dokümantasyon, çeviri ve kod katkıları için [katkı rehberine](CONTRIBUTING.md) bakabilirsin. Yerel geliştirme komutları ve testler de bu rehberde bulunur.
 
-İhtiyaç duyduğumuz temel bilgi kaynaklarını kendi cihazlarımızda saklayabilmeli ve dışarıdaki bağlantının durumundan bağımsız olarak kullanabilmeliyiz.
+- [Ürün kapsamı ve teknik gereksinimler](docs/main-spec.md)
+- [Release doğrulaması ve platform kabul testleri](docs/release-validation.md)
+- [Güvenli paketleme ve üçüncü taraf kaynakları](third_party/README.md)
+- [Açık işler ve yol haritası](https://github.com/yusuferdemyamali/engelsiz/issues)
+- [Uzun vadeli vizyon](docs/vision.md): farklı açık bilgi kaynakları, haritalar, eğitim ve yerel yapay zekâ; bunlar mevcut alpha sürümünün özellikleri değildir.
 
-Engelsiz herhangi bir erişim engelini aşmaya yönelik bir proxy veya VPN değildir.
+## Lisans ve teşekkür
 
-Bunun yerine farklı bir yaklaşım benimser:
+Engelsiz’in kendi kodu [MIT](LICENSE) lisanslıdır. Kiwix, bağımlılıkları ve indirilen içerikler kendi lisanslarına tabidir; dağıtılan runtime’ın kaynakları ve özgün notice dosyaları paket içindeki `LICENSES` klasöründedir. [Üçüncü taraf bilgileri](third_party/README.md).
 
-**Bilgiyi önceden yerelleştirir.**
+Bu proje [Kiwix](https://kiwix.org/), [openZIM](https://openzim.org/) ve Wikipedia katkıcılarının çalışmalarından yararlanır.
 
-Kaynak cihazınızdaysa ona ulaşmak için uzaktaki bir sunucunun, DNS servisinin veya sürekli çalışan bir internet bağlantısının varlığına ihtiyaç duymazsınız.
-
----
-
-
-## Gelecek
-
-Temel sistem oturduktan sonra Engelsiz farklı offline bilgi kaynaklarını destekleyebilir.
-
-### 🗺️ Haritalar
-
-Türkiye için offline harita ve OpenStreetMap verileri.
-
-### 🚑 Acil Durum
-
-Afet hazırlığı, ilk yardım ve güvenilir acil durum kaynakları.
-
-### 🎓 Eğitim
-
-Offline eğitim materyalleri, kitaplar ve açık eğitim kaynakları.
-
-### 📚 Bilgi Arşivleri
-
-Wikipedia dışında farklı açık bilgi kaynakları.
-
-### 🤖 Yerel Yapay Zekâ
-
-İnternet bağlantısı gerektirmeden cihazdaki kaynaklar üzerinde çalışan yapay zekâ destekli soru-cevap sistemi.
-
-### 📦 Bilgi Paketleri
-
-Kullanıcıların ihtiyaçlarına göre farklı içerik paketleri indirebilmesi.
-
-Örneğin:
-
-```text
-core
-wikipedia-tr
-maps-tr
-emergency
-education
-```
-
-Böylece herkes devasa bir arşivi indirmek zorunda kalmadan ihtiyaç duyduğu bilgileri cihazında saklayabilir.
-
----
-
-## Temel İlkeler
-
-### Offline First
-
-Temel özellikler internet bağlantısı olmadan çalışabilmelidir.
-
-İnternet Engelsiz için bir gereksinim değil, yalnızca bilgi paketlerini güncellemenin yollarından biridir.
-
-### Local First
-
-Bilgi ve yapay zekâ mümkün olduğunca kullanıcının kendi cihazında çalışmalıdır.
-
-### Açık Kaynak
-
-Engelsiz'in nasıl çalıştığı incelenebilmeli, geliştirilebilmeli ve topluluk tarafından sürdürülebilmelidir.
-
-### Açık Bilgi
-
-Mümkün olduğunca açık lisanslı ve yeniden dağıtılabilir bilgi kaynakları kullanılmalıdır.
-
-### Kaynak Gösterme
-
-Yapay zekâ bir bilgi verdiğinde mümkün olduğunca bu bilginin hangi yerel kaynaktan geldiği görülebilmelidir.
-
-### Merkeziyetsizlik
-
-Temel bilgiye ulaşmak için tek bir şirkete, servise veya uzak sunucuya bağımlı olunmaması hedeflenmektedir.
-
-### Basit Kurulum
-
-Engelsiz'i çalıştırmak için ileri düzey sistem yönetimi bilgisine ihtiyaç duyulmaması hedeflenmektedir.
-
----
-
-## Kullanım Senaryoları
-
-Engelsiz özellikle şu durumlar düşünülerek geliştirilmektedir:
-
-* İnternet bağlantısının olmadığı bölgeler
-* Uzun süreli internet veya altyapı kesintileri
-* Doğal afetler
-* Belirli web sitelerine veya bilgi kaynaklarına erişimin kısıtlandığı dönemler
-* İnternet erişiminin geçici olarak sınırlandırıldığı durumlar
-* Çevrimiçi servislerin kullanılamaz hale gelmesi
-* Kırsal bölgeler
-* Seyahat ve saha çalışmaları
-* İnternetten bağımsız kişisel bilgi arşivleri
-* Raspberry Pi veya mini PC tabanlı offline bilgi sunucuları
-
----
-
-## Engelsiz Ne Değildir?
-
-Engelsiz;
-
-* VPN değildir.
-* Proxy değildir.
-* Anonimlik aracı değildir.
-* İnternet erişim engellerini teknik olarak aşmayı amaçlayan bir araç değildir.
-
-Engelsiz'in yaklaşımı daha basittir:
-
-> **İhtiyaç duyabileceğin bilgiyi, ihtiyaç duymadan önce yanında tut.**
-
----
-
-## Katkıda Bulunmak
-
-Engelsiz açık kaynaklı ve topluluk katkısına açık bir proje olarak geliştirilecektir.
-
-Kod, dokümantasyon, tasarım, offline veri kaynakları, yerel yapay zekâ, Docker ve diğer alanlardaki katkılar değerlidir.
-
-Katkı rehberi proje geliştikçe eklenecektir.
-
----
-
-<p align="center">
-  <strong>Bilginin erişim engeli olmaz.</strong>
-</p>
-
-<p align="center">
-  Offline Knowledge for When the Internet Isn't There.
-</p>
+> Bilginin erişim engeli olmaz.
