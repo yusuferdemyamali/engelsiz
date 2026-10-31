@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Sürümler ve indirmeler / Releases and downloads
+    url: https://github.com/yusuferdemyamali/engelsiz/releases
+    about: Güncel yayınları, indirme dosyalarını ve sürüm notlarını inceleyin.
