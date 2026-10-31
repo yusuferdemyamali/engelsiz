@@ -103,7 +103,13 @@ func Run(ctx context.Context, opts Options) (runErr error) {
 			runErr = errors.Join(runErr, fmt.Errorf("stop content provider: %w", err))
 		}
 	}()
-	packageService, err := packages.New(ctx, db, dirs.DataRoot, packages.Options{Logger: logger})
+	refreshNotifications := make(chan struct{}, 1)
+	packageService, err := packages.New(ctx, db, dirs.DataRoot, packages.Options{Logger: logger, OnInstalled: func() {
+		select {
+		case refreshNotifications <- struct{}{}:
+		default:
+		}
+	}})
 	if err != nil {
 		return fmt.Errorf("initialize packages: %w", err)
 	}
@@ -130,14 +136,24 @@ func Run(ctx context.Context, opts Options) (runErr error) {
 		return nil
 	}
 	logger.Printf("database ready: %s", dirs.DBPath)
-	if err := provider.EnsureStarted(ctx); err != nil {
+	activation := newActivation(ctx, packageService, provider, logger, refreshNotifications)
+	defer activation.cancel()
+	if err := activation.refresh(false); err != nil {
+		if errors.Is(err, download.ErrStorage) {
+			return fmt.Errorf("read installed content: %w", err)
+		}
 		if ctx.Err() != nil && cancellationOnly(err, ctx.Err()) {
 			logger.Printf("shutdown: context done during content startup")
 			return nil
 		}
 		logger.Printf("content provider startup failed: %v", err)
-		return fmt.Errorf("start content provider: %w", err)
+		if ctx.Err() != nil {
+			return fmt.Errorf("start content provider: %w", err)
+		}
 	}
+
+	activation.start()
+	defer activation.close()
 
 	ln, port, err := ListenLoopback(PreferredPort)
 	if err != nil {
@@ -149,12 +165,14 @@ func Run(ctx context.Context, opts Options) (runErr error) {
 	mux := api.NewMux()
 	mux.HandleFunc("/api/catalog", api.CatalogHandler(provider, logger))
 	mux.HandleFunc("/api/packages", api.PackagesHandler(packageService))
+	mux.HandleFunc("/api/runtime", api.RuntimeHandler(activation, false))
+	mux.HandleFunc("/api/runtime/retry", api.RuntimeHandler(activation, true))
 	resolver, _ := provider.(providers.AcquisitionResolver)
 	downloadsHandler := api.DownloadsHandler(manager, resolver, packageService)
 	mux.HandleFunc("/api/downloads", downloadsHandler)
 	mux.HandleFunc("/api/downloads/", downloadsHandler)
 	mux.Handle("/", web.Handler())
-	server := &http.Server{Handler: mux, ReadHeaderTimeout: 5 * time.Second}
+	server := &http.Server{Handler: api.WithContent(mux, activation.serving, logger), ReadHeaderTimeout: 5 * time.Second}
 	defer func() {
 		if err := shutdown(server, logger); err != nil {
 			runErr = errors.Join(runErr, err)

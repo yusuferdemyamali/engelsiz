@@ -19,8 +19,9 @@ import (
 // Options exposes fault boundaries for deterministic lifecycle tests. Hook is
 // called outside the transfer manager's operation lock.
 type Options struct {
-	Logger *log.Logger
-	Hook   func(context.Context, string) error
+	Logger      *log.Logger
+	Hook        func(context.Context, string) error
+	OnInstalled func() // notification only; called after durable commit, outside locks
 }
 type Service struct {
 	db                   *sql.DB
@@ -31,6 +32,7 @@ type Service struct {
 	mu                   sync.Mutex
 	wg                   sync.WaitGroup
 	active               map[string]bool
+	accepted             map[string]os.FileInfo
 	closed               bool
 	persistErr           error
 	opts                 Options
@@ -50,7 +52,7 @@ func New(ctx context.Context, db *sql.DB, dataDir string, opts Options) (*Servic
 		return nil, e
 	}
 	work, cancel := context.WithCancel(ctx)
-	s := &Service{db: db, dataDir: absolute, root: root, ctx: work, cancel: cancel, active: map[string]bool{}, opts: opts}
+	s := &Service{db: db, dataDir: absolute, root: root, ctx: work, cancel: cancel, active: map[string]bool{}, accepted: map[string]os.FileInfo{}, opts: opts}
 	ok := false
 	defer func() {
 		if !ok {
@@ -328,13 +330,15 @@ func (s *Service) run(r *record, recovery bool) error {
 		if !recovery || (r.Status != "installing" && r.Status != "installed") {
 			return s.fail(r, ErrCollision)
 		}
-		if _, e = s.verify(s.target, dst, r); e != nil {
+		verified, verifyErr := s.verify(s.target, dst, r)
+		e = verifyErr
+		if e != nil {
 			if errors.Is(e, context.Canceled) {
 				return e
 			}
 			return s.fail(r, ErrVerification)
 		}
-		return s.installed(r)
+		return s.installed(r, verified)
 	}
 	if !source || r.Status == "installed" {
 		return s.fail(r, ErrFiles)
@@ -372,7 +376,9 @@ func (s *Service) run(r *record, recovery bool) error {
 	}
 	// Check the actual published inode as well; a source replaced immediately
 	// around rename must never become trusted installed content.
-	if _, e = s.verify(s.target, dst, r); e != nil {
+	published, verifyErr := s.verify(s.target, dst, r)
+	e = verifyErr
+	if e != nil {
 		if errors.Is(e, context.Canceled) {
 			return e
 		}
@@ -381,7 +387,7 @@ func (s *Service) run(r *record, recovery bool) error {
 	if e = s.hook("commit"); e != nil {
 		return e
 	}
-	return s.installed(r)
+	return s.installed(r, published)
 }
 func (s *Service) Close() error {
 	s.mu.Lock()
