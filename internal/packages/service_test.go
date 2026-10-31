@@ -7,6 +7,7 @@ import (
 	"database/sql"
 	"encoding/hex"
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -572,4 +573,61 @@ func TestFreshCorrectDownloadCanReplaceFailedReleaseReservation(t *testing.T) {
 	if e != nil || len(rows) != 1 || rows[0].ID != freshID {
 		t.Fatalf("release duplicated %+v %v", rows, e)
 	}
+}
+
+func TestExplicitRetryWaitsForFailedWorkerSettlement(t *testing.T) {
+	f := newFixture(t, Options{})
+	source := filepath.Join(f.dir, "downloads", testID+".part")
+	if err := os.WriteFile(source, bytes.Repeat([]byte("x"), len(f.body)), 0600); err != nil {
+		t.Fatal(err)
+	}
+	if _, _, err := f.s.Install(f.m, testID); err != nil {
+		t.Fatal(err)
+	}
+	f.wait(t, "failed")
+	f.s.wg.Wait()
+	if err := os.WriteFile(source, f.body, 0600); err != nil {
+		t.Fatal(err)
+	}
+	// Reproduce the observed boundary: a failed row is visible while the old
+	// worker still owns the active slot. Its completion is deliberately gated.
+	f.s.mu.Lock()
+	f.s.active[testID] = true
+	f.s.mu.Unlock()
+	released := false
+	release := func() {
+		f.s.mu.Lock()
+		delete(f.s.active, testID)
+		f.s.settled.Broadcast()
+		f.s.mu.Unlock()
+		released = true
+	}
+	defer func() {
+		if !released {
+			release()
+		}
+	}()
+	result := make(chan error, 1)
+	go func() {
+		p, _, err := f.s.Install(f.m, testID)
+		if err == nil && p.Status != "verifying" {
+			err = fmt.Errorf("retry returned stale status %s", p.Status)
+		}
+		result <- err
+	}()
+	select {
+	case err := <-result:
+		t.Fatalf("retry returned before previous worker settled: %v", err)
+	case <-time.After(30 * time.Millisecond):
+	}
+	release()
+	select {
+	case err := <-result:
+		if err != nil {
+			t.Fatal(err)
+		}
+	case <-time.After(5 * time.Second):
+		t.Fatal("retry stayed blocked after settlement")
+	}
+	f.wait(t, "installed")
 }

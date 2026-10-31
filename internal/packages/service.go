@@ -30,6 +30,7 @@ type Service struct {
 	ctx                  context.Context
 	cancel               context.CancelFunc
 	mu                   sync.Mutex
+	settled              *sync.Cond
 	wg                   sync.WaitGroup
 	active               map[string]bool
 	accepted             map[string]os.FileInfo
@@ -53,6 +54,7 @@ func New(ctx context.Context, db *sql.DB, dataDir string, opts Options) (*Servic
 	}
 	work, cancel := context.WithCancel(ctx)
 	s := &Service{db: db, dataDir: absolute, root: root, ctx: work, cancel: cancel, active: map[string]bool{}, accepted: map[string]os.FileInfo{}, opts: opts}
+	s.settled = sync.NewCond(&s.mu)
 	ok := false
 	defer func() {
 		if !ok {
@@ -142,17 +144,29 @@ func (s *Service) Install(m *download.Manager, id string) (Package, bool, error)
 	if !s.directoriesOwned() {
 		return Package{}, false, ErrUnsafe
 	}
-	r, e := s.get(id)
-	if e == nil {
-		if r.Status == "installed" {
+	var r record
+	var e error
+	for {
+		if s.closed || s.ctx.Err() != nil || s.persistErr != nil {
+			return Package{}, false, download.ErrStorage
+		}
+		r, e = s.get(id)
+		if e != nil && !errors.Is(e, sql.ErrNoRows) {
+			return Package{}, false, download.ErrStorage
+		}
+		if e == nil && r.Status == "installed" {
 			return r.Package, true, nil
 		}
-		if s.active[id] {
+		if !s.active[id] {
+			break
+		}
+		if r.Status != "failed" {
 			return r.Package, false, nil
 		}
-	}
-	if e != nil && !errors.Is(e, sql.ErrNoRows) {
-		return Package{}, false, download.ErrStorage
+		// Failure can become durable before the worker has completed its final
+		// update bookkeeping. An explicit retry must wait for that worker rather
+		// than report acceptance without starting another attempt.
+		s.settled.Wait()
 	}
 	a, e := m.ClaimCompleted(id, id)
 	if e != nil {
@@ -197,6 +211,7 @@ func (s *Service) Install(m *download.Manager, id string) (Package, bool, error)
 		s.mu.Lock()
 		defer s.mu.Unlock()
 		delete(s.active, id)
+		defer s.settled.Broadcast()
 		if e != nil && !errors.Is(e, context.Canceled) {
 			s.persistErr = e
 			if s.opts.Logger != nil {
