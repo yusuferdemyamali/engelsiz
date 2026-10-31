@@ -44,6 +44,22 @@ type Acquisition struct {
 	MediaType string `json:"mediaType"`
 }
 
+// DownloadSource is trusted transfer metadata resolved by a provider. TotalBytes
+// is nil when the provider cannot supply an exact payload length.
+type DownloadSource struct {
+	Provider          string
+	ProviderPackageID string
+	Title             string
+	Variant           string
+	FileName          string
+	SourceURL         string
+	TotalBytes        *int64
+}
+
+type AcquisitionResolver interface {
+	ResolveDownload(context.Context, string) (DownloadSource, error)
+}
+
 type ContentProvider interface {
 	Catalog(context.Context) ([]CatalogPackage, error)
 	EnsureStarted(context.Context) error

@@ -41,6 +41,22 @@
   }
 }
 
+@layer components {
+  .download-progress {
+    @apply block h-2 w-full overflow-hidden rounded-sm bg-muted;
+    accent-color: hsl(var(--primary));
+  }
+  .download-progress::-webkit-progress-bar {
+    @apply rounded-sm bg-muted;
+  }
+  .download-progress::-webkit-progress-value {
+    @apply rounded-sm bg-primary;
+  }
+  .download-progress::-moz-progress-bar {
+    @apply rounded-sm bg-primary;
+  }
+}
+
 @layer base {
   * {
     @apply border-border;
