@@ -51,14 +51,14 @@ class ApplicationNoticeTests(unittest.TestCase):
         (self.root / 'README.md').write_text('No license is present')
         with self.assertRaisesRegex(ValueError, 'Missing license'):
             notices.root_notices(self.root)
-        original = 'Copyright original author\nRedistribution conditions must stay intact.\n'
-        (self.root / 'LICENSE').write_text(original)
-        (self.root / 'NOTICE').write_text('Additional attribution\n')
+        original = b'Copyright original author\r\nRedistribution conditions must stay intact.\r\n'
+        (self.root / 'LICENSE').write_bytes(original)
+        (self.root / 'NOTICE').write_bytes(b'Additional attribution\r\n')
         entries = notices.root_notices(self.root)
         rendered, inventory = notices.render('Synthetic component', [{'name': 'example', 'version': '1.0.0',
             'source': 'https://example.invalid/source', 'notices': entries}])
-        self.assertIn(original.encode(), rendered)
-        self.assertIn(b'Additional attribution\n', rendered)
+        self.assertIn(original, rendered)
+        self.assertIn(b'Additional attribution\r\n', rendered)
         self.assertEqual(len(inventory[0]['noticeSources']), 2)
         self.assertNotIn('text', inventory[0]['noticeSources'][0])
 
