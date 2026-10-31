@@ -12,21 +12,23 @@ func fakeEnv(vars map[string]string) func(string) string {
 }
 
 func TestResolveLinuxXDG(t *testing.T) {
+	base := t.TempDir()
+	home := filepath.Join(base, "home")
 	d, err := ResolveFor("linux", fakeEnv(map[string]string{
-		"XDG_CONFIG_HOME": "/tmp/xdg/config",
-		"XDG_DATA_HOME":   "/tmp/xdg/data",
-		"XDG_CACHE_HOME":  "/tmp/xdg/cache",
-	}), "/home/test")
+		"XDG_CONFIG_HOME": filepath.Join(base, "config"),
+		"XDG_DATA_HOME":   filepath.Join(base, "data"),
+		"XDG_CACHE_HOME":  filepath.Join(base, "cache"),
+	}), home)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if d.ConfigDir != "/tmp/xdg/config/engelsiz/config" {
+	if d.ConfigDir != filepath.Join(base, "config", "engelsiz", "config") {
 		t.Errorf("config dir = %q", d.ConfigDir)
 	}
-	if d.DBPath != "/tmp/xdg/data/engelsiz/engelsiz.db" {
+	if d.DBPath != filepath.Join(base, "data", "engelsiz", "engelsiz.db") {
 		t.Errorf("db path = %q", d.DBPath)
 	}
-	if !strings.HasPrefix(d.CacheDir, "/tmp/xdg/cache/engelsiz") {
+	if !strings.HasPrefix(d.CacheDir, filepath.Join(base, "cache", "engelsiz")) {
 		t.Errorf("cache dir = %q", d.CacheDir)
 	}
 	for _, p := range []string{d.ConfigDir, d.LogDir, d.DownloadDir, d.ContentDir, d.RuntimeDir, d.DBPath, d.LogPath} {
@@ -37,17 +39,18 @@ func TestResolveLinuxXDG(t *testing.T) {
 }
 
 func TestResolveLinuxFallback(t *testing.T) {
-	d, err := ResolveFor("linux", fakeEnv(nil), "/home/test")
+	home := filepath.Join(t.TempDir(), "home")
+	d, err := ResolveFor("linux", fakeEnv(nil), home)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if d.ConfigRoot != "/home/test/.config/engelsiz" {
+	if d.ConfigRoot != filepath.Join(home, ".config", "engelsiz") {
 		t.Errorf("config root = %q", d.ConfigRoot)
 	}
-	if d.DataRoot != "/home/test/.local/share/engelsiz" {
+	if d.DataRoot != filepath.Join(home, ".local", "share", "engelsiz") {
 		t.Errorf("data root = %q", d.DataRoot)
 	}
-	if d.CacheRoot != "/home/test/.cache/engelsiz" {
+	if d.CacheRoot != filepath.Join(home, ".cache", "engelsiz") {
 		t.Errorf("cache root = %q", d.CacheRoot)
 	}
 }

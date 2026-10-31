@@ -40,7 +40,7 @@ func ListenLoopback(preferred int) (net.Listener, int, error) {
 	if err == nil {
 		return ln, ln.Addr().(*net.TCPAddr).Port, nil
 	}
-	if !errors.Is(err, syscall.EADDRINUSE) {
+	if !addressInUse(err) {
 		return nil, 0, fmt.Errorf("listen %s: %w", addr, err)
 	}
 	fallback, err2 := net.Listen("tcp", "127.0.0.1:0")

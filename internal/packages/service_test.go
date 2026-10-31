@@ -489,6 +489,9 @@ func TestDirectoryReplacementCannotPublishInstalledPath(t *testing.T) {
 }
 
 func TestDataRootReplacementCannotPublishInstalledPath(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("Windows prevents renaming a data root containing the open SQLite database; content-directory replacement is tested separately")
+	}
 	f := newFixture(t, Options{})
 	moved := f.dir + "-original"
 	defer os.RemoveAll(moved)
