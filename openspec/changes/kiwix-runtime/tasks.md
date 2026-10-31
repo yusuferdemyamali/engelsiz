@@ -1,0 +1,34 @@
+## 1. Provider boundary and executable inputs
+
+- [x] 1.1 Add only the lifecycle `ContentProvider` interface, runtime status value and sole concrete `KiwixProvider` delegating to Kiwix process code; verify compilation/interface assertion and source inspection show no unused content methods, provider stubs or plugin framework.
+- [x] 1.2 Implement lazy explicit/default executable resolution and wire `--kiwix-binary` through app options; test spaces, relative explicit override, invalid override without fallback, missing/non-executable/directory inputs, adjacent Linux/Windows filename resolution and working-directory independence.
+- [x] 1.3 Accept explicit trusted local ZIM file paths as concrete constructor inputs, with no-content stopped/no-op behavior; test no binary lookup/process start for empty paths and separate absolute path arguments without shell interpretation; do not scan/parse/install content.
+
+## 2. Real child startup and diagnostics
+
+- [x] 2.1 Add a deterministic subprocess fixture using a compiled helper or test executable with isolated fixture mode; verify it actually launches OS processes, records argv/PID/start/exit markers, serves controlled HTTP responses and can write separately to stdout/stderr or ignore termination.
+- [x] 2.2 Complete foreground startup readiness with bounded HTTP 200 plus positive exact-child PID/IPv4 loopback listener proof, live generation and cancellation checks; preserve existing argv, delayed success, response/error and cleanup coverage and remove fixed-delay ownership inference.
+- [x] 2.3 Correct port handoff handling: regress the reviewed 500 ms delayed-bind child against an early unrelated HTTP 200 listener, prove no false owned readiness, reap the failed owned attempt, preserve the competitor, and return contextual failure or bounded fresh-port retry.
+- [x] 2.4 Drain labelled stdout/stderr with bounded buffers and connect lifecycle/output events to the existing logger; test both streams, long output beyond ordinary scanner limits, failure diagnostic retention and cleanup under concurrent output without deadlock or unbounded retained memory.
+- [x] 2.5 Add narrow private ownership helpers: Linux child fd/socket-inode correlation with listening IPv4 TCP records and Windows `GetExtendedTcpTable` PID-owner IPv4 listener rows. Verify owned/unrelated address-port-PID matches, unavailable/malformed evidence fails closed, and document the Linux procfs assumption and actual native Windows execution boundary; do not create a generic socket/process framework.
+
+## 3. State, concurrency and controlled recovery
+
+- [x] 3.1 Implement synchronized state snapshots, one wait/reap owner per child and unexpected-exit detection; verify zero/nonzero unexpected exits clear active PID, retain failure context, reap the child and do not auto-restart.
+- [x] 3.2 Preserve shared ensure attempts while correcting Stop/Restart synchronization so Stop can promptly publish intent and cancel replacement readiness; prevent an earlier/queued restart or completed old generation from reporting success, spawning a late child or overwriting newer status after Stop wins.
+- [x] 3.3 Complete explicit restart and idempotent bounded stop while preserving Linux graceful termination/kill fallback, Windows owned-process termination, old-child reap before replacement, recovery after failure and unrelated sentinel survival; short/already-cancelled Stop contexts must not bypass owned cleanup.
+- [x] 3.4 Add real-process regressions for Stop during delayed and never-ready restart replacement, including a 50 ms Stop deadline and already-cancelled context; prove cancellation is not blocked for the readiness interval, restart returns cancelled, owned PID is reaped, no queued/late generation appears, and unrelated sentinels survive. Retain concurrent ensure, direct-start cancellation and stop/restart ordering coverage under race detection.
+
+## 4. App lifecycle integration
+
+- [x] 4.1 Construct and own the empty Kiwix provider in normal app startup and provide a narrow used test/integration seam for a configured real provider; verify a clean profile without installed Kiwix still serves existing health/shell and opens the browser only after backend readiness.
+- [x] 4.2 Stop/reap provider before DB/log closure on context/signal shutdown and every startup rollback path using a fresh bounded cleanup context; app integration tests with real fixture provider must verify startup failure prevents browser launch, cancellation during readiness cleans child, running-app cancellation releases child/port, and cleanup errors are surfaced rather than swallowed.
+- [x] 4.3 Preserve existing health JSON and browser URL while keeping internal port/path out of public API/UI/browser output; run foundation regressions and inspect responses/output/source to confirm no runtime/proxy/catalog/search endpoints, installed-package discovery or feature placeholders were added.
+
+## 5. Integrated validation and execution bounds
+
+- [x] 5.1 Re-run `go test ./...`, relevant lifecycle/app `go test -race` including the R1/R2 regressions, `go vet ./...` and `gofmt -l`, then `CGO_ENABLED=0` Linux/Windows amd64 builds using the available Go 1.26+ toolchain; record exact commands/results and distinguish Windows build from native execution. If race tooling is unavailable, record the specific tool limitation and do not describe race checking as passed.
+- [x] 5.2 Run a Linux controlled app/process smoke covering SIGINT/SIGTERM or equivalent controlled context shutdown, empty shell, fixture-backed owned-child cleanup and unrelated process survival; record evidence and disclose any unexecuted native Windows cases. Exercise SIGINT/SIGTERM at process level where available rather than claiming signals from context-only tests.
+- [x] 5.3 Check whether a real `kiwix-serve` and small valid local ZIM are readily available; if so record actual version/argv/readiness/cleanup smoke, otherwise record their absence and the fixture-only execution boundary. Completion of this task means the availability check and honest evidence report, not an invented real-runtime pass; do not add packaging or large content download work.
+- [x] 5.4 Re-run `openspec validate kiwix-runtime --strict` and map revised acceptance criteria/scenarios to delivered code and test evidence; leave any unproven implementation task unchecked and report residual risks/limits for a fresh independent verification handoff resolving R1/R2.
+- [x] 5.5 Refresh affected Linux app/process cleanup smoke and, if still readily available, the actual Kiwix/small-ZIM startup/restart/cleanup smoke after the ownership/synchronization changes. Preserve prior evidence as historical only, record exact commands/results, and explicitly disclose unexecuted native Windows ownership/lifecycle cases without expanding into packaging or content features.
