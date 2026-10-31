@@ -119,13 +119,13 @@ export function RuntimeStatus({ manager, installedCount }: { manager: RuntimeMan
     : null
 
   return (
-    <div className="mt-6 space-y-3 border-y py-5" aria-busy={busy}>
-      {manager.loading && !manager.error && <p role="status" className="text-sm text-muted-foreground">İçerik hizmetinin durumu kontrol ediliyor…</p>}
-      {!manager.error && status && <p role="status" className="text-sm leading-6 text-muted-foreground">{status}</p>}
-      {!manager.error && state === "failed" && <p role="alert" className="text-sm leading-6">{manager.snapshot?.runtime.error?.message}</p>}
+    <div className="mt-6 space-y-3 rounded-md border border-sand/20 bg-coal/50 px-4 py-5" aria-busy={busy}>
+      {manager.loading && !manager.error && <p role="status" className="font-mono text-xs text-sand/80">İçerik hizmetinin durumu kontrol ediliyor…</p>}
+      {!manager.error && status && <p role="status" className="text-sm leading-6 text-sand/90">{status}</p>}
+      {!manager.error && state === "failed" && <p role="alert" className="rounded border border-blood/60 bg-blood/10 px-3 py-2 text-sm leading-6 text-parchment">{manager.snapshot?.runtime.error?.message}</p>}
       {manager.error && (
         <div className="space-y-3">
-          <p role="alert" className="max-w-prose text-sm leading-6">İçerik durumu yenilenemedi. {manager.error}</p>
+          <p role="alert" className="max-w-prose text-sm leading-6 text-parchment">İçerik durumu yenilenemedi. {manager.error}</p>
           <button type="button" className={secondaryButtonClass} disabled={busy} onClick={manager.reload}>İçerik durumunu yenile</button>
         </div>
       )}
@@ -145,7 +145,7 @@ export function InstalledContent({ packageId, title, variant, manager }: { packa
   return content ? (
     <a href={content.href} className={`${buttonClass} inline-flex items-center`} aria-label={`${title} ${variant}: İçeriği aç`}>İçeriği aç</a>
   ) : (
-    <p role="status" className="max-w-prose text-sm leading-6 text-muted-foreground">
+    <p role="status" className="max-w-prose text-sm leading-6 text-sand/80">
       {manager.error ? "Paket kurulu. İçerik durumu kontrol edilemiyor."
         : manager.snapshot?.runtime.state === "failed" ? "Paket kurulu. İçeriği açmak için içerik hizmetini tekrar deneyin."
         : "Paket kurulu. İçeriğin kullanıma hazır olması bekleniyor…"}

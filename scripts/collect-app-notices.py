@@ -67,7 +67,7 @@ def go_components(go):
         raise ValueError(f'Collect with the release toolchain go{expected}, got {version}')
     modules, packages, per_platform = {}, {}, {}
     for platform in ('linux', 'windows'):
-        selected = list(json_stream(run_go(go, ['list', '-deps', '-json', './cmd/engelsiz'], platform)))
+        selected = list(json_stream(run_go(go, ['list', '-buildvcs=false', '-deps', '-json', './cmd/engelsiz'], platform)))
         per_platform[platform + '-amd64'] = sorted(item['ImportPath'] for item in selected)
         for package in selected:
             if package.get('Module', {}).get('Main'):

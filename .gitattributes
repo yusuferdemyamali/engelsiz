@@ -1,0 +1,8 @@
+# Keep hashed application inputs identical in Linux and Windows checkouts.
+go.mod text eol=lf
+go.sum text eol=lf
+frontend/package-lock.json text eol=lf
+frontend/tailwind.config.js text eol=lf
+
+# Preserve original attribution/provenance bytes, including upstream line endings.
+third_party/** -text

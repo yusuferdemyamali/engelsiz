@@ -123,12 +123,12 @@ const labels: Record<Update["state"], string> = {
 }
 
 export function UpdateCheck({ manager }: { manager: UpdateManager }) {
-  return <div className="mt-6 space-y-3">
+  return <div className="mt-6 space-y-3 rounded-md border border-sand/20 bg-coal/50 px-4 py-5">
     <div className="flex flex-wrap items-center justify-between gap-3">
-      <h3 className="font-medium">İçerik güncellemeleri</h3>
+      <h3 className="font-mono text-xs uppercase tracking-wider text-parchment">İçerik güncellemeleri</h3>
       <button type="button" className={secondaryButtonClass} disabled={manager.loading || manager.pending !== null} onClick={manager.reload}>Güncellemeleri kontrol et</button>
     </div>
-    <p role="status" aria-atomic="true" className="max-w-prose text-sm leading-6 text-muted-foreground">
+    <p role="status" aria-atomic="true" className="max-w-prose text-sm leading-6 text-sand/90">
       {manager.loading ? "Yeni sürümler kontrol ediliyor…" : manager.error ? manager.error
         : manager.snapshot?.comparisonAvailable === false ? manager.snapshot.error?.message ?? "Katalog şu anda yenilenemiyor. Güncelleme durumu kontrol edilemedi; yerel içerikleriniz kullanılabilir."
         : manager.snapshot?.updates.some((item) => item.state === "update_available") ? "Yeni sürüm indirmek için ilgili paketin Güncelle düğmesini kullanın."
@@ -146,21 +146,21 @@ export function PackageUpdates({ item, packages, manager, onOpenDownloads }: { i
       const candidateInstalled = candidate?.status === "installed"
       const canActivate = !!update.id && candidateInstalled && ["ready", "failed", "interrupted"].includes(update.state)
       const percentage = download?.percentage == null ? null : Math.max(0, Math.min(100, download.percentage))
-      return <div key={update.id ?? update.candidateProviderPackageId} className="space-y-3 border-t pt-4" aria-busy={manager.pending === item.id || update.state === "activating"}>
-        <p role="status" aria-atomic="true" className="text-sm font-medium">{labels[update.state]}</p>
+      return <div key={update.id ?? update.candidateProviderPackageId} className="space-y-3 rounded border border-sand/15 bg-coal/50 px-3 py-4" aria-busy={manager.pending === item.id || update.state === "activating"}>
+        <p role="status" aria-atomic="true" className="font-mono text-xs uppercase tracking-wider text-parchment">{labels[update.state]}</p>
         <dl className="grid gap-x-6 gap-y-3 text-sm sm:grid-cols-3">
-          <div><dt className="text-muted-foreground">Kurulu sürüm</dt><dd className="mt-1 break-words tabular-nums">{update.installedVersion}</dd></div>
-          <div><dt className="text-muted-foreground">Yeni sürüm</dt><dd className="mt-1 break-words tabular-nums">{update.candidateVersion}</dd></div>
-          <div><dt className="text-muted-foreground">Yeni dosyanın boyutu</dt><dd className="mt-1 tabular-nums">{update.sizeBytes === null ? "Boyut bilgisi yok" : formatBytes(update.sizeBytes)}</dd></div>
+          <div><dt className="font-mono text-[11px] uppercase tracking-wider text-sand/70">Kurulu sürüm</dt><dd className="mt-1 break-words font-mono tabular-nums text-parchment">{update.installedVersion}</dd></div>
+          <div><dt className="font-mono text-[11px] uppercase tracking-wider text-sand/70">Yeni sürüm</dt><dd className="mt-1 break-words font-mono tabular-nums text-parchment">{update.candidateVersion}</dd></div>
+          <div><dt className="font-mono text-[11px] uppercase tracking-wider text-sand/70">Yeni dosyanın boyutu</dt><dd className="mt-1 font-mono tabular-nums text-parchment">{update.sizeBytes === null ? "Boyut bilgisi yok" : formatBytes(update.sizeBytes)}</dd></div>
         </dl>
         {download && update.state !== "succeeded" && <div className="space-y-2">
-          <p className="text-sm leading-6 text-muted-foreground">{candidate?.status === "verifying" ? "Yeni dosyanın bütünlüğü doğrulanıyor…" : candidate?.status === "installing" ? "Yeni dosya kuruluyor…" : candidate?.status === "failed" ? "Yeni dosyanın kurulumu başarısız. İndirmeler bölümünden tekrar deneyebilirsiniz." : download.status === "completed" && !candidateInstalled ? "İndirme tamamlandı. İndirmeler bölümünden Doğrula ve kur işlemini başlatın." : download.status === "paused" ? "İndirme duraklatıldı." : download.status === "failed" ? "İndirme başarısız. İndirmeler bölümünden tekrar deneyebilirsiniz." : download.status === "cancelled" ? "İndirme iptal edildi. Önceki sürüm korunuyor." : candidateInstalled ? "Yeni dosya doğrulandı ve cihazınızda korunuyor." : "İndirme ilerlemesi"}</p>
+          <p className="text-sm leading-6 text-sand/90">{candidate?.status === "verifying" ? "Yeni dosyanın bütünlüğü doğrulanıyor…" : candidate?.status === "installing" ? "Yeni dosya kuruluyor…" : candidate?.status === "failed" ? "Yeni dosyanın kurulumu başarısız. İndirmeler bölümünden tekrar deneyebilirsiniz." : download.status === "completed" && !candidateInstalled ? "İndirme tamamlandı. İndirmeler bölümünden Doğrula ve kur işlemini başlatın." : download.status === "paused" ? "İndirme duraklatıldı." : download.status === "failed" ? "İndirme başarısız. İndirmeler bölümünden tekrar deneyebilirsiniz." : download.status === "cancelled" ? "İndirme iptal edildi. Önceki sürüm korunuyor." : candidateInstalled ? "Yeni dosya doğrulandı ve cihazınızda korunuyor." : "İndirme ilerlemesi"}</p>
           <progress className="download-progress" max={100} value={percentage ?? undefined} aria-label={`${item.title} güncelleme ilerlemesi`} />
-          <p className="text-sm tabular-nums text-muted-foreground">{formatBytes(download.downloadedBytes)} / {download.totalBytes === null ? "Toplam boyut bilinmiyor" : formatBytes(download.totalBytes)}{percentage === null ? "" : ` · %${new Intl.NumberFormat("tr-TR", { maximumFractionDigits: 1 }).format(percentage)}`}</p>
-          {download.error && <p role="alert" className="max-w-prose break-words text-sm leading-6">{download.error.message}</p>}
+          <p className="font-mono text-xs tabular-nums text-sand/80">{formatBytes(download.downloadedBytes)} / {download.totalBytes === null ? "Toplam boyut bilinmiyor" : formatBytes(download.totalBytes)}{percentage === null ? "" : ` · %${new Intl.NumberFormat("tr-TR", { maximumFractionDigits: 1 }).format(percentage)}`}</p>
+          {download.error && <p role="alert" className="max-w-prose break-words text-sm leading-6 text-parchment">{download.error.message}</p>}
         </div>}
-        {update.error && <p role="alert" className="max-w-prose break-words text-sm leading-6">{update.error.message}</p>}
-        {manager.actionError?.packageId === item.id && <p role="alert" className="max-w-prose break-words text-sm leading-6">{manager.actionError.message}</p>}
+        {update.error && <p role="alert" className="max-w-prose break-words rounded border border-blood/60 bg-blood/10 px-3 py-2 text-sm leading-6 text-parchment">{update.error.message}</p>}
+        {manager.actionError?.packageId === item.id && <p role="alert" className="max-w-prose break-words rounded border border-blood/60 bg-blood/10 px-3 py-2 text-sm leading-6 text-parchment">{manager.actionError.message}</p>}
         <div className="flex flex-wrap gap-3">
           {update.state === "update_available" && item.active && <button type="button" className={buttonClass} disabled={manager.pending !== null} aria-label={`${item.title} ${variantsLabel(item.variant)}: Güncelle`} onClick={() => void manager.perform(update)}>{manager.pending === item.id ? "Başlatılıyor…" : "Güncelle"}</button>}
           {canActivate && <button type="button" className={buttonClass} disabled={manager.pending !== null} onClick={() => void manager.perform(update, true)}>{manager.pending === item.id ? "Başlatılıyor…" : update.state === "ready" ? "Yeni sürümü etkinleştir" : "Etkinleştirmeyi tekrar dene"}</button>}

@@ -134,13 +134,13 @@ export function PackageState({ item, downloadId, title, variant, manager }: {
   const installed = item?.status === "installed"
   const actionError = manager.actionError?.id === downloadId ? manager.actionError.message : null
   return (
-    <div className="space-y-3">
-      <p role="status" aria-atomic="true" className="text-sm font-medium">
+    <div className="space-y-3 rounded border border-sand/15 bg-coal/50 px-3 py-3">
+      <p role="status" aria-atomic="true" className="font-mono text-xs uppercase tracking-wider text-parchment">
         {pending ? "Kurulum isteği gönderiliyor…" : item ? statusLabels[item.status] : "İndirilen dosya henüz doğrulanıp kurulmadı."}
       </p>
-      {installed && <p className="text-sm text-muted-foreground">Kurulu sürüm: {variantsLabel(item.variant)} · {item.version}</p>}
-      {item?.error && <p role="alert" className="max-w-prose break-words text-sm leading-6">{item.error.message}</p>}
-      {actionError && <p role="alert" className="max-w-prose break-words text-sm leading-6">{actionError}</p>}
+      {installed && <p className="font-mono text-xs text-sand/80">Kurulu sürüm: {variantsLabel(item.variant)} · {item.version}</p>}
+      {item?.error && <p role="alert" className="max-w-prose break-words text-sm leading-6 text-parchment">{item.error.message}</p>}
+      {actionError && <p role="alert" className="max-w-prose break-words text-sm leading-6 text-parchment">{actionError}</p>}
       {!installed && (
         <button
           type="button"
@@ -161,36 +161,37 @@ export function PackagesView({ onOpenDownloads }: { onOpenDownloads?: () => void
   const manager = usePackages(updates.revision)
   const runtime = useRuntime()
   return (
-    <section aria-labelledby="packages-heading" className="pt-8 sm:pt-10">
-      <h2 id="packages-heading" className="text-2xl font-semibold tracking-tight">Yerel Paketler</h2>
-      <p className="mt-2 max-w-prose text-sm leading-6 text-muted-foreground">
+    <section aria-labelledby="packages-heading">
+      <p className="terminal-label">03 / Yerel arşiv</p>
+      <h2 id="packages-heading" className="mt-2 font-display text-4xl tracking-wide text-parchment">YEREL PAKETLER</h2>
+      <p className="mt-2 max-w-prose text-sm leading-6 text-sand/90">
         Kurulumları ve doğrulanmış yerel paketleri çevrimdışıyken de takip edin. Yeni bir kurulum için İndirmeler bölümünü kullanın.
       </p>
       <RuntimeStatus manager={runtime} installedCount={manager.loading ? null : manager.items.filter((item) => item.status === "installed" && item.active).length} />
       <UpdateCheck manager={updates} />
       {manager.error && (
-        <div className="mt-6 border-y py-5">
-          <p role="alert" className="text-sm leading-6">{manager.error}</p>
+        <div className="mt-6 rounded-md border border-blood/60 bg-blood/10 px-4 py-5">
+          <p role="alert" className="text-sm leading-6 text-parchment">{manager.error}</p>
           <button type="button" className={`${secondaryButtonClass} mt-3`} onClick={manager.reload}>Tekrar dene</button>
         </div>
       )}
-      {manager.loading && <p role="status" className="mt-8 text-sm text-muted-foreground">Yerel paketler yükleniyor…</p>}
+      {manager.loading && <p role="status" className="mt-8 font-mono text-sm text-sand/80">Yerel paketler yükleniyor…</p>}
       {!manager.loading && !manager.error && manager.items.length === 0 && (
-        <p role="status" className="mt-8 border-y py-6 text-sm leading-6 text-muted-foreground">
+        <p role="status" className="mt-8 rounded-md border border-dashed border-sand/30 px-4 py-6 text-sm leading-6 text-sand/80">
           Henüz yerel paket yok. Tamamlanan bir indirme için Doğrula ve kur düğmesini kullanın.
         </p>
       )}
       {manager.items.length > 0 && (
-        <ul className="mt-8 divide-y border-y">
+        <ul className="mt-8 divide-y divide-sand/15 border-y border-sand/15">
           {manager.items.map((item) => (
             <li key={item.id} className="space-y-4 py-6" aria-busy={manager.pending === item.downloadId}>
               <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
-                <h3 className="min-w-0 break-words font-medium">{item.title}</h3>
-                <p className="break-words text-sm text-muted-foreground">{variantsLabel(item.variant)} · Sürüm {item.version}</p>
+                <h3 className="min-w-0 break-words font-medium text-parchment">{item.title}</h3>
+                <p className="break-words font-mono text-xs text-sand/70">{variantsLabel(item.variant)} · Sürüm {item.version}</p>
               </div>
-              <p className="text-sm tabular-nums text-muted-foreground">{formatBytes(item.sizeBytes)}</p>
+              <p className="font-mono text-xs tabular-nums text-sand/80">{formatBytes(item.sizeBytes)}</p>
               <PackageState item={item} downloadId={item.downloadId} title={item.title} variant={item.variant} manager={manager} />
-              {item.status === "installed" && !item.active && <p className="text-sm leading-6 text-muted-foreground">Bu sürüm cihazınızda korunuyor; etkin içerik olarak kullanılmıyor.</p>}
+              {item.status === "installed" && !item.active && <p className="text-sm leading-6 text-sand/70">Bu sürüm cihazınızda korunuyor; etkin içerik olarak kullanılmıyor.</p>}
               {item.status === "installed" && item.active && <InstalledContent packageId={item.id} title={item.title} variant={variantsLabel(item.variant)} manager={runtime} />}
               <PackageUpdates item={item} packages={manager.items} manager={updates} onOpenDownloads={onOpenDownloads} />
             </li>

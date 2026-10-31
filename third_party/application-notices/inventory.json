@@ -2,6 +2,51 @@
   "format": 1,
   "frontend": [
     {
+      "archiveIntegrity": "sha512-nCxMEb9Bg9sjNWm9TIOsvHKDMLRUfEZPWpLgYu6m9KavZZVSA/WoHzI5wROwqA+eNwEi/PNBAcB5Co7HA3S0Cw==",
+      "declaredLicense": "OFL-1.1",
+      "name": "@fontsource/bebas-neue",
+      "noticePayloadsVerifiedAgainstArchive": true,
+      "noticeSources": [
+        {
+          "path": "LICENSE",
+          "sha256": "66c436339f7490c1a99e4f6a7b8aef5c176676edfd071a31638e7d54c1b0aeda"
+        }
+      ],
+      "scope": "locked production dependency (conservative superset of tree-shaken bundle)",
+      "source": "https://registry.npmjs.org/@fontsource/bebas-neue/-/bebas-neue-5.3.0.tgz",
+      "version": "5.3.0"
+    },
+    {
+      "archiveIntegrity": "sha512-RofMylZmjlJEfELXeNHFWBRcSs75rGU/6bV2S2jfnvv/3rPXPGe0LgUJTklcHZ9lM4OZmAVFhcJPnACfb91A3g==",
+      "declaredLicense": "OFL-1.1",
+      "name": "@fontsource/inter",
+      "noticePayloadsVerifiedAgainstArchive": true,
+      "noticeSources": [
+        {
+          "path": "LICENSE",
+          "sha256": "3b0a5fca3d17942cde889069889dedbbbd075e9b599968c82a95f4d944e9b345"
+        }
+      ],
+      "scope": "locked production dependency (conservative superset of tree-shaken bundle)",
+      "source": "https://registry.npmjs.org/@fontsource/inter/-/inter-5.3.0.tgz",
+      "version": "5.3.0"
+    },
+    {
+      "archiveIntegrity": "sha512-fqDfB5I9f1p1TV486aUgB9t8zP84P0O1FtQR5Ol9vjwPy+S+EIGlVYm1cvj2W5shcZMTg2nZFdVMoH5wFu8a1A==",
+      "declaredLicense": "OFL-1.1",
+      "name": "@fontsource/jetbrains-mono",
+      "noticePayloadsVerifiedAgainstArchive": true,
+      "noticeSources": [
+        {
+          "path": "LICENSE",
+          "sha256": "403581b69dac5cff4079205e01c6b467e56af449ecbd7247693ddb1baafa005b"
+        }
+      ],
+      "scope": "locked production dependency (conservative superset of tree-shaken bundle)",
+      "source": "https://registry.npmjs.org/@fontsource/jetbrains-mono/-/jetbrains-mono-5.3.0.tgz",
+      "version": "5.3.0"
+    },
+    {
       "archiveIntegrity": "sha512-Ka+9Trutv7G8M6WT6SeiRWz792K5qEqIGEGzXKhAE6xOWAY6pPH8U+9IY3oCMv6kqTmLsv7Xh/2w2RigkePMsg==",
       "declaredLicense": "Apache-2.0",
       "name": "class-variance-authority",
@@ -9708,15 +9753,15 @@
     ]
   },
   "inputs": {
-    "frontend/package-lock.json": "fe2330eef30eb8f6074ff66a195d8d0cb3b5fef332cd5e77ed8dcfed79bcc2ea",
-    "frontend/tailwind.config.js": "2d1801b1d34e25b4c1b7bd499f840d984ee7462b95ee363fd8e8a804a7376971",
+    "frontend/package-lock.json": "36d702ad601ab46c91ff2622318b7dede4c1a533f603e540085f16a0991d8c10",
+    "frontend/tailwind.config.js": "13a666df112e383bae888a16ae34e8769cdd92d0daca566cd244067b40f88609",
     "go.mod": "6615e9cdf2fb9e21d13eaa349cd07bd2d1ee95a45bf41b0ebc2ae080df683e10",
     "go.sum": "3ca6de191cbcf41056b3b2c7abdcbe4b55c7ececa358c900df16bad0a700ee95"
   },
   "outputs": {
     "frontend.txt": {
-      "bytes": 140446,
-      "sha256": "4f63aaccb097e4e1bef6a95684c01999090d40f09b5072e1cf8af39baa3be9c9"
+      "bytes": 154465,
+      "sha256": "fa66fbd1f4ac808b1c8cde4c3fc12435dd409fce59a8c81f8ef26b5d703273e9"
     },
     "go.txt": {
       "bytes": 375163,
