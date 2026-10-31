@@ -1,0 +1,17 @@
+:root{--paper:#fdfcf8;--ink:#1a1a1a;--muted:#6b6b6b;--accent:#1d4ed8;--line:#e5e0d5;--ok:#15803d;--bad:#b91c1c}
+*{box-sizing:border-box}body{background:var(--paper);color:var(--ink);font:18px/1.6 "Source Serif 4",Georgia,serif;margin:0}
+.wrap{max-width:720px;margin:0 auto;padding:48px 24px 80px}
+.top{font:13px/1.4 system-ui,sans-serif;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+h1{font-size:38px;line-height:1.15;margin:12px 0}h2{font-size:24px;margin:36px 0 8px}
+p,li{max-width:62ch}.meta{color:var(--muted);font:14px system-ui}
+pre{background:#111827;color:#f3f4f6;padding:16px;border-radius:10px;overflow:auto;font:13.5px/1.55 ui-monospace,Menlo,monospace}
+code{background:#eee9dc;padding:1px 6px;border-radius:5px;font-size:.88em}pre code{background:none;padding:0}
+.diagram{border:1px solid var(--line);border-radius:12px;padding:16px;background:#fff;margin:20px 0;font:14px system-ui}
+.quiz{border:1px solid var(--line);border-radius:12px;padding:18px;background:#fff;margin:18px 0}
+.quiz button{display:block;width:100%;text-align:left;margin:8px 0;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:#fafaf9;cursor:pointer;font:15px system-ui}
+.quiz button.correct{border-color:var(--ok);background:#f0fdf4}
+.quiz button.wrong{border-color:var(--bad);background:#fef2f2}
+.feedback{font:14px system-ui;min-height:22px;margin-top:8px}
+a{color:var(--accent)}hr{border:none;border-top:1px solid var(--line);margin:32px 0}
+.next{font:15px system-ui;background:#eff6ff;border:1px solid #bfdbfe;padding:14px;border-radius:10px}
+@media print{body{background:#fff}.wrap{padding:0}.quiz button{border:1px solid #999}}

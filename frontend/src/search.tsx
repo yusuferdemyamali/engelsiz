@@ -118,8 +118,9 @@ export function SearchView({ onOpenPackages }: { onOpenPackages: () => void }) {
         throw new Error("Kurulu paket listesi okunamadı. Tekrar deneyin.")
       }
       if (controller.signal.aborted) return
-      setInstalled({ status: "ready", packages: result.packages })
-      setPackageId((current) => result.packages.some((item) => item.id === current) ? current : result.packages[0]?.id ?? "")
+      const activePackages = result.packages.filter((item) => item.active)
+      setInstalled({ status: "ready", packages: activePackages })
+      setPackageId((current) => activePackages.some((item) => item.id === current) ? current : activePackages[0]?.id ?? "")
     }).catch((failure: unknown) => {
       if (!controller.signal.aborted) setInstalled({ status: "error", message: failure instanceof Error ? failure.message : "Kurulu paketler yüklenemedi. Tekrar deneyin." })
     })

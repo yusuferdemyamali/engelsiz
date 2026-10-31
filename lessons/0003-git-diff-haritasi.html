@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>0003 — Git Diff Haritası: 35 dosya neden var</title>
+<link rel="stylesheet" href="../assets/style.css"></head>
+<body><div class="wrap">
+<div class="top">Lesson 0003 · application-foundation · ~20 dk deep-dive</div>
+<h1>Git Diff Haritası: <code>HEAD</code> 35 dosya</h1>
+<p class="meta">Mission: boot'u ezberden çizmek · Kaynak: <code>git diff HEAD --stat</code> (5718 satır) · Önceki: <a href="./0001-app-lifecycle.html">0001 Lifecycle</a> · <a href="./0002-config-resolve.html">0002 Config</a> · <a href="../reference/app-foundation-cheatsheet.html">cheatsheet</a></p>
+
+<h2>Tek kazanım</h2>
+<p>Bu ders bitince 35 dosyayı 5 gruba ayıracaksın ve neden Kiwix/download/search kodu <strong>yok</strong> açıklayacaksın.</p>
+
+<div class="diagram"><strong>5 grup:</strong> 1 Spec/plan (docs + openspec) · 2 Go core (app/api/config/database/web) · 3 Migration (settings+providers) · 4 Frontend iskelet (React+Vite) · 5 Infra (gitignore/script/go.mod) + 5 test dosyası</div>
+
+<h2>1. Grup 1 — Spec: neyin sözü veriliyor</h2>
+<p><code>docs/main-spec.md</code> 1560 satır: v0.1 Türkçe Wikipedia dikey akışı, <code>127.0.0.1:17321</code> + fallback, offline-first. <code>openspec/changes/application-foundation/proposal.md</code> bunu küçültür: "önce app shell, Kiwix yok". Non-Goals listesi diff'in neden küçük kaldığını açıklar.</p>
+<pre><code>git diff HEAD --stat
+# docs/main-spec.md | 1560 +++
+# openspec/.../proposal.md | 49 +
+# openspec/.../tasks.md | 38 +</code></pre>
+
+<h2>2. Grup 2 — Go core: boot sırası</h2>
+<p><a href="./0001-app-lifecycle.html">0001</a>'deki sıra burada kodlanır: <code>internal/app/app.go:44-127</code> Resolve → Ensure → logger → <code>database.Open</code> → <code>ListenLoopback(17321)</code> → <code>api.NewMux + web.Handler</code> → <code>waitForHealth(10s)</code> → browser → shutdown. <code>internal/api/health.go:9-22</code> sadece GET'e <code>{"status":"ok"}</code> döner. <code>internal/web/web.go:24-43</code> <code>/api/* → 404</code>, dosya varsa serve, yoksa <code>index.html</code> fallback.</p>
+
+<h2>3. Grup 3 — DB: iki tablo, sıfır business logic</h2>
+<pre><code>-- migrations/001_init.sql = internal/database/migrations/001_init.sql
+CREATE TABLE settings(key PRIMARY KEY, value, updated_at);
+CREATE TABLE providers(id PRIMARY KEY, type, enabled, ...);</code></pre>
+<p><code>internal/database/db.go:19-44</code> WAL + busy_timeout + foreign_keys açar, sonra <code>Migrate()</code> her <code>.sql</code>'i tek tx'te uygular + <code>schema_migrations</code>'a yazar. Bozuk DB'de reset yok — hata fırlatır (<code>db_test.go:36-54</code> bunu assert eder).</p>
+
+<h2>4. Grup 4+5 — Frontend iskelet + infra</h2>
+<p><code>frontend/src/App.tsx:1-13</code> 13 satır placeholder: "Uygulama temeli hazır". <code>vite.config.ts</code> outDir <code>dist</code>, dev port 5173. <code>scripts/build-frontend.sh</code> dist'i <code>internal/web/dist</code>'e kopyalar ki <code>//go:embed all:dist</code> gömebilsin. <code>go.mod</code> saf-Go <code>modernc.org/sqlite</code> seçer — cgo yok, kurulum kolay.</p>
+
+<h2>5. Birincil kaynak</h2>
+<p>Oku: <a href="https://pkg.go.dev/modernc.org/sqlite">modernc.org/sqlite driver</a> — DSN + WAL notları, 5 dk. Plan tarafı: <code>openspec/changes/application-foundation/tasks.md</code> 1. satırdan 38. satıra.</p>
+
+<h2>6. Retrieval — quiz</h2>
+<div class="quiz"><strong>Q1. Bu diff'te hangisi yoktur?</strong>
+<button data-ok="1">Kiwix indirme yöneticisi</button>
+<button>SQLite migration altyapısı</button>
+<button>React Vite iskeleti</button>
+<div class="feedback"></div></div>
+
+<div class="quiz"><strong>Q2. waitForHealth ne yapar?</strong>
+<button>Port çakışmasını otomatik çözer</button>
+<button data-ok="1">Browser öncesi sağlığı kanıtlar</button>
+<button>Bozuk veritabanını sessizce sıfırlar</button>
+<div class="feedback"></div></div>
+
+<div class="quiz"><strong>Q3. web.Handler /api/* ne yapar?</strong>
+<button>SPA fallback index sunar</button>
+<button>Dev proxy herşeyi yakalar</button>
+<button data-ok="1">API yolunu 404 döndürür</button>
+<div class="feedback"></div></div>
+
+<hr>
+<div class="next"><strong>Sonraki (2 dk):</strong> <code>git diff HEAD -- internal/database/db.go internal/web/web.go</code> çalıştır, <code>PRAGMA</code> ve <code>/api/</code> satırlarını bul. Takıldığın yeri sor — ben öğretmenim, follow-up sor.</div>
+<p class="meta">Ref: <a href="./0001-app-lifecycle.html">0001</a> · <a href="./0002-config-resolve.html">0002</a> · <a href="../reference/app-foundation-cheatsheet.html">cheatsheet</a> · <a href="https://pkg.go.dev/net/http">net/http</a></p>
+</div>
+<script>
+document.querySelectorAll('.quiz').forEach(q=>{
+ const fb=q.querySelector('.feedback');
+ q.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+  q.querySelectorAll('button').forEach(x=>x.classList.remove('correct','wrong'));
+  const ok=b.hasAttribute('data-ok');
+  b.classList.add(ok?'correct':'wrong');
+  fb.textContent=ok?'Doğru. Retrieval +1.':'Tekrar dene — yukarıdaki gruba dön.';
+ });
+});
+</script></body></html>

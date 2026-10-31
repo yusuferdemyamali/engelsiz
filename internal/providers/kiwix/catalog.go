@@ -53,7 +53,8 @@ type catalogPage struct {
 
 // Catalog never starts, stops or mutates the content runtime. A traversal is
 // all-or-nothing, including when an upstream page becomes inconsistent.
-func (p *KiwixProvider) Catalog(ctx context.Context) ([]providers.CatalogPackage, error) {
+func (p *KiwixProvider) Catalog(ctx context.Context) (result []providers.CatalogPackage, resultErr error) {
+	defer func() { p.logFailure("catalog", resultErr) }()
 	ctx, cancel := context.WithTimeout(ctx, 15*time.Second)
 	defer cancel()
 	selected := make(map[string]providers.CatalogPackage)

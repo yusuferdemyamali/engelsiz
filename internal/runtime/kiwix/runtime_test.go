@@ -462,8 +462,8 @@ func TestStartupFailureRetainsBothDiagnosticStreams(t *testing.T) {
 	if err == nil {
 		t.Fatal("early exit passed")
 	}
-	if text := r.Status().LastError; !strings.Contains(text, "stdout tail: ") || !strings.Contains(text, "stderr tail: ") || !strings.Contains(text, "stdout stdout") || !strings.Contains(text, "stderr stderr") {
-		t.Fatalf("diagnostic tails missing: %.100s", text)
+	if text := r.Status().LastError; !strings.Contains(text, "stdout bytes captured: ") || !strings.Contains(text, "stderr bytes captured: ") || strings.Contains(text, "stdout stdout") || strings.Contains(text, "stderr stderr") {
+		t.Fatalf("private stream diagnostics missing: %.100s", text)
 	}
 	if text := logs.String(); !strings.Contains(text, "kiwix stdout:") || !strings.Contains(text, "kiwix stderr:") || !strings.Contains(text, "startup failed:") {
 		t.Fatal("failure output absent from logs")
@@ -740,5 +740,31 @@ func TestUnavailableListenerProofCannotBecomeReady(t *testing.T) {
 				t.Fatal("unproved child was not reaped")
 			}
 		})
+	}
+}
+
+func TestRuntimeOutputDiagnosticsOmitQueriesBodiesAndCredentials(t *testing.T) {
+	var logs lockedBuffer
+	logger := log.New(&logs, "", 0)
+	stdout, stderr := &output{label: "stdout", logger: logger}, &output{label: "stderr", logger: logger}
+	secret := "GET /content/search?pattern=private-query https://user:password@example.invalid/token=secret article-body\n"
+	for _, out := range []*output{stdout, stderr} {
+		if n, e := out.Write([]byte(strings.Repeat(secret, 1000))); e != nil || n == 0 {
+			t.Fatal(e)
+		}
+	}
+	child := &child{stdout: stdout, stderr: stderr}
+	for _, text := range []string{logs.String(), child.diagnostics()} {
+		for _, private := range []string{"private-query", "password", "token=", "article-body"} {
+			if strings.Contains(text, private) {
+				t.Fatalf("runtime diagnostic leaked %q", private)
+			}
+		}
+		if len(text) > 1024 {
+			t.Fatalf("unbounded diagnostic summary %d", len(text))
+		}
+	}
+	if !strings.Contains(logs.String(), "content=omitted") || !strings.Contains(child.diagnostics(), "bytes captured:") {
+		t.Fatal("missing safe stream diagnostic")
 	}
 }

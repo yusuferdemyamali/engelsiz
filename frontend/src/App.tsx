@@ -172,7 +172,7 @@ export default function App() {
         ))}
       </nav>
       <p role="status" className={notice ? "mt-6 text-sm leading-6 text-muted-foreground" : "sr-only"}>{notice}</p>
-      {view === "search" ? <SearchView onOpenPackages={() => setView("packages")} /> : view === "downloads" ? <DownloadsView refreshKey={downloadRefresh} /> : view === "packages" ? <PackagesView /> : (
+      {view === "search" ? <SearchView onOpenPackages={() => setView("packages")} /> : view === "downloads" ? <DownloadsView refreshKey={downloadRefresh} /> : view === "packages" ? <PackagesView onOpenDownloads={() => setView("downloads")} /> : (
       <section aria-labelledby="catalog-heading" className="pt-8 sm:pt-10">
         <h2 id="catalog-heading" className="text-2xl font-semibold tracking-tight">Bilgi Paketleri</h2>
         <p className="mt-2 text-lg">Türkçe Wikipedia</p>

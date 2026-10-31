@@ -8,6 +8,7 @@ type Checksum struct {
 	Value     string `json:"value"`
 }
 type Package struct {
+	Active            bool            `json:"active"`
 	ID                string          `json:"id"`
 	DownloadID        string          `json:"downloadId"`
 	Provider          string          `json:"provider"`

@@ -1,9 +1,11 @@
 package kiwix
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -242,5 +244,34 @@ func TestCatalogEmpty(t *testing.T) {
 	packages, err := p.Catalog(context.Background())
 	if err != nil || packages == nil || len(packages) != 0 {
 		t.Fatalf("%+v %v", packages, err)
+	}
+}
+
+func TestProviderFailureDiagnosticsOmitRemoteURLsAndBody(t *testing.T) {
+	var logs bytes.Buffer
+	secret := "https://user:password@example.invalid/?q=private-query&token=secret"
+	p, e := New(Options{Logger: log.New(&logs, "", 0), HTTPClient: &http.Client{Transport: searchTripFunc(func(*http.Request) (*http.Response, error) {
+		return nil, errors.New(secret + strings.Repeat("article-body", 10000))
+	})}})
+	if e != nil {
+		t.Fatal(e)
+	}
+	if _, e = p.Catalog(context.Background()); e == nil {
+		t.Fatal("catalog failure passed")
+	}
+	if _, e = p.ResolveDownload(context.Background(), "private-provider-id"); e == nil {
+		t.Fatal("acquisition failure passed")
+	}
+	text := logs.String()
+	if !strings.Contains(text, "provider catalog failed:") || !strings.Contains(text, "provider acquisition failed:") {
+		t.Fatalf("missing provider diagnostics %s", text)
+	}
+	for _, private := range []string{"password", "private-query", "token=", "article-body", "private-provider-id"} {
+		if strings.Contains(text, private) {
+			t.Fatalf("diagnostic leaked %q", private)
+		}
+	}
+	if len(text) > 1024 {
+		t.Fatalf("unbounded diagnostic %d", len(text))
 	}
 }

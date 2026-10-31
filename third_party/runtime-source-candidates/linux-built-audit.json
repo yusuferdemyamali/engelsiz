@@ -1,0 +1,45 @@
+{
+  "status": "built and source-audited local Linux candidate; not a Windows/desktop release acceptance",
+  "date": "2026-10-31",
+  "runtimeVersion": "3.8.2",
+  "runtimeBinarySha256": "d90ee80c33685187f4fbb4e57284e4ad81666fe374a981bfd1c7fdf1d1541cae",
+  "cpuBaseline": "x86-64-baseline (ELF GNU property)",
+  "kernelAbiNote": "Linux3.2.0",
+  "buildImage": "docker.io/library/ubuntu@sha256:076e7bf82319619f28dd0aa9c02ab34b055ad37100395b4f49a2ffba04fb5e11",
+  "glibc": "2.35-0ubuntu3.15",
+  "gcc": "11.4.0-1ubuntu1~22.04.3",
+  "sourceGitCommits": {
+    "kiwix-tools": "f76e38bdc06b86b73ba8e84a5de234a0d6c3fa3d",
+    "libkiwix": "30adab733771835f25697e4f2ea18dc2eec4e92d",
+    "libzim": "0e95c45ec5ebd758784060111ea5a80a08c3f9c7"
+  },
+  "runtimeArchive": "dist/linux-source-candidate/kiwix-tools_linux-x86_64-3.8.2-known-source.tar.gz",
+  "runtimeArchiveSha256": "fd18dc8e60a1b4c70cda173db15cfea1ffcd1e2ea502aec2de2b4fa2401cbadb",
+  "sourceArchive": "dist/linux-source-candidate/compliance/sources/linux-known-source.tar.gz",
+  "sourceArchiveSha256": "089dfc70cd2e9192cf351b003f4e2d300f7f47e276820ead0f6437175d9feb13",
+  "complianceManifest": "dist/linux-source-candidate/compliance/manifest.json",
+  "complianceManifestSha256": "9dd04c0521e623445f58d571db32f416e9f69a5efbeb9674e8375b24e3557f30",
+  "candidateRuntimeLock": "dist/linux-source-candidate/candidate-runtime-lock.json",
+  "finalLink": {
+    "installedSha256": "d90ee80c33685187f4fbb4e57284e4ad81666fe374a981bfd1c7fdf1d1541cae",
+    "tracedAndStrippedSha256": "d90ee80c33685187f4fbb4e57284e4ad81666fe374a981bfd1c7fdf1d1541cae",
+    "identicalAfterInstallStrip": true
+  },
+  "linkTraceSha256": "9e30f6559f684c9dedd433369fc4d4da1e6608426280e0537284b198a820fa7b",
+  "linkMapSha256": "d17e80bec2e2dfea98ef655bc9e57fea8c907391c3736d4118806d9237bf8565",
+  "verified": {
+    "allSourceBuildStepsCompleted": true,
+    "staticELF": true,
+    "cwdIndependentAppRuntime": true,
+    "realZimSearchAndArticle": true,
+    "embeddedFrontend": true,
+    "cleanShutdown": true,
+    "emptyRootfsWithoutSharedLibraries": true
+  },
+  "unchangedDefaultRuntimePin": true,
+  "limits": [
+    "not bit-for-bit reproduction of upstream binary",
+    "mutable apt/PyPI resolution is recorded, not a promise of bit-reproducible future rebuilds",
+    "clean desktop/browser acceptance and native Windows CI remain separate checks"
+  ]
+}

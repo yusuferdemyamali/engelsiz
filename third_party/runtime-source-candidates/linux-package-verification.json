@@ -1,0 +1,35 @@
+{
+  "package": "dist/linux-source-candidate/release-final/engelsiz-linux-x64.tar.gz",
+  "sha256": "77b1678e50f56901b084765dccbd2ad618aeb8e0a8d2b5eca09efe7bcc7f9a7e",
+  "bytes": 308240346,
+  "includesSourceAndNotices": true,
+  "sourceComponentRecords": 22,
+  "emptyRootfsPassed": true,
+  "smoke": {
+    "date": "2026-10-31",
+    "type": "extracted-package headless smoke; desktop acceptance pending",
+    "cwdIndependent": true,
+    "adjacentRuntime": true,
+    "staticELF": true,
+    "embeddedFrontend": true,
+    "runtime": {
+      "runtime": {
+        "state": "ready",
+        "error": null
+      },
+      "contents": [
+        {
+          "packageId": "0123456789abcdef0123456789abcdef",
+          "href": "/content/content/0123456789abcdef0123456789abcdef/"
+        }
+      ]
+    },
+    "searchStatus": 200,
+    "articleStatus": 200,
+    "profile": "/tmp/engelsiz-linux-bundle-lmb8svg3",
+    "runtimeSha256": "d90ee80c33685187f4fbb4e57284e4ad81666fe374a981bfd1c7fdf1d1541cae",
+    "runtimeVersion": "kiwix-tools 3.8.2\n\nlibkiwix 14.2.0\n+ libzim 9.5.0\n+ libxapian 1.4.23\n+ libcurl 8.4.0\n+ libmicrohttpd 0.9.76\n+ libz 1.3.1\n+ libicu 73.2.0\n+ libpugixml 1.15.0\n\nlibzim 9.5.0\n+ libzstd 1.5.7\n+ liblzma 5.2.6\n+ libxapian 1.4.23\n+ libicu 73.2.0\n",
+    "cleanShutdown": true
+  },
+  "appSha256": "79e5cdcf3fb1df92cfbdc62aef308967949f0f7d972f203ff33738c5bb8ba926"
+}

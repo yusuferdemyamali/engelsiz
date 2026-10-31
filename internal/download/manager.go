@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"encoding/hex"
 	"errors"
+	"log"
 	"net"
 	"net/http"
 	"os"
@@ -15,6 +16,7 @@ import (
 )
 
 type Options struct {
+	Logger     *log.Logger
 	HTTPClient *http.Client
 	Available  func(string) (uint64, error)
 	Write      func(*os.File, []byte) (int, error)
@@ -25,6 +27,7 @@ type worker struct {
 	done   chan struct{}
 }
 type Manager struct {
+	logger     *log.Logger
 	db         *sql.DB
 	dir        string
 	root       *os.Root
@@ -75,7 +78,7 @@ func New(db *sql.DB, directory string, opts Options) (*Manager, error) {
 		}
 		return nil
 	}
-	m := &Manager{db: db, dir: dir, root: root, client: client, available: opts.Available, write: opts.Write, wake: make(chan struct{}, 1), stop: make(chan struct{}), finished: make(chan struct{})}
+	m := &Manager{logger: opts.Logger, db: db, dir: dir, root: root, client: client, available: opts.Available, write: opts.Write, wake: make(chan struct{}, 1), stop: make(chan struct{}), finished: make(chan struct{})}
 	if m.available == nil {
 		m.available = diskAvailable
 	}
@@ -83,6 +86,7 @@ func New(db *sql.DB, directory string, opts Options) (*Manager, error) {
 		m.write = func(f *os.File, b []byte) (int, error) { return f.Write(b) }
 	}
 	if e = m.recover(); e != nil {
+		m.diagnostic("recovery", "", ErrStorage)
 		root.Close()
 		return nil, e
 	}
@@ -151,6 +155,9 @@ func (m *Manager) recover() error {
 		if e = m.save(&r); e != nil {
 			return e
 		}
+		if r.Error != nil {
+			m.diagnostic("recovery", r.ID, r.Error)
+		}
 	}
 	return nil
 }
@@ -167,7 +174,12 @@ func (m *Manager) checkSpace(total *int64, offset int64) error {
 	}
 	return nil
 }
-func (m *Manager) Create(d Descriptor) (Snapshot, error) {
+func (m *Manager) Create(d Descriptor) (snapshot Snapshot, result error) {
+	defer func() {
+		if result != nil {
+			m.diagnostic("create", "", result)
+		}
+	}()
 	m.ops.Lock()
 	defer m.ops.Unlock()
 	if e := m.healthy(); e != nil {
@@ -196,6 +208,7 @@ func (m *Manager) Create(d Descriptor) (Snapshot, error) {
 	if e := m.insert(&r); e != nil {
 		return Snapshot{}, ErrStorage
 	}
+	m.diagnostic("queued", r.ID, nil)
 	m.signal()
 	return r.snapshot(), nil
 }
@@ -223,7 +236,12 @@ func (m *Manager) Get(id string) (Snapshot, error) {
 	}
 	return r.snapshot(), nil
 }
-func (m *Manager) Control(id, action string) (Snapshot, error) {
+func (m *Manager) Control(id, action string) (snapshot Snapshot, result error) {
+	defer func() {
+		if result != nil {
+			m.diagnostic("control", id, result)
+		}
+	}()
 	m.ops.Lock()
 	defer m.ops.Unlock()
 	if e := m.healthy(); e != nil {
@@ -347,6 +365,7 @@ func (m *Manager) loop() {
 			}
 			if e != nil {
 				m.persistErr = e
+				m.diagnostic("queue", "", ErrStorage)
 			}
 			if next == nil {
 				m.mu.Unlock()
@@ -358,6 +377,7 @@ func (m *Manager) loop() {
 			r.Error = nil
 			if e = m.save(&r); e != nil {
 				m.persistErr = e
+				m.diagnostic("checkpoint", r.ID, ErrStorage)
 				m.mu.Unlock()
 				m.ops.Unlock()
 				break
@@ -382,7 +402,9 @@ func (m *Manager) loop() {
 			m.mu.Lock()
 			if saveErr := m.save(&r); saveErr != nil {
 				m.persistErr = saveErr
+				m.diagnostic("checkpoint", r.ID, ErrStorage)
 			}
+			m.diagnostic("transfer", r.ID, e)
 			m.active = nil
 			close(w.done)
 			m.mu.Unlock()
@@ -436,4 +458,27 @@ func validator(r *record) string {
 		return r.LastModified
 	}
 	return ""
+}
+
+// Diagnostics deliberately omit metadata, URLs and error messages. A custom
+// HTTP client or writer may return errors containing credentials or body text.
+func (m *Manager) diagnostic(operation, id string, err error) {
+	if m.logger == nil {
+		return
+	}
+	if decoded, e := hex.DecodeString(id); e != nil || len(decoded) != 16 {
+		id = "unassigned"
+	}
+	code := "ok"
+	if errors.Is(err, context.Canceled) {
+		code = "interrupted"
+	} else if err != nil {
+		switch publicError(err).Code {
+		case "not_found", "invalid_state", "download_exists", "invalid_request", "insufficient_space", "source_unavailable", "storage_error", "ownership_conflict":
+			code = publicError(err).Code
+		default:
+			code = "storage_error"
+		}
+	}
+	m.logger.Printf("download %s: id=%s code=%s", operation, id, code)
 }

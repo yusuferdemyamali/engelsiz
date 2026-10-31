@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ref — App Foundation Cheatsheet</title><link rel="stylesheet" href="../assets/style.css"></head>
+<body><div class="wrap">
+<div class="top">Reference · print-friendly</div>
+<h1>App Foundation Cheatsheet</h1>
+<h2>Lifecycle (app.go)</h2>
+<p><code>Resolve → Ensure → initLogger → database.Open → ListenLoopback(17321) → NewMux + web.Handler → Serve → waitForHealth(10s) → openBrowser → select shutdown</code></p>
+<h2>Portlar</h2>
+<p>Tercih <code>17321</code>, fallback <code>127.0.0.1:0</code>. Sadece loopback.</p>
+<h2>DB (db.go)</h2>
+<p><code>PRAGMA journal_mode=WAL, busy_timeout=5000, foreign_keys=ON</code> → <code>Migrate()</code> → <code>schema_migrations(version)</code>. Tx başına bir <code>.sql</code> dosyası.</p>
+<h2>Web (web.go)</h2>
+<p><code>ENGELSIZ_DEV_PROXY</code> varsa reverse proxy. Yoksa <code>embed dist/</code>. <code>/api/*</code> → 404. Dosya yoksa → <code>index.html</code> (SPA fallback). Dosya yoksa → 503 "frontend not built".</p>
+<h2>Config (dirs.go)</h2>
+<p>Linux: <code>~/.config/engelsiz</code>, <code>~/.local/share/engelsiz</code>, <code>~/.cache/engelsiz</code>. Windows: <code>APPDATA/Engelsiz</code> + <code>LOCALAPPDATA/Engelsiz</code>. <code>ResolveFor(os, getenv, home)</code> test edilebilir.</p>
+<h2>Komutlar</h2>
+<pre><code>go test ./...
+ENGELSIZ_DEV_PROXY=http://localhost:5173 go run ./cmd/engelsiz
+scripts/build-frontend.sh  # frontend/dist üretir</code></pre>
+</div></body></html>

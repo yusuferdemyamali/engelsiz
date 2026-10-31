@@ -1,0 +1,44 @@
+{
+  "status": "candidate sources; not an approved complete compliance bundle",
+  "researchedAt": "2026-10-31",
+  "platform": "windows-amd64",
+  "binarySha256": "fcd01ed2b93e9a68632c7863c83b9f66bf64406a66357be1df7b8b75596f3e45",
+  "buildRecipe": {
+    "commit": "6f3a27d3988c424b5dbb82a29ff508aad0055211",
+    "tag": "r_91",
+    "url": "https://codeload.github.com/kiwix/kiwix-build/tar.gz/6f3a27d3988c424b5dbb82a29ff508aad0055211",
+    "sha256": "c2bb1238965dec74560f651811d6689bc6c0b8b68c8d128c4e260c7194f30740"
+  },
+  "records": [
+    {
+      "name": "kiwix-tools-3.8.1.tar.xz",
+      "url": "https://download.kiwix.org/release/kiwix-tools/kiwix-tools-3.8.1.tar.xz",
+      "sha256": "dd769c9bd3d75b59ad9e451b128187b128da6a10b1241bb2d0325fe4aafe51a3",
+      "bytes": 531416,
+      "verified": true,
+      "verification": "computed from official downloaded source; not a source-to-binary attestation"
+    },
+    {
+      "name": "libkiwix-14.1.1.tar.xz",
+      "url": "https://download.kiwix.org/release/libkiwix/libkiwix-14.1.1.tar.xz",
+      "sha256": "e232f42bba33561493e2d7318c3be60d8508e83a8891a8358135519dedc5ff5a",
+      "bytes": 1123600,
+      "verified": true,
+      "verification": "computed from official downloaded source; not a source-to-binary attestation"
+    },
+    {
+      "name": "libzim-9.4.0.tar.xz",
+      "url": "https://download.openzim.org/release/libzim/libzim-9.4.0.tar.xz",
+      "sha256": "7fa374f4714b23c43afa3fb406d7e21c483d77e8218895e1408e2f037969b6ea",
+      "bytes": 217752,
+      "verified": true,
+      "verification": "computed from official downloaded source; not a source-to-binary attestation"
+    }
+  ],
+  "remaining": [
+    "Review Windows-specific xapian-meson and Boost.Regex source refs",
+    "Obtain ICU74.1 source and original notices for the included Windows ICU binary DLLs",
+    "Obtain authorized app-local Visual C++ redistributables and original redistribution terms",
+    "Include all transitive incorporated-code notices and application dependency notices"
+  ]
+}

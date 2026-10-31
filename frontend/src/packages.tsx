@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react"
 import { buttonClass, downloadRequest, formatBytes, secondaryButtonClass, variantsLabel } from "./downloads"
 import { InstalledContent, RuntimeStatus, useRuntime } from "./runtime"
+import { PackageUpdates, UpdateCheck, useUpdates } from "./updates"
 
 export type Package = {
   id: string
+  active: boolean
   downloadId: string
   provider: string
   providerPackageId: string
@@ -154,8 +156,9 @@ export function PackageState({ item, downloadId, title, variant, manager }: {
   )
 }
 
-export function PackagesView() {
-  const manager = usePackages()
+export function PackagesView({ onOpenDownloads }: { onOpenDownloads?: () => void }) {
+  const updates = useUpdates()
+  const manager = usePackages(updates.revision)
   const runtime = useRuntime()
   return (
     <section aria-labelledby="packages-heading" className="pt-8 sm:pt-10">
@@ -163,7 +166,8 @@ export function PackagesView() {
       <p className="mt-2 max-w-prose text-sm leading-6 text-muted-foreground">
         Kurulumları ve doğrulanmış yerel paketleri çevrimdışıyken de takip edin. Yeni bir kurulum için İndirmeler bölümünü kullanın.
       </p>
-      <RuntimeStatus manager={runtime} installedCount={manager.loading ? null : manager.items.filter((item) => item.status === "installed").length} />
+      <RuntimeStatus manager={runtime} installedCount={manager.loading ? null : manager.items.filter((item) => item.status === "installed" && item.active).length} />
+      <UpdateCheck manager={updates} />
       {manager.error && (
         <div className="mt-6 border-y py-5">
           <p role="alert" className="text-sm leading-6">{manager.error}</p>
@@ -186,7 +190,9 @@ export function PackagesView() {
               </div>
               <p className="text-sm tabular-nums text-muted-foreground">{formatBytes(item.sizeBytes)}</p>
               <PackageState item={item} downloadId={item.downloadId} title={item.title} variant={item.variant} manager={manager} />
-              {item.status === "installed" && <InstalledContent packageId={item.id} title={item.title} variant={variantsLabel(item.variant)} manager={runtime} />}
+              {item.status === "installed" && !item.active && <p className="text-sm leading-6 text-muted-foreground">Bu sürüm cihazınızda korunuyor; etkin içerik olarak kullanılmıyor.</p>}
+              {item.status === "installed" && item.active && <InstalledContent packageId={item.id} title={item.title} variant={variantsLabel(item.variant)} manager={runtime} />}
+              <PackageUpdates item={item} packages={manager.items} manager={updates} onOpenDownloads={onOpenDownloads} />
             </li>
           ))}
         </ul>

@@ -1,0 +1,18 @@
+{
+  "linux-amd64": {
+    "version": "3.8.2",
+    "url": "https://download.kiwix.org/release/kiwix-tools/kiwix-tools_linux-x86_64-3.8.2.tar.gz",
+    "sha256": "b0ae98dd344aa0469a15ab42feff6d5aafb79541a82fb4e2647c74b073123815",
+    "root": "kiwix-tools_linux-x86_64-3.8.2",
+    "executable": "kiwix-serve",
+    "complianceManifestSha256": null
+  },
+  "windows-amd64": {
+    "version": "3.8.1",
+    "url": "https://download.kiwix.org/release/kiwix-tools/kiwix-tools_win-x86_64-3.8.1.zip",
+    "sha256": "fcd01ed2b93e9a68632c7863c83b9f66bf64406a66357be1df7b8b75596f3e45",
+    "root": "",
+    "executable": "kiwix-serve.exe",
+    "complianceManifestSha256": null
+  }
+}

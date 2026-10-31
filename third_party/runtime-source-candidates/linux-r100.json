@@ -1,0 +1,256 @@
+{
+  "status": "candidate sources; not an approved complete compliance bundle",
+  "researchedAt": "2026-10-31",
+  "platform": "linux-amd64",
+  "binarySha256": "b0ae98dd344aa0469a15ab42feff6d5aafb79541a82fb4e2647c74b073123815",
+  "buildRecipe": {
+    "commit": "8062f23fb42454c9e6db319abe71d2add7263de7",
+    "tag": "r_100",
+    "url": "https://codeload.github.com/kiwix/kiwix-build/tar.gz/8062f23fb42454c9e6db319abe71d2add7263de7",
+    "sha256": "4fe1e6f808e280066cb47ab8238ee49e6f763459fd57f7ce0e5329c0b656d485",
+    "releaseJob": "https://github.com/kiwix/kiwix-build/actions/runs/22567605021/job/65373400418",
+    "config": "native_static",
+    "host": "jammy"
+  },
+  "records": [
+    {
+      "recipe": "kiwixbuild/dependencies/docoptcpp.py",
+      "name": "v0.6.3.tar.gz",
+      "sha256": "28af5a0c482c6d508d22b14d588a3b0bd9ff97135f99c2814a5aa3cbff1d6632",
+      "url": "https://github.com/docopt/docopt.cpp/archive/v0.6.3.tar.gz",
+      "computedSha256": "28af5a0c482c6d508d22b14d588a3b0bd9ff97135f99c2814a5aa3cbff1d6632",
+      "verified": true,
+      "bytes": 27598
+    },
+    {
+      "recipe": "kiwixbuild/dependencies/docoptcpp.py",
+      "name": "docopt_0.6.3-3_patch.zip",
+      "sha256": "1f641187f9d3f35b0a5ebd2011876ef8e9b04b69b7b163095dd7dfa16219ad01",
+      "url": "https://wrapdb.mesonbuild.com/v2/docopt_0.6.3-3/get_patch",
+      "computedSha256": "1f641187f9d3f35b0a5ebd2011876ef8e9b04b69b7b163095dd7dfa16219ad01",
+      "verified": true,
+      "bytes": 1393
+    },
+    {
+      "recipe": "kiwixbuild/dependencies/pugixml.py",
+      "name": "pugixml-1.15.tar.gz",
+      "sha256": "2e094287f58de02047b2ef23122904de0e02e3b4e9d6b44952d087e746b25974",
+      "url": "https://dev.kiwix.org/kiwix-build/pugixml-1.15.tar.gz",
+      "computedSha256": "2e094287f58de02047b2ef23122904de0e02e3b4e9d6b44952d087e746b25974",
+      "verified": true,
+      "bytes": 400790
+    },
+    {
+      "recipe": "kiwixbuild/dependencies/zlib.py",
+      "name": "zlib-1.3.1.tar.gz",
+      "sha256": "9a93b2b7dfdac77ceba5a558a580e74667dd6fede4585b91eefb60f03b72df23",
+      "url": "https://dev.kiwix.org/kiwix-build/zlib-1.3.1.tar.gz",
+      "computedSha256": "9a93b2b7dfdac77ceba5a558a580e74667dd6fede4585b91eefb60f03b72df23",
+      "verified": true,
+      "bytes": 1512791
+    },
+    {
+      "recipe": "kiwixbuild/dependencies/zlib.py",
+      "name": "zlib_1.3.1-1_patch.zip",
+      "sha256": "e79b98eb24a75392009cec6f99ca5cdca9881ff20bfa174e8b8926d5c7a47095",
+      "url": "https://dev.kiwix.org/kiwix-build/zlib_1.3.1-1_patch.zip",
+      "computedSha256": "e79b98eb24a75392009cec6f99ca5cdca9881ff20bfa174e8b8926d5c7a47095",
+      "verified": true,
+      "bytes": 2403
+    },
+    {
+      "recipe": "kiwixbuild/dependencies/libcurl.py",
+      "name": "curl-8.4.0.tar.xz",
+      "sha256": "16c62a9c4af0f703d28bda6d7bbf37ba47055ad3414d70dec63e2e6336f2a82d",
+      "url": "https://curl.se/download/curl-8.4.0.tar.xz",
+      "computedSha256": "16c62a9c4af0f703d28bda6d7bbf37ba47055ad3414d70dec63e2e6336f2a82d",
+      "verified": true,
+      "bytes": 2658376
+    },
+    {
+      "recipe": "kiwixbuild/dependencies/libcurl.py",
+      "name": "curl_8.4.0-2_patch.zip",
+      "sha256": "bbb6ae75225c36ef9bb336cface729794c7c070c623a003fff40bd416042ff6e",
+      "url": "https://dev.kiwix.org/libkiwix/curl_8.4.0-2_patch.zip",
+      "computedSha256": "bbb6ae75225c36ef9bb336cface729794c7c070c623a003fff40bd416042ff6e",
+      "verified": true,
+      "bytes": 25561
+    },
+    {
+      "recipe": "kiwixbuild/dependencies/libmicrohttpd.py",
+      "name": "libmicrohttpd-0.9.76.tar.gz",
+      "sha256": "f0b1547b5a42a6c0f724e8e1c1cb5ce9c4c35fb495e7d780b9930d35011ceb4c",
+      "url": "https://dev.kiwix.org/kiwix-build/libmicrohttpd-0.9.76.tar.gz",
+      "computedSha256": "f0b1547b5a42a6c0f724e8e1c1cb5ce9c4c35fb495e7d780b9930d35011ceb4c",
+      "verified": true,
+      "bytes": 2199858
+    },
+    {
+      "recipe": "kiwixbuild/dependencies/libmicrohttpd.py",
+      "name": "libmicrohttpd_0.9.16-3_patch.zip",
+      "sha256": "0954c094a0d4cfe0dd799d8df8a04face6669f7b4d51a7386a9c3e2d37b9c3b3",
+      "url": "https://wrapdb.mesonbuild.com/v2/libmicrohttpd_0.9.76-3/get_patch",
+      "computedSha256": "0954c094a0d4cfe0dd799d8df8a04face6669f7b4d51a7386a9c3e2d37b9c3b3",
+      "verified": true,
+      "bytes": 7808
+    },
+    {
+      "recipe": "kiwixbuild/dependencies/icu4c.py",
+      "name": "icu4c-73_2-src.tgz",
+      "sha256": "818a80712ed3caacd9b652305e01afc7fa167e6f2e94996da44b90c2ab604ce1",
+      "url": "https://github.com/unicode-org/icu/releases/download/release-73-2/icu4c-73_2-src.tgz",
+      "computedSha256": "818a80712ed3caacd9b652305e01afc7fa167e6f2e94996da44b90c2ab604ce1",
+      "verified": true,
+      "bytes": 26519906
+    },
+    {
+      "recipe": "kiwixbuild/dependencies/icu4c.py",
+      "name": "icu4c-73_2-data.zip",
+      "sha256": "ca1ee076163b438461e484421a7679fc33a64cd0a54f9d4b401893fa1eb42701",
+      "url": "https://github.com/unicode-org/icu/releases/download/release-73-2/icu4c-73_2-data.zip",
+      "computedSha256": "ca1ee076163b438461e484421a7679fc33a64cd0a54f9d4b401893fa1eb42701",
+      "verified": true,
+      "bytes": 19990179
+    },
+    {
+      "recipe": "kiwixbuild/dependencies/mustache.py",
+      "name": "Mustache-4.1.tar.gz",
+      "sha256": "acd66359feb4318b421f9574cfc5a511133a77d916d0b13c7caa3783c0bfe167",
+      "url": "https://dev.kiwix.org/kiwix-build/mustache-4.1.tar.gz",
+      "computedSha256": "acd66359feb4318b421f9574cfc5a511133a77d916d0b13c7caa3783c0bfe167",
+      "verified": true,
+      "bytes": 98905
+    },
+    {
+      "recipe": "kiwixbuild/dependencies/xapian.py",
+      "name": "xapian-core-1.4.23.tar.xz",
+      "sha256": "30d3518172084f310dab86d262b512718a7f9a13635aaa1a188e61dc26b2288c",
+      "url": "https://dev.kiwix.org/kiwix-build/xapian-core-1.4.23.tar.xz",
+      "computedSha256": "30d3518172084f310dab86d262b512718a7f9a13635aaa1a188e61dc26b2288c",
+      "verified": true,
+      "bytes": 3024644
+    },
+    {
+      "recipe": "kiwixbuild/dependencies/lzma.py",
+      "name": "xz-5.2.6.tar.gz",
+      "sha256": "a2105abee17bcd2ebd15ced31b4f5eda6e17efd6b10f921a01cda4a44c91b3a0",
+      "url": "https://dev.kiwix.org/kiwix-build/xz-5.2.6.tar.gz",
+      "computedSha256": "a2105abee17bcd2ebd15ced31b4f5eda6e17efd6b10f921a01cda4a44c91b3a0",
+      "verified": true,
+      "bytes": 2069602
+    },
+    {
+      "recipe": "kiwixbuild/dependencies/lzma.py",
+      "name": "liblzma_5.2.6-3_patch.zip",
+      "sha256": "1c71536d364e1a3ce6bea61266576f89cc5cce4d3b9e11f3494417dafa29780b",
+      "url": "https://dev.kiwix.org/kiwix-build/liblzma_5.2.6-3_patch.zip",
+      "computedSha256": "1c71536d364e1a3ce6bea61266576f89cc5cce4d3b9e11f3494417dafa29780b",
+      "verified": true,
+      "bytes": 7598
+    },
+    {
+      "recipe": "kiwixbuild/dependencies/zstd.py",
+      "name": "zstd-1.5.7.tar.gz",
+      "sha256": "eb33e51f49a15e023950cd7825ca74a4a2b43db8354825ac24fc1b7ee09e6fa3",
+      "url": "https://dev.kiwix.org/kiwix-build/zstd-1.5.7.tar.gz",
+      "computedSha256": "eb33e51f49a15e023950cd7825ca74a4a2b43db8354825ac24fc1b7ee09e6fa3",
+      "verified": true,
+      "bytes": 2434947
+    },
+    {
+      "recipe": "kiwixbuild/dependencies/uuid.py",
+      "name": "e2fsprogs-1.47.3.tar.xz",
+      "sha256": "857e6ef800feaa2bb4578fbc810214be5d3c88b072ea53c5384733a965737329",
+      "url": "https://dev.kiwix.org/kiwix-build/e2fsprogs-1.47.3.tar.xz",
+      "computedSha256": "857e6ef800feaa2bb4578fbc810214be5d3c88b072ea53c5384733a965737329",
+      "verified": true,
+      "bytes": 7321540
+    },
+    {
+      "name": "kiwix-tools-3.8.2.tar.xz",
+      "url": "https://download.kiwix.org/release/kiwix-tools/kiwix-tools-3.8.2.tar.xz",
+      "sha256": "1238f85984fb5c98aff646f6cec22b5bcf7c832c31b8a24df07c34f436c929f9",
+      "bytes": 531604,
+      "verified": true,
+      "verification": "computed from official downloaded source; not a source-to-binary attestation"
+    },
+    {
+      "name": "libkiwix-14.2.0.tar.xz",
+      "url": "https://download.kiwix.org/release/libkiwix/libkiwix-14.2.0.tar.xz",
+      "sha256": "6431e3dd31edcfc9a1cf2930a266616e845002882211adfe4c1dab9c28af540b",
+      "bytes": 1126448,
+      "verified": true,
+      "verification": "computed from official downloaded source; not a source-to-binary attestation"
+    },
+    {
+      "name": "libzim-9.5.0.tar.xz",
+      "url": "https://download.openzim.org/release/libzim/libzim-9.5.0.tar.xz",
+      "sha256": "41fdcb748b11f28cdc11cb99c99d9ef462b445fbe354ada2bbe700b31f553819",
+      "bytes": 219208,
+      "verified": true,
+      "verification": "computed from official downloaded source; not a source-to-binary attestation"
+    }
+  ],
+  "remaining": [
+    "Review transitive incorporated-code closure and original notices for the actual binary",
+    "Include recipe patch tree and build instructions",
+    "Include application Go/frontend dependency notices",
+    "No claim of bit-for-bit upstream rebuild; separate isolated source rebuild is being attempted"
+  ],
+  "isolatedBuildAttempt": {
+    "status": "stopped: host static runtime incompatible with product CPU/kernel baseline",
+    "recipeCommit": "8062f23fb42454c9e6db319abe71d2add7263de7",
+    "host": "Linux-7.2.9-2-cachyos-bore-x86_64-with-glibc2.44",
+    "compiler": "g++ (GCC) 16.2.1 20260810",
+    "meson": "1.9.2",
+    "ninja": "1.13.2",
+    "gitSources": {
+      "kiwix-tools_release": {
+        "commit": "f76e38bdc06b86b73ba8e84a5de234a0d6c3fa3d",
+        "remote": "https://github.com/kiwix/kiwix-tools.git",
+        "status": ""
+      },
+      "libkiwix_release": {
+        "commit": "30adab733771835f25697e4f2ea18dc2eec4e92d",
+        "remote": "https://github.com/kiwix/libkiwix.git",
+        "status": ""
+      },
+      "libzim_release": {
+        "commit": "0e95c45ec5ebd758784060111ea5a80a08c3f9c7",
+        "remote": "https://github.com/openzim/libzim.git",
+        "status": ""
+      }
+    },
+    "directory": "/tmp/engelsiz-known-source-build",
+    "command": "kiwix-build kiwix-tools --config native_static --make-release --fast-clone --dont-install-packages --working-dir /tmp/engelsiz-known-source-build --hide-progress",
+    "systemPackagesInstalled": false,
+    "hostRuntime": {
+      "glibc": "2.44+r50+g1848099f063e-2",
+      "gcc": "16.2.1+r23+gd564253eb6c8-1",
+      "packageArchitecture": "x86_64_v4",
+      "libcSharedObjectABI": "Linux 6.1.0",
+      "staticArchivesObserved": [
+        "/usr/lib/libc.a",
+        "/usr/lib/gcc/x86_64-pc-linux-gnu/16/libstdc++.a",
+        "/usr/lib/gcc/x86_64-pc-linux-gnu/16/libgcc.a"
+      ]
+    }
+  },
+  "baselineContainerBuildAttempt": {
+    "status": "in progress; no runtime pin changed",
+    "image": "docker.io/library/ubuntu@sha256:076e7bf82319619f28dd0aa9c02ab34b055ad37100395b4f49a2ffba04fb5e11",
+    "workspace": "/tmp/engelsiz-baseline-source-build",
+    "recipeCommit": "8062f23fb42454c9e6db319abe71d2add7263de7",
+    "vendorFlags": "-O2 -march=x86-64 -mtune=generic",
+    "parallelCompileJobs": 4,
+    "meson": "1.9.2",
+    "libcABINote": "Linux 3.2.0",
+    "hostSystemPackagesInstalled": false,
+    "containerPackages": "provenance/dpkg-packages.tsv",
+    "hostStaticArchiveHashes": "provenance/host-static-archives.sha256",
+    "hostStaticArchiveOwners": "provenance/host-static-archive-owners.txt",
+    "hostSources": "provenance/host-sources",
+    "hostSourceArchiveHashes": "provenance/host-source-archives.sha256",
+    "linkClosureReview": "pending final link"
+  }
+}

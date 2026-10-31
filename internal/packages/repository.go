@@ -69,6 +69,15 @@ func (s *Service) installed(r *record, verified os.FileInfo) error {
 	if !s.directoriesOwned() {
 		return s.fail(r, ErrUnsafe)
 	}
+	// Publish registry status, update readiness and accepted identity under one
+	// service lock so readers cannot observe installed before its snapshot is usable.
+	s.mu.Lock()
+	locked := true
+	defer func() {
+		if locked {
+			s.mu.Unlock()
+		}
+	}()
 	tx, e := s.db.Begin()
 	if e != nil {
 		return e
@@ -90,12 +99,24 @@ func (s *Service) installed(r *record, verified os.FileInfo) error {
 	if e != nil {
 		return e
 	}
+	// A candidate is installed independently of serving selection. Reservation
+	// identity is durable even if the process stopped before download association.
+	if r.InstalledAt == nil {
+		_, e = tx.Exec(`INSERT OR IGNORE INTO active_packages(package_id) SELECT ? WHERE NOT EXISTS (SELECT 1 FROM package_updates WHERE candidate_provider_package_id=? AND state!='cancelled') AND NOT EXISTS (SELECT 1 FROM active_packages a JOIN content_packages p ON p.id=a.package_id WHERE p.provider=? AND p.content_type=? AND p.language=? AND p.variant=?)`, r.ID, r.ProviderPackageID, r.Provider, r.ContentType, r.Language, r.Variant)
+		if e != nil {
+			return e
+		}
+	}
+	_, e = tx.Exec(`UPDATE package_updates SET download_id=?,state='ready',error_code='',error_message='',updated_at=? WHERE candidate_provider_package_id=? AND candidate_version=? AND (state IN ('creating','downloading') OR (state='failed' AND ?))`, r.ID, stamp, r.ProviderPackageID, r.Version, r.InstalledAt == nil)
+	if e != nil {
+		return e
+	}
 	if e = tx.Commit(); e != nil {
 		return e
 	}
-	s.mu.Lock()
 	s.accepted[r.ID] = verified
 	s.mu.Unlock()
+	locked = false
 	if s.opts.OnInstalled != nil {
 		s.opts.OnInstalled()
 	}

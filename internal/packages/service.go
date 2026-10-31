@@ -77,6 +77,9 @@ func New(ctx context.Context, db *sql.DB, dataDir string, opts Options) (*Servic
 	if e != nil {
 		return nil, e
 	}
+	if e = s.recoverUpdates(); e != nil {
+		return nil, e
+	}
 	// Reconcile accepted local work before download.New performs ordinary
 	// transfer recovery. This operation never fetches upstream metadata.
 	rows, e := s.records()
@@ -90,6 +93,9 @@ func New(ctx context.Context, db *sql.DB, dataDir string, opts Options) (*Servic
 		if e = s.run(&r, true); e != nil {
 			return nil, e
 		}
+	}
+	if e = s.recoverUpdates(); e != nil {
+		return nil, e
 	}
 	ok = true
 	return s, nil
@@ -107,6 +113,11 @@ func (s *Service) List(status string) ([]Package, error) {
 	out := []Package{}
 	for _, r := range rows {
 		if status == "" || r.Status == status {
+			var selected int
+			if e = s.db.QueryRow(`SELECT COUNT(*) FROM active_packages WHERE package_id=?`, r.ID).Scan(&selected); e != nil {
+				return nil, download.ErrStorage
+			}
+			r.Active = selected != 0 && r.Status == "installed"
 			out = append(out, r.Package)
 		}
 	}
@@ -211,7 +222,11 @@ func (s *Service) fail(r *record, problem *download.Error) error {
 	r.Status = "failed"
 	r.Error = problem
 	r.InstalledAt = nil
-	return s.save(r)
+	if err := s.save(r); err != nil {
+		return err
+	}
+	_, err := s.db.Exec(`UPDATE package_updates SET state='failed',error_code=?,error_message=?,updated_at=? WHERE download_id=? AND state IN ('creating','downloading')`, problem.Code, problem.Message, now(), r.ID)
+	return err
 }
 func (s *Service) owned(r *record) bool {
 	id, e := hex.DecodeString(r.ID)

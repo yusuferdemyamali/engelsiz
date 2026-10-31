@@ -26,7 +26,8 @@ var _ providers.AcquisitionResolver = (*KiwixProvider)(nil)
 
 // ResolveDownload refetches the catalog so callers only select a package ID;
 // URLs, filenames and exact sizes never come from the browser.
-func (p *KiwixProvider) ResolveDownload(ctx context.Context, packageID string) (providers.DownloadSource, error) {
+func (p *KiwixProvider) ResolveDownload(ctx context.Context, packageID string) (resolved providers.DownloadSource, resultErr error) {
+	defer func() { p.logFailure("acquisition", resultErr) }()
 	ctx, cancel := context.WithTimeout(ctx, 15*time.Second)
 	defer cancel()
 	packages, err := p.Catalog(ctx)
