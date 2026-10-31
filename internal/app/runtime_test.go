@@ -126,6 +126,9 @@ func fixtureProvider(t *testing.T, cfg kiwixfixture.Config) (*kiwix.KiwixProvide
 	if err != nil {
 		t.Fatal(err)
 	}
+	if _, err = db.Exec(`INSERT OR IGNORE INTO active_packages(package_id) VALUES(?)`, id); err != nil {
+		t.Fatal(err)
+	}
 	if err = db.Close(); err != nil {
 		t.Fatal(err)
 	}

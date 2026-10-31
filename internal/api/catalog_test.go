@@ -64,8 +64,8 @@ func TestCatalogMethodAndFailureIsolation(t *testing.T) {
 	if rec.Code != 503 || rec.Body.String() != want {
 		t.Fatalf("error: %d %s", rec.Code, rec.Body)
 	}
-	if !strings.Contains(diagnostics.String(), "upstream secret") {
-		t.Fatal("missing technical diagnostics")
+	if !strings.Contains(diagnostics.String(), "code=catalog_unavailable") || strings.Contains(diagnostics.String(), "upstream secret") {
+		t.Fatalf("missing safe diagnostics or leaked upstream text: %s", diagnostics.String())
 	}
 	for _, path := range []string{"/api/health", "/"} {
 		rec = httptest.NewRecorder()
@@ -88,5 +88,28 @@ func TestCatalogRequestContext(t *testing.T) {
 	handler(rec, httptest.NewRequest(http.MethodGet, "/api/catalog", nil).WithContext(ctx))
 	if !reached || rec.Code != 503 {
 		t.Fatalf("context propagated=%v status=%d", reached, rec.Code)
+	}
+}
+
+func TestCatalogDiagnosticsOmitSensitiveOversizedUpstreamErrors(t *testing.T) {
+	var diagnostics bytes.Buffer
+	secret := "https://user:password@example.invalid/?q=private-search&token=secret"
+	handler := CatalogHandler(catalogStub(func(context.Context) ([]providers.CatalogPackage, error) {
+		return nil, errors.New(secret + strings.Repeat("article body ", 10000))
+	}), log.New(&diagnostics, "", 0))
+	rec := httptest.NewRecorder()
+	handler(rec, httptest.NewRequest("GET", "/api/catalog", nil))
+	if rec.Code != 503 || !strings.Contains(diagnostics.String(), "code=catalog_unavailable") {
+		t.Fatalf("diagnostics %s status %d", diagnostics.String(), rec.Code)
+	}
+	for _, text := range []string{diagnostics.String(), rec.Body.String()} {
+		for _, secret := range []string{"password", "private-search", "token=", "article body"} {
+			if strings.Contains(text, secret) {
+				t.Fatalf("leaked %s", secret)
+			}
+		}
+		if len(text) > 1024 {
+			t.Fatalf("unbounded diagnostics %d", len(text))
+		}
 	}
 }

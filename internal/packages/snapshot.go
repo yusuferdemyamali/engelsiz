@@ -20,12 +20,25 @@ func (s *Service) InstalledSnapshot() ([]InstalledFile, error) {
 	if !s.directoriesOwned() {
 		return nil, download.ErrStorage
 	}
+	return s.snapshot(true)
+}
+
+func (s *Service) snapshot(activeOnly bool) ([]InstalledFile, error) {
 	rows, err := s.records()
 	if err != nil {
 		return nil, download.ErrStorage
 	}
 	out := []InstalledFile{}
 	for _, r := range rows {
+		if activeOnly {
+			var selected int
+			if err := s.db.QueryRow(`SELECT COUNT(*) FROM active_packages WHERE package_id=?`, r.ID).Scan(&selected); err != nil {
+				return nil, download.ErrStorage
+			}
+			if selected == 0 {
+				continue
+			}
+		}
 		accepted := s.accepted[r.ID]
 		if r.Status != "installed" || accepted == nil || !s.owned(&r) {
 			continue

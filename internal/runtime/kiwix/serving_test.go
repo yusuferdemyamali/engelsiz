@@ -1,11 +1,13 @@
 package kiwix
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net"
 	"net/http"
 	"net/http/httptest"
@@ -23,6 +25,8 @@ import (
 
 func TestReplaceCompleteSetAndLoadedSnapshot(t *testing.T) {
 	r, marker := setup(t, fixture.Config{})
+	var lifecycle bytes.Buffer
+	r.opts.Logger = log.New(&lifecycle, "", 0)
 	initial := r.opts.ZIMPaths[0]
 	if err := r.ReplaceZIMPaths(t.Context(), []string{initial, initial}, false); err != nil {
 		t.Fatal(err)
@@ -56,20 +60,7 @@ func TestReplaceCompleteSetAndLoadedSnapshot(t *testing.T) {
 	if status, loaded := r.Snapshot(); status.State != providers.Stopped || len(loaded) != 0 {
 		t.Fatalf("empty=%+v %q", status, loaded)
 	}
-	active := 0
-	for _, event := range fixture.ReadEvents(t, marker) {
-		if event.Kind == "start" {
-			active++
-		} else if event.Kind == "exit" {
-			active--
-		}
-		if active < 0 || active > 1 {
-			t.Fatalf("overlapping/unowned child events: %v", fixture.ReadEvents(t, marker))
-		}
-	}
-	if active != 0 {
-		t.Fatal("empty set did not reap child")
-	}
+	assertReapedGenerations(t, lifecycle.String())
 }
 
 func TestReplaceFailureRequiresExplicitRetryAndChangedSetRecovers(t *testing.T) {

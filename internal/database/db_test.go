@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 	"testing/fstest"
 )
@@ -32,8 +33,8 @@ func TestMigrateFreshAndIdempotent(t *testing.T) {
 	if err := db2.QueryRow(`SELECT COUNT(*) FROM schema_migrations`).Scan(&count); err != nil {
 		t.Fatal(err)
 	}
-	if count != 3 {
-		t.Fatalf("expected 3 applied migrations, got %d", count)
+	if count != 4 {
+		t.Fatalf("expected 4 applied migrations, got %d", count)
 	}
 	db2.Close()
 }
@@ -62,7 +63,12 @@ func TestCorruptDBNoReset(t *testing.T) {
 }
 
 func TestSQLitePragmasAndMetadataPreserved(t *testing.T) {
-	path := filepath.Join(t.TempDir(), "special ?# metadata.db")
+	name := "special ?# metadata.db"
+	if runtime.GOOS == "windows" {
+		// Windows disallows question marks in filenames; percent/hash still exercise URI escaping.
+		name = "special %# Türkçe metadata.db"
+	}
+	path := filepath.Join(t.TempDir(), name)
 	db, err := Open(path)
 	if err != nil {
 		t.Fatal(err)

@@ -162,7 +162,7 @@ func TestPackageHTTPAcceptedDuplicateInstalledAndRequestCancellation(t *testing.
 		keys = append(keys, key)
 	}
 	sort.Strings(keys)
-	want := []string{"checksum", "contentType", "createdAt", "downloadId", "error", "id", "installedAt", "language", "provider", "providerPackageId", "sizeBytes", "status", "title", "updatedAt", "variant", "version"}
+	want := []string{"active", "checksum", "contentType", "createdAt", "downloadId", "error", "id", "installedAt", "language", "provider", "providerPackageId", "sizeBytes", "status", "title", "updatedAt", "variant", "version"}
 	if strings.Join(keys, ",") != strings.Join(want, ",") {
 		t.Fatalf("public package fields: %v", keys)
 	}

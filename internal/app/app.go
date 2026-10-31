@@ -40,7 +40,7 @@ func ListenLoopback(preferred int) (net.Listener, int, error) {
 	if err == nil {
 		return ln, ln.Addr().(*net.TCPAddr).Port, nil
 	}
-	if !errors.Is(err, syscall.EADDRINUSE) {
+	if !addressInUse(err) {
 		return nil, 0, fmt.Errorf("listen %s: %w", addr, err)
 	}
 	fallback, err2 := net.Listen("tcp", "127.0.0.1:0")
@@ -111,6 +111,7 @@ func Run(ctx context.Context, opts Options) (runErr error) {
 		}
 	}})
 	if err != nil {
+		logger.Printf("package initialization failed: code=storage_error cause=%T", err)
 		return fmt.Errorf("initialize packages: %w", err)
 	}
 	// This defer is registered before downloads; package workers need their
@@ -120,8 +121,9 @@ func Run(ctx context.Context, opts Options) (runErr error) {
 			runErr = errors.Join(runErr, fmt.Errorf("close packages: %w", err))
 		}
 	}()
-	manager, err := download.New(db, dirs.DownloadDir, download.Options{})
+	manager, err := download.New(db, dirs.DownloadDir, download.Options{Logger: logger})
 	if err != nil {
+		logger.Printf("download initialization failed: code=storage_error cause=%T", err)
 		return fmt.Errorf("initialize downloads: %w", err)
 	}
 	defer func() {
@@ -165,8 +167,11 @@ func Run(ctx context.Context, opts Options) (runErr error) {
 	mux := api.NewMux()
 	mux.HandleFunc("/api/catalog", api.CatalogHandler(provider, logger))
 	mux.HandleFunc("/api/packages", api.PackagesHandler(packageService))
-	searchProvider, _ := provider.(providers.SearchProvider)
-	mux.HandleFunc("/api/search", api.SearchHandler(searchProvider, packageService))
+	mux.HandleFunc("/api/packages/", api.UpdatePackageHandler(packageService, manager, provider))
+	updatesHandler := api.UpdatesHandler(packageService, manager, provider)
+	mux.HandleFunc("/api/updates", updatesHandler)
+	mux.HandleFunc("/api/updates/", updatesHandler)
+	mux.HandleFunc("/api/search", api.SearchHandler(activation, packageService))
 	mux.HandleFunc("/api/runtime", api.RuntimeHandler(activation, false))
 	mux.HandleFunc("/api/runtime/retry", api.RuntimeHandler(activation, true))
 	resolver, _ := provider.(providers.AcquisitionResolver)
@@ -174,7 +179,7 @@ func Run(ctx context.Context, opts Options) (runErr error) {
 	mux.HandleFunc("/api/downloads", downloadsHandler)
 	mux.HandleFunc("/api/downloads/", downloadsHandler)
 	mux.Handle("/", web.Handler())
-	server := &http.Server{Handler: api.WithContent(mux, activation.serving, logger), ReadHeaderTimeout: 5 * time.Second}
+	server := &http.Server{Handler: api.WithContent(mux, activation, logger), ReadHeaderTimeout: 5 * time.Second}
 	defer func() {
 		if err := shutdown(server, logger); err != nil {
 			runErr = errors.Join(runErr, err)
@@ -310,12 +315,4 @@ func openBrowser(url string) (*exec.Cmd, error) {
 		cmd = exec.Command("xdg-open", url)
 	}
 	return cmd, cmd.Start()
-}
-
-func initLogger(path string) (*log.Logger, *os.File, error) {
-	f, err := os.OpenFile(path, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0o644)
-	if err != nil {
-		return nil, nil, fmt.Errorf("open log file %s: %w", path, err)
-	}
-	return log.New(io.MultiWriter(os.Stderr, f), "", log.LstdFlags), f, nil
 }

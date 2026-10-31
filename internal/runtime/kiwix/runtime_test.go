@@ -1,6 +1,7 @@
 package kiwix
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -27,7 +28,11 @@ func setup(t *testing.T, cfg fixture.Config) (*Runtime, string) {
 	binary := fixture.Build(t)
 	marker := filepath.Join(t.TempDir(), "events")
 	cfg.MarkerPath = marker
-	r, err := New(Options{BinaryPath: binary, ZIMPaths: []string{fixture.WriteConfig(t, cfg)}, StartupTimeout: time.Second, StopGrace: 50 * time.Millisecond})
+	timeout := time.Second
+	if runtime.GOOS == "windows" {
+		timeout = 5 * time.Second
+	}
+	r, err := New(Options{BinaryPath: binary, ZIMPaths: []string{fixture.WriteConfig(t, cfg)}, StartupTimeout: timeout, StopGrace: 50 * time.Millisecond})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -113,6 +118,7 @@ func TestEmptyAndResolution(t *testing.T) {
 
 func TestRelativeOverrideFrozenAndPathsSeparate(t *testing.T) {
 	r, marker := setup(t, fixture.Config{ReadyDelay: 50 * time.Millisecond})
+	t.Chdir(filepath.Dir(r.opts.BinaryPath))
 	cwd, err := os.Getwd()
 	if err != nil {
 		t.Fatal(err)
@@ -123,7 +129,7 @@ func TestRelativeOverrideFrozenAndPathsSeparate(t *testing.T) {
 	}
 	extra := filepath.Join(t.TempDir(), "- literal ; $(touch should-not-exist).zim")
 	os.WriteFile(extra, []byte("opaque"), 0600)
-	r2, err := New(Options{BinaryPath: rel, ZIMPaths: []string{r.opts.ZIMPaths[0], extra}, StartupTimeout: time.Second, StopGrace: 50 * time.Millisecond})
+	r2, err := New(Options{BinaryPath: rel, ZIMPaths: []string{r.opts.ZIMPaths[0], extra}, StartupTimeout: r.opts.StartupTimeout, StopGrace: 50 * time.Millisecond})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -162,8 +168,15 @@ func TestStartupFailuresAndCancellation(t *testing.T) {
 		{"cancel", fixture.Config{ReadyDelay: 3 * time.Second}, true},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
+			timeout := 200 * time.Millisecond
+			if runtime.GOOS == "windows" {
+				timeout = 5 * time.Second
+				if tc.cfg.ReadyDelay > 0 {
+					tc.cfg.ReadyDelay = 15 * time.Second
+				}
+			}
 			r, marker := setup(t, tc.cfg)
-			r.opts.StartupTimeout = 200 * time.Millisecond
+			r.opts.StartupTimeout = timeout
 			ctx, cancel := context.WithCancel(context.Background())
 			defer cancel()
 			if tc.cancel {
@@ -345,7 +358,12 @@ func TestRestartReapsBeforeReplacementAndSentinelSurvives(t *testing.T) {
 		t.Fatal("old child not reaped")
 	}
 	events := fixture.ReadEvents(t, marker)
-	if len(events) != 3 || events[0].Kind != "start" || events[1].Kind != "exit" || events[2].Kind != "start" || events[1].PID != events[0].PID || events[2].PID == events[0].PID {
+	if runtime.GOOS == "windows" {
+		// TerminateProcess cannot emit an exit marker. old.done above proves Wait completed.
+		if len(events) != 2 || events[0].Kind != "start" || events[1].Kind != "start" || events[0].PID == events[1].PID {
+			t.Fatalf("restart events=%v", events)
+		}
+	} else if len(events) != 3 || events[0].Kind != "start" || events[1].Kind != "exit" || events[2].Kind != "start" || events[1].PID != events[0].PID || events[2].PID == events[0].PID {
 		t.Fatalf("restart order=%v", events)
 	}
 	if err := r.Stop(context.Background()); err != nil {
@@ -462,8 +480,8 @@ func TestStartupFailureRetainsBothDiagnosticStreams(t *testing.T) {
 	if err == nil {
 		t.Fatal("early exit passed")
 	}
-	if text := r.Status().LastError; !strings.Contains(text, "stdout tail: ") || !strings.Contains(text, "stderr tail: ") || !strings.Contains(text, "stdout stdout") || !strings.Contains(text, "stderr stderr") {
-		t.Fatalf("diagnostic tails missing: %.100s", text)
+	if text := r.Status().LastError; !strings.Contains(text, "stdout bytes captured: ") || !strings.Contains(text, "stderr bytes captured: ") || strings.Contains(text, "stdout stdout") || strings.Contains(text, "stderr stderr") {
+		t.Fatalf("private stream diagnostics missing: %.100s", text)
 	}
 	if text := logs.String(); !strings.Contains(text, "kiwix stdout:") || !strings.Contains(text, "kiwix stderr:") || !strings.Contains(text, "startup failed:") {
 		t.Fatal("failure output absent from logs")
@@ -471,7 +489,9 @@ func TestStartupFailureRetainsBothDiagnosticStreams(t *testing.T) {
 }
 
 func TestStopAndRestartSerialization(t *testing.T) {
-	r, marker := setup(t, fixture.Config{})
+	r, _ := setup(t, fixture.Config{})
+	var lifecycle bytes.Buffer
+	r.opts.Logger = log.New(&lifecycle, "", 0)
 	if err := r.EnsureStarted(context.Background()); err != nil {
 		t.Fatal(err)
 	}
@@ -490,20 +510,7 @@ func TestStopAndRestartSerialization(t *testing.T) {
 	if err := r.Stop(context.Background()); err != nil {
 		t.Fatal(err)
 	}
-	active := 0
-	for _, e := range fixture.ReadEvents(t, marker) {
-		if e.Kind == "start" {
-			active++
-			if active > 1 {
-				t.Fatal("overlapping process generations")
-			}
-		} else if e.Kind == "exit" {
-			active--
-		}
-	}
-	if active != 0 {
-		t.Fatalf("unreaped markers: %d", active)
-	}
+	assertReapedGenerations(t, lifecycle.String())
 }
 
 func TestCollisionAfterSpawnDoesNotAdoptListener(t *testing.T) {
@@ -740,5 +747,52 @@ func TestUnavailableListenerProofCannotBecomeReady(t *testing.T) {
 				t.Fatal("unproved child was not reaped")
 			}
 		})
+	}
+}
+
+func TestRuntimeOutputDiagnosticsOmitQueriesBodiesAndCredentials(t *testing.T) {
+	var logs lockedBuffer
+	logger := log.New(&logs, "", 0)
+	stdout, stderr := &output{label: "stdout", logger: logger}, &output{label: "stderr", logger: logger}
+	secret := "GET /content/search?pattern=private-query https://user:password@example.invalid/token=secret article-body\n"
+	for _, out := range []*output{stdout, stderr} {
+		if n, e := out.Write([]byte(strings.Repeat(secret, 1000))); e != nil || n == 0 {
+			t.Fatal(e)
+		}
+	}
+	child := &child{stdout: stdout, stderr: stderr}
+	for _, text := range []string{logs.String(), child.diagnostics()} {
+		for _, private := range []string{"private-query", "password", "token=", "article-body"} {
+			if strings.Contains(text, private) {
+				t.Fatalf("runtime diagnostic leaked %q", private)
+			}
+		}
+		if len(text) > 1024 {
+			t.Fatalf("unbounded diagnostic summary %d", len(text))
+		}
+	}
+	if !strings.Contains(logs.String(), "content=omitted") || !strings.Contains(child.diagnostics(), "bytes captured:") {
+		t.Fatal("missing safe stream diagnostic")
+	}
+}
+
+// Parent logs include completed Wait calls even when Windows terminates a child
+// without letting it write its own exit marker.
+func assertReapedGenerations(t *testing.T, lifecycle string) {
+	t.Helper()
+	active := 0
+	for _, line := range strings.Split(lifecycle, "\n") {
+		if strings.HasPrefix(line, "kiwix start:") {
+			active++
+		}
+		if strings.HasPrefix(line, "kiwix exit:") {
+			active--
+		}
+		if active < 0 || active > 1 {
+			t.Fatalf("overlapping/unowned generations: %s", lifecycle)
+		}
+	}
+	if active != 0 {
+		t.Fatalf("unreaped generations: %s", lifecycle)
 	}
 }

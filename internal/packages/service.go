@@ -30,6 +30,7 @@ type Service struct {
 	ctx                  context.Context
 	cancel               context.CancelFunc
 	mu                   sync.Mutex
+	settled              *sync.Cond
 	wg                   sync.WaitGroup
 	active               map[string]bool
 	accepted             map[string]os.FileInfo
@@ -53,6 +54,7 @@ func New(ctx context.Context, db *sql.DB, dataDir string, opts Options) (*Servic
 	}
 	work, cancel := context.WithCancel(ctx)
 	s := &Service{db: db, dataDir: absolute, root: root, ctx: work, cancel: cancel, active: map[string]bool{}, accepted: map[string]os.FileInfo{}, opts: opts}
+	s.settled = sync.NewCond(&s.mu)
 	ok := false
 	defer func() {
 		if !ok {
@@ -77,6 +79,9 @@ func New(ctx context.Context, db *sql.DB, dataDir string, opts Options) (*Servic
 	if e != nil {
 		return nil, e
 	}
+	if e = s.recoverUpdates(); e != nil {
+		return nil, e
+	}
 	// Reconcile accepted local work before download.New performs ordinary
 	// transfer recovery. This operation never fetches upstream metadata.
 	rows, e := s.records()
@@ -90,6 +95,9 @@ func New(ctx context.Context, db *sql.DB, dataDir string, opts Options) (*Servic
 		if e = s.run(&r, true); e != nil {
 			return nil, e
 		}
+	}
+	if e = s.recoverUpdates(); e != nil {
+		return nil, e
 	}
 	ok = true
 	return s, nil
@@ -107,6 +115,11 @@ func (s *Service) List(status string) ([]Package, error) {
 	out := []Package{}
 	for _, r := range rows {
 		if status == "" || r.Status == status {
+			var selected int
+			if e = s.db.QueryRow(`SELECT COUNT(*) FROM active_packages WHERE package_id=?`, r.ID).Scan(&selected); e != nil {
+				return nil, download.ErrStorage
+			}
+			r.Active = selected != 0 && r.Status == "installed"
 			out = append(out, r.Package)
 		}
 	}
@@ -131,17 +144,29 @@ func (s *Service) Install(m *download.Manager, id string) (Package, bool, error)
 	if !s.directoriesOwned() {
 		return Package{}, false, ErrUnsafe
 	}
-	r, e := s.get(id)
-	if e == nil {
-		if r.Status == "installed" {
+	var r record
+	var e error
+	for {
+		if s.closed || s.ctx.Err() != nil || s.persistErr != nil {
+			return Package{}, false, download.ErrStorage
+		}
+		r, e = s.get(id)
+		if e != nil && !errors.Is(e, sql.ErrNoRows) {
+			return Package{}, false, download.ErrStorage
+		}
+		if e == nil && r.Status == "installed" {
 			return r.Package, true, nil
 		}
-		if s.active[id] {
+		if !s.active[id] {
+			break
+		}
+		if r.Status != "failed" {
 			return r.Package, false, nil
 		}
-	}
-	if e != nil && !errors.Is(e, sql.ErrNoRows) {
-		return Package{}, false, download.ErrStorage
+		// Failure can become durable before the worker has completed its final
+		// update bookkeeping. An explicit retry must wait for that worker rather
+		// than report acceptance without starting another attempt.
+		s.settled.Wait()
 	}
 	a, e := m.ClaimCompleted(id, id)
 	if e != nil {
@@ -186,6 +211,7 @@ func (s *Service) Install(m *download.Manager, id string) (Package, bool, error)
 		s.mu.Lock()
 		defer s.mu.Unlock()
 		delete(s.active, id)
+		defer s.settled.Broadcast()
 		if e != nil && !errors.Is(e, context.Canceled) {
 			s.persistErr = e
 			if s.opts.Logger != nil {
@@ -211,7 +237,11 @@ func (s *Service) fail(r *record, problem *download.Error) error {
 	r.Status = "failed"
 	r.Error = problem
 	r.InstalledAt = nil
-	return s.save(r)
+	if err := s.save(r); err != nil {
+		return err
+	}
+	_, err := s.db.Exec(`UPDATE package_updates SET state='failed',error_code=?,error_message=?,updated_at=? WHERE download_id=? AND state IN ('creating','downloading')`, problem.Code, problem.Message, now(), r.ID)
+	return err
 }
 func (s *Service) owned(r *record) bool {
 	id, e := hex.DecodeString(r.ID)

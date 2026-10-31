@@ -4,6 +4,20 @@
 
 **Offline Knowledge for When the Internet Isn't There.**
 
+## Linux ön sürümü — v0.1.0-alpha.1
+
+[Linux x86_64 paketini indir](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.1/engelsiz-linux-x64.tar.gz) · [SHA-256](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.1/engelsiz-linux-x64.tar.gz.sha256) · [Sürüm notları](https://github.com/yusuferdemyamali/engelsiz/releases/tag/v0.1.0-alpha.1)
+
+Bu ilk Linux ön sürümü Türkçe Wikipedia katalog, indirme/devam ettirme, doğrulama, offline arama/okuma ve güvenli içerik güncellemesini içerir. Go, Node, SQLite veya Kiwix'i ayrıca kurmanız gerekmez. Linux x86_64, kernel 4.4+ ve bir masaüstü tarayıcısı/opener gerekir.
+
+```sh
+sha256sum -c engelsiz-linux-x64.tar.gz.sha256
+tar -xzf engelsiz-linux-x64.tar.gz
+./engelsiz/engelsiz
+```
+
+Wikipedia verisi pakete dahil değildir; ilk indirme için bağlantı ve yeterli disk alanı gerekir. Kurulu içerik daha sonra offline kullanılabilir. Paket, runtime kaynak kodu ve lisanslarını da içerdiği için büyüktür. Windows installer ve tam v0.1 platform kabul testleri üzerinde çalışma sürüyor. Ayrıntılar: [release doğrulaması](docs/release-validation.md).
+
 Engelsiz; internet bağlantısının olmadığı, kesildiği veya bilgiye erişimin teknik ya da idari nedenlerle kısıtlandığı durumlarda bilgiye erişimi sürdürebilmek için geliştirilen açık kaynaklı, offline-first bir projedir.
 
 Amaç; Wikipedia, eğitim içerikleri, haritalar, acil durum kaynakları ve diğer açık bilgi arşivlerini yerel olarak saklayabilen, bunlar üzerinde arama yapabilen ve yerel çalışan yapay zekâ modelleriyle etkileşime geçebilen bağımsız bir sistem oluşturmaktır.

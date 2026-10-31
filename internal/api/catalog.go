@@ -26,7 +26,7 @@ func CatalogHandler(provider interface {
 		packages, err := provider.Catalog(r.Context())
 		if err != nil {
 			if logger != nil {
-				logger.Printf("catalog unavailable: %v", err)
+				logger.Printf("catalog unavailable: code=catalog_unavailable cause=%T", err)
 			}
 			w.WriteHeader(http.StatusServiceUnavailable)
 			_ = json.NewEncoder(w).Encode(map[string]any{"error": map[string]string{"code": "catalog_unavailable", "message": "Katalog şu anda yenilenemiyor. Lütfen tekrar deneyin."}})

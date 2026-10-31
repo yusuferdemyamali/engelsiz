@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="Engelsiz amblemi">
+  <circle cx="48" cy="44" r="34" fill="none" stroke="#E6D7A3" stroke-width="9" opacity="0.92"/>
+  <circle cx="48" cy="44" r="34" fill="none" stroke="#2A2A24" stroke-width="9" stroke-dasharray="2 5" opacity="0.35"/>
+  <circle cx="52" cy="40" r="13" fill="#8B4E2E"/>
+  <path d="M18 58 L36 38 L44 48 L54 34 L64 46 L72 40 L78 58 Z" fill="#211F1B" stroke="#C4A484" stroke-width="1" opacity="1"/>
+  <path d="M48 58 L40 78 L56 78 Z" fill="#E6D7A3" opacity="0.92"/>
+  <path d="M47 66 L49 66 L50 70 L46 70 Z M45.5 72 L50.5 72 L52 76 L44 76 Z" fill="#2A2A24"/>
+</svg>

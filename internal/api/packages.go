@@ -23,8 +23,12 @@ func packageFailure(w http.ResponseWriter, e error) {
 		status = 400
 	case "not_found":
 		status = 404
-	case "invalid_state", "ownership_conflict", "target_collision":
+	case "invalid_state", "download_exists", "ownership_conflict", "target_collision":
 		status = 409
+	case "source_unavailable":
+		status = 502
+	case "insufficient_space":
+		status = 507
 	case "metadata_unavailable", "checksum_unavailable":
 		status = 422
 	}

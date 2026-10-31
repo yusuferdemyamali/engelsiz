@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>0002 — Config Resolve: XDG / Windows ayrımı</title>
+<link rel="stylesheet" href="../assets/style.css"></head>
+<body><div class="wrap">
+<div class="top">Lesson 0002 · application-foundation · ~20 dk deep-dive</div>
+<h1>Config Resolve: <code>ResolveFor</code> XDG / Windows ayrımı</h1>
+<p class="meta">Mission: boot yollarını ezberden çizmek · Kaynak: <code>internal/config/dirs.go:23-80</code>, test: <code>internal/config/dirs_test.go:14-92</code> · Önceki: <a href="./0001-app-lifecycle.html">0001 App Lifecycle</a></p>
+
+<h2>Tek kazanım</h2>
+<p>Bu ders bitince <code>ResolveFor(os, getenv, home)</code> imzasını neden böyle olduğunu ve Linux vs Windows kök farkını tabloyla anlatacaksın. Hepsi <a href="../reference/app-foundation-cheatsheet.html">cheatsheet</a>'te özetli.</p>
+
+<div class="diagram"><strong>Kökler:</strong><br>
+Linux: <code>XDG_CONFIG_HOME → ~/.config</code> · <code>XDG_DATA_HOME → ~/.local/share</code> · <code>XDG_CACHE_HOME → ~/.cache</code><br>
+Windows: <code>APPDATA → Roaming</code> · <code>LOCALAPPDATA → Local</code> · CacheRoot = DataRoot<br>
+Alt: <code>config/ · logs/ · downloads/ · content/ · runtime/ · cache/ · engelsiz.db</code></div>
+
+<h2>1. İmza neden 3 parametre?</h2>
+<pre><code>func Resolve() (AppDirs, error) {
+  return ResolveFor(runtime.GOOS, os.Getenv, homeDir())
+}
+// dirs.go:23-25</code></pre>
+<p><code>Resolve()</code> gerçek dünyayı bağlar: OS + env + home. <code>ResolveFor</code> ise saf fonksiyon gibi davranır — test <code>fakeEnv(map)</code> verip <code>"linux"/"windows"</code> taklit eder (<code>dirs_test.go:10-12</code>). <code>runtime.GOOS</code>'u parametre yapmak, Windows dalını Linux'ta test etmeyi sağlar.</p>
+<pre><code>func fakeEnv(vars map[string]string) func(string) string {
+  return func(k string) string { return vars[k] }
+}</code></pre>
+
+<h2>2. Linux dalı — XDG + fallback</h2>
+<pre><code>configHome := getenv("XDG_CONFIG_HOME")
+if configHome == "" {
+  configHome = filepath.Join(home, ".config")
+}
+// aynı pattern: XDG_DATA_HOME → ~/.local/share
+// XDG_CACHE_HOME → ~/.cache
+// dirs.go:53-64</code></pre>
+<p>Boş string = tanımsız sayılır. Fallback hep <code>home</code> tabanlı, asla kaynak ağaca yazmaz — test bunu <code>"cmd" içermez</code> diye doğrular (<code>dirs_test.go:32-36</code>).</p>
+<p>Kritik detay: <code>LogDir = dataRoot/logs</code> (<code>dirs.go:72</code>). Yani Linux'ta log, config'de değil datada. <code>DBPath = dataRoot/engelsiz.db</code>, <code>CacheDir = cacheRoot/cache</code>.</p>
+
+<h2>3. Windows dalı — Roaming vs Local</h2>
+<pre><code>if osName == "windows" {
+  appData := getenv("APPDATA") // boşsa ~/AppData/Roaming
+  localAppData := getenv("LOCALAPPDATA") // boşsa ~/AppData/Local
+  configRoot := filepath.Join(appData, "Engelsiz")
+  dataRoot := filepath.Join(localAppData, "Engelsiz")
+  // dirs.go:29-40</code></pre>
+<p>Roaming = makineden makineye gezen ayar. Local = büyük veri (DB, download). Bu yüzden <code>ConfigRoot ≠ DataRoot</code> burada da korunur, ama <code>CacheRoot = DataRoot</code> olur (<code>dirs.go:42</code>).</p>
+<p>Kritik fark: <code>LogDir = configRoot/logs</code> (<code>dirs.go:44</code>) — Linux'tan farklı! Windows log'u Roaming altında. <code>DBPath</code> yine <code>dataRoot</code> altında (<code>dirs_test.go:69-71</code> bunu assert eder).</p>
+
+<h2>4. Ensure() ne garanti eder?</h2>
+<pre><code>func (d AppDirs) Ensure() error {
+  for _, dir := range []string{d.ConfigDir, d.LogDir,
+    d.DownloadDir, d.ContentDir, d.RuntimeDir, d.CacheDir} {
+    os.MkdirAll(dir, 0o755)
+    os.MkdirAll(filepath.Dir(d.DBPath), 0o755)
+  }
+}
+// dirs.go:82-99, test dirs_test.go:74-92</code></pre>
+<p><code>app.Run</code> içinde <code>Resolve → Ensure</code> ilk iki adım (<code>app.go:45-50</code>). <code>Ensure</code> idempotent: yoksa yarat, varsa dokunma. DB dosyasını yaratmaz, sadece klasörünü.</p>
+
+<h2>5. Birincil kaynak</h2>
+<p>Oku: <a href="https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html">XDG Base Directory Spec</a> — 5 dk, <code>XDG_CONFIG_HOME / XDG_DATA_HOME / XDG_CACHE_HOME</code> tanımı. Go tarafı: <a href="https://pkg.go.dev/os#UserHomeDir">os.UserHomeDir</a> + <a href="https://pkg.go.dev/path/filepath#Join">filepath.Join</a>.</p>
+
+<h2>6. Retrieval — quiz</h2>
+<div class="quiz"><strong>Q1. ResolveFor neden os/getenv/home alır?</strong>
+<button data-ok="1">Test için bağımlılığı dışarıdan alır</button>
+<button>Hız için dosya yolunu kısaltır</button>
+<button>Log için ek dosya oluşturur</button>
+<div class="feedback"></div></div>
+
+<div class="quiz"><strong>Q2. Linux'ta XDG boşsa ne olur?</strong>
+<button>Program hemen hata verip kapanır</button>
+<button data-ok="1">Ev dizininde varsayılan yolu kullanır</button>
+<button>Geçici dizinde yeni yol oluşturur</button>
+<div class="feedback"></div></div>
+
+<div class="quiz"><strong>Q3. Windows'ta LogDir nerededir?</strong>
+<button>Veri kökünde logs altında durur</button>
+<button>Önbellek kökünde cache altında durur</button>
+<button data-ok="1">Yapılandırma kökünde logs altında durur</button>
+<div class="feedback"></div></div>
+
+<hr>
+<div class="next"><strong>Sonraki (2 dk):</strong> <code>internal/config/dirs_test.go:14-53</code> satırlarını oku, <code>TestResolveLinuxXDG</code> içindeki 3 path assert'ini kağıda yaz. Takıldığın yeri sor — ben öğretmenim, follow-up sor.</div>
+<p class="meta">Ref: <a href="./0001-app-lifecycle.html">0001</a> · <a href="../reference/app-foundation-cheatsheet.html">cheatsheet</a> · <a href="https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html">XDG spec</a></p>
+</div>
+<script>
+document.querySelectorAll('.quiz').forEach(q=>{
+ const fb=q.querySelector('.feedback');
+ q.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+  q.querySelectorAll('button').forEach(x=>x.classList.remove('correct','wrong'));
+  const ok=b.hasAttribute('data-ok');
+  b.classList.add(ok?'correct':'wrong');
+  fb.textContent=ok?'Doğru. Retrieval +1.':'Tekrar dene — yukarıdaki dal tablosuna dön.';
+ });
+});
+</script></body></html>

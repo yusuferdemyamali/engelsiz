@@ -641,14 +641,14 @@ func (w *output) Write(p []byte) (int, error) {
 		w.tail = append(w.tail, p...)
 	}
 	w.mu.Unlock()
-	for len(p) > 0 {
-		chunk := min(len(p), 4096)
-		w.logger.Printf("kiwix %s: %s", w.label, p[:chunk])
-		p = p[chunk:]
+	// Runtime access/error output can contain article paths, queries or remote
+	// bodies. Record stream activity, never its untrusted text.
+	if w.logger != nil {
+		w.logger.Printf("kiwix %s: bytes=%d content=omitted", w.label, n)
 	}
 	return n, nil
 }
 func (w *output) snapshot() string { w.mu.Lock(); defer w.mu.Unlock(); return string(w.tail) }
 func (c *child) diagnostics() string {
-	return fmt.Sprintf("; stdout tail: %s; stderr tail: %s", c.stdout.snapshot(), c.stderr.snapshot())
+	return fmt.Sprintf("; stdout bytes captured: %d; stderr bytes captured: %d", len(c.stdout.snapshot()), len(c.stderr.snapshot()))
 }

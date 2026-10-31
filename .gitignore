@@ -16,3 +16,5 @@ logs/
 *.log
 .DS_Store
 Thumbs.db
+
+/scripts/**/__pycache__/

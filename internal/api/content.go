@@ -152,7 +152,7 @@ func ContentHandler(backend ContentBackend, logger *log.Logger) http.Handler {
 			},
 			ErrorHandler: func(w http.ResponseWriter, r *http.Request, err error) {
 				if logger != nil {
-					logger.Printf("content request failed: %v", err)
+					logger.Printf("content request failed: code=content_proxy_failed cause=%T", err)
 				}
 				contentFailure(w, 502)
 			},

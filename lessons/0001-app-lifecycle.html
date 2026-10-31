@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>0001 — App Lifecycle: Run() baştan sona</title>
+<link rel="stylesheet" href="../assets/style.css"></head>
+<body><div class="wrap">
+<div class="top">Lesson 0001 · application-foundation · ~12 dk</div>
+<h1>App Lifecycle: <code>Run()</code> baştan sona</h1>
+<p class="meta">Mission: bu branch'in nasıl boot ettiğini ezberden çizebilmek · Kaynak: <code>internal/app/app.go:44-127</code></p>
+
+<h2>Tek kazanım</h2>
+<p>Bu ders bitince <code>Run(ctx, opts)</code> içindeki 7 adımı sırayla sayacaksın. Hepsi <a href="../reference/app-foundation-cheatsheet.html">cheatsheet</a>'te de var.</p>
+
+<div class="diagram"><strong>Akış:</strong> Resolve → Ensure → logger → Open DB → ListenLoopback(17321) → mux+web → waitForHealth → browser → signal bekle → shutdown</div>
+
+<h2>1. Kod</h2>
+<pre><code>dirs := config.Resolve()      // XDG / APPDATA yolları
+dirs.Ensure()                 // mkdir -p hepsi
+logger := initLogger(dirs.LogPath)
+db := database.Open(dirs.DBPath)  // WAL + migrate
+ln, port := ListenLoopback(17321) // doluysa :0 fallback
+mux := api.NewMux()           // /api/health
+mux.Handle("/", web.Handler())// dist/ ya da dev proxy
+waitForHealth(baseURL+"/api/health", 10s)
+openBrowser(baseURL) unless --no-browser
+select { ctx.Done / SIGINT / serverErr } → shutdown()</code></pre>
+<p>Neden health self-check? Server <code>Serve(ln)</code> goroutine'da başlıyor (<code>app.go:81-86</code>). Browser açmadan önce gerçekten cevap verdiğini kanıtlıyor. Başarısızsa logla + kapat + hata dön (<code>app.go:89-93</code>).</p>
+<p>Neden loopback + fallback? <code>127.0.0.1:17321</code> tercih, doluysa <code>127.0.0.1:0</code> ile rastgele port (<code>app.go:30-42</code>). Dışarıya kapalı, tek kullanıcı.</p>
+
+<h2>2. Birincil kaynak</h2>
+<p>Oku: <a href="https://pkg.go.dev/net/http#Server.Shutdown">net/http Server.Shutdown</a> — graceful shutdown bu derste kritik. 5 dk.</p>
+
+<h2>3. Retrieval — quiz</h2>
+<div class="quiz" id="q1"><strong>Q1. <code>waitForHealth</code> neden var?</strong>
+<button data-ok="1">Browser öncesi canlılığı kanıtlamak için</button>
+<button>Log dosyasını erken oluşturmak için</button>
+<button>Port çakışmasını sessizce çözmek için</button>
+<div class="feedback"></div></div>
+
+<div class="quiz" id="q2"><strong>Q2. Port 17321 doluysa ne olur?</strong>
+<button>Program hata verip hemen kapanır</button>
+<button data-ok="1">Rastgele boş porta geçip devam eder</button>
+<button>Tarayıcıyı gizli modda yeniden dener</button>
+<div class="feedback"></div></div>
+
+<div class="quiz" id="q3"><strong>Q3. <code>web.Handler</code> <code>/api/*</code>'a ne yapar?</strong>
+<button data-ok="0">404 döndürür, API'yi ezmez</button>
+<button>SPA fallback ile index sunar</button>
+<button>Dev proxy'ye her zaman yönlendirir</button>
+<div class="feedback"></div></div>
+
+<hr>
+<div class="next"><strong>Sonraki:</strong> <code>go test ./internal/app ./internal/config -v</code> çalıştır (~1 dk). Çıktıdaki ilk FAIL/PASS satırını öğretmene yapıştır. Takıldığın yeri sor — ben öğretmenim, follow-up sor.</div>
+<p class="meta">Ref: <a href="../reference/app-foundation-cheatsheet.html">cheatsheet</a> · <a href="https://pkg.go.dev/net/http">net/http</a> · <a href="https://pkg.go.dev/embed">embed</a></p>
+</div>
+<script>
+document.querySelectorAll('.quiz').forEach(q=>{
+ const fb=q.querySelector('.feedback');
+ q.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+  q.querySelectorAll('button').forEach(x=>x.classList.remove('correct','wrong'));
+  const ok=b.hasAttribute('data-ok');
+  b.classList.add(ok?'correct':'wrong');
+  fb.textContent=ok?'Doğru. Retrieval +1.':'Tekrar dene — akış şemasına dön.';
+ });
+});
+</script></body></html>

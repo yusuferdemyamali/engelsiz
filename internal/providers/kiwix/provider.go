@@ -25,6 +25,7 @@ type Options struct {
 }
 
 type KiwixProvider struct {
+	logger     *log.Logger
 	runtime    *runtime.Runtime
 	catalogURL *url.URL
 	client     *http.Client
@@ -65,7 +66,7 @@ func New(opts Options) (*KiwixProvider, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &KiwixProvider{runtime: r, catalogURL: u, client: &client}, nil
+	return &KiwixProvider{logger: opts.Logger, runtime: r, catalogURL: u, client: &client}, nil
 }
 func (p *KiwixProvider) EnsureStarted(ctx context.Context) error { return p.runtime.EnsureStarted(ctx) }
 func (p *KiwixProvider) Stop(ctx context.Context) error          { return p.runtime.Stop(ctx) }
@@ -79,4 +80,12 @@ func (p *KiwixProvider) ReplaceZIMPaths(ctx context.Context, paths []string, ret
 func (p *KiwixProvider) Snapshot() (providers.RuntimeStatus, []string) { return p.runtime.Snapshot() }
 func (p *KiwixProvider) ContentTransport() (http.RoundTripper, *url.URL, error) {
 	return p.runtime.ContentTransport()
+}
+
+// The diagnostic boundary never formats remote errors: net/url and XML errors
+// can carry credentials, query terms or malformed response-body fragments.
+func (p *KiwixProvider) logFailure(operation string, err error) {
+	if err != nil && p.logger != nil {
+		p.logger.Printf("kiwix provider %s failed: code=source_unavailable cause=%T", operation, err)
+	}
 }
