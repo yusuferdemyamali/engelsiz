@@ -122,6 +122,7 @@ func Run(ctx context.Context, opts Options) (runErr error) {
 	logger.Printf("listening on http://127.0.0.1:%d", port)
 
 	mux := api.NewMux()
+	mux.HandleFunc("/api/catalog", api.CatalogHandler(provider, logger))
 	mux.Handle("/", web.Handler())
 	server := &http.Server{Handler: mux, ReadHeaderTimeout: 5 * time.Second}
 	defer func() {
