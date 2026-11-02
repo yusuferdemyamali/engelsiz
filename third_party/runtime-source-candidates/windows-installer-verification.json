@@ -128,5 +128,14 @@
     "largeWikipediaDownloadResume": "not executed",
     "signing": "No signing certificate provisioned; native SmartScreen behavior not observed"
   },
-  "rebuildCommand": "python scripts/release.py --platform windows-amd64 --runtime-lock dist/windows-research/candidate/candidate-runtime-lock.json --runtime-archive dist/windows-research/candidate/kiwix-tools_windows-x86_64-3.8.2-known-source.zip --compliance dist/windows-research/candidate/compliance --output <empty-directory> --version 0.1.0-alpha.2"
+  "rebuildCommand": "python scripts/release.py --platform windows-amd64 --runtime-lock dist/windows-research/candidate/candidate-runtime-lock.json --runtime-archive dist/windows-research/candidate/kiwix-tools_windows-x86_64-3.8.2-known-source.zip --compliance dist/windows-research/candidate/compliance --output <empty-directory> --version 0.1.0-alpha.2",
+  "ownerWindows11Report": {
+    "reportedBy": "project owner",
+    "result": "all features tested individually on Windows 11; no problems reported",
+    "windowsBuild": "not provided",
+    "artifactSha256": "3d75e814029deacb61e608af76b7954a5d7e049d3518539be6414cb92161e70b",
+    "individualScenarios": "owner reported all features tested in response to question including search, reading, offline restart and uninstall/reinstall",
+    "environmentCleanliness": "not specified",
+    "evidenceType": "firsthand user report"
+  }
 }

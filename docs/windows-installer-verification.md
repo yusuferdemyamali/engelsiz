@@ -6,7 +6,7 @@ Source commit of built application: `8f51fa844fabd1875e1cea3ea1d3aa743c5da2a6`.
 | Dimension | Finding |
 |---|---|
 | Completeness | Windows 2/4 tasks; pipeline 2/4 tasks. Acceptance remains incomplete. |
-| Correctness | Real installer/source/hash/PE gates and Wine integration passed. Clean native Windows scenarios unexecuted. |
+| Correctness | Real installer/source/hash/PE gates and Wine integration passed. Owner reports all features passed on Windows 11 with the matching installer hash; environment cleanliness remains unspecified. |
 | Coherence | Per-user Inno, adjacent runtime, embedded frontend, preserved app-data and fail-closed delivery retained. |
 
 ## Critical: required before release acceptance/archive
@@ -17,7 +17,7 @@ Source commit of built application: `8f51fa844fabd1875e1cea3ea1d3aa743c5da2a6`.
 2. Windows task 2.2: complete clean Windows 10 and 11 standard-user installation,
    Start menu/default browser, disconnected restart, Turkish paths and
    uninstall/reinstall preservation. Also record absence of developer tools and
-   SmartScreen behavior. No native Windows version was tested in this session.
+   SmartScreen behavior. The owner reports all features passed on Windows 11 with the matching installer hash; the OS build and environment cleanliness were not specified. Windows 10 remains untested.
 3. Pipeline task 2.1: run both actual native platform package jobs with available,
    reviewed compliance payloads. The local explicit Windows runtime lock passes;
    default official-runtime locks remain intentionally unapproved. Do not run a

@@ -27,3 +27,7 @@
 
 See [candidate validation](../../../docs/windows-installer-validation.md) and
 [artifact provenance](../../../third_party/runtime-source-candidates/windows-installer-verification.json).
+
+- Project owner reports all features passed individually on Windows 11 and
+  confirmed installer SHA-256 `3d75e814029deacb61e608af76b7954a5d7e049d3518539be6414cb92161e70b`. The OS build
+  and whether the machine was clean were not specified; Windows 10 is untested.

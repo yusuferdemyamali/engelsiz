@@ -456,5 +456,14 @@
     "No clean native Windows 10/11 execution",
     "Wine app/runtime smoke does not prove default-browser, network-disconnected or clean-machine acceptance",
     "Whole-build bit reproducibility from mutable package repositories is not asserted"
-  ]
+  ],
+  "ownerWindows11Report": {
+    "reportedBy": "project owner",
+    "result": "all features tested individually on Windows 11; no problems reported",
+    "windowsBuild": "not provided",
+    "artifactSha256": "3d75e814029deacb61e608af76b7954a5d7e049d3518539be6414cb92161e70b",
+    "individualScenarios": "owner reported all features tested in response to question including search, reading, offline restart and uninstall/reinstall",
+    "environmentCleanliness": "not specified",
+    "evidenceType": "firsthand user report"
+  }
 }

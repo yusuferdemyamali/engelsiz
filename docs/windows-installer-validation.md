@@ -2,8 +2,10 @@
 
 Status: **NOT RELEASE-READY**. This work addresses #10 and the Windows part of
 #12. A real source-built runtime candidate is being packaged; Wine tests do not
-establish clean Windows acceptance. No Windows version has been verified on a
-clean native machine in this session. The existing Linux alpha release is unchanged.
+establish clean Windows acceptance. The project owner subsequently reported
+that the exact installer ran without problems on Windows 11 and that they tested
+all features individually. The OS build and whether the environment was clean
+were not specified. The existing Linux alpha release is unchanged.
 
 ## Runtime choice and source review
 
@@ -155,3 +157,7 @@ recorded separately; its installer fixture remains a compiler check.
 Local logs are under `dist/windows-research/logs/`; installed-state and namespace
 evidence are under `dist/windows-research/candidate/`. No GitHub Release asset
 was created, replaced or modified.
+
+## Project owner’s Windows 11 report
+
+The project owner reports that they tested all features individually on Windows 11 and found no problems. They confirmed the installer SHA-256 was `3d75e814029deacb61e608af76b7954a5d7e049d3518539be6414cb92161e70b`. In response to the request to identify search/reading, offline restart and uninstall/reinstall checks, they reported testing all features. This is a firsthand user report; Windows build number and whether the environment was clean were not specified. Windows 10 was not tested.
