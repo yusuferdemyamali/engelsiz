@@ -26,3 +26,14 @@ See proposal.md and specs for the user contract. App runtime resolution already 
 ## Migration Plan
 
 No database changes. Maintainers supply reviewed compliance material and retain the approved MIT project license before packaging. Preserve all user data on install/uninstall. Publish only after docs/release-validation.md evidence has been filled and independently reviewed.
+
+## Source-built Windows candidate (2026-11-02)
+
+The maintainer selected a separately audited MinGW Kiwix Tools 3.8.2 runtime to
+avoid assuming MSVC redistribution entitlement. The official 3.8.1 lock remains
+unchanged. The explicit candidate lock, full preferred sources, original notices,
+Windows Unicode/XML patches and final-link evidence are documented in
+[Windows validation](../../../docs/windows-installer-validation.md). Actual
+installer/Wine/offline namespace results do not close clean native Windows or
+two-platform package-job acceptance. See the
+[verification report](../../../docs/windows-installer-verification.md).

@@ -99,3 +99,59 @@ restart, Turkish username and space paths, uninstall/reinstall preserving ZIMs,
 partial transfers, SQLite and settings. Capture SmartScreen/signature behavior.
 A dual-boot developer installation, Wine, a hosted CI runner or compiler fixture
 cannot close the clean-machine criteria. All unexecuted acceptance remains pending.
+
+## Produced artifact and executed checks
+
+- Installer: `dist/windows-research/candidate/release/Engelsiz-Setup.exe`
+  (248,814,662 bytes), with adjacent `Engelsiz-Setup.exe.sha256`.
+- SHA-256: `3d75e814029deacb61e608af76b7954a5d7e049d3518539be6414cb92161e70b`.
+- Application source commit: `8f51fa844fabd1875e1cea3ea1d3aa743c5da2a6`.
+- Runtime binary SHA-256:
+  `f983ebb6a009d47a85f54ef99fe49f4772a854fa20b43c7d55f33273897f1040`.
+- [Retained build/provenance and verification](../third_party/runtime-source-candidates/windows-installer-verification.json).
+  A copy also accompanies the local installer as `build-provenance.json`.
+
+The actual installer passed Inno compilation (37.5 seconds), hash verification,
+installation to a Turkish/space path, inspection of installed LICENSES/source
+hashes and the actual installed PE imports. It contains the 19 MiB Go application
+with embedded UI and the 40 MiB static MinGW runtime. The application imports
+kernel32.dll; the runtime imports only the eight system DLLs listed in the audit.
+No MSVC, GCC or pthread DLL download is required. The source payload retains
+original libkiwix test-data files; no active ZIM is installed into user app-data.
+
+**Executed environment:** Linux kernel 7.3.0-2-cachyos-bore x86_64, Wine 11.0,
+isolated prefix under `dist/windows-research/wine-prefix`. This is not a clean
+Windows installation. Inno is installed in that maintainer prefix. Go/Node/Python
+on the Linux build host are not evidence of their absence on a Windows target.
+
+Actual installed application tests used the upstream 8.6 MiB
+`wikipedia_en_climate_change_mini_2024-06.zim`, SHA-256
+`3485a2c475a2356331f33f137ce26ed7116e62c7062d73a7773362d6dff005f4`.
+The package registry was seeded as test state; real catalog acquisition/download
+was not exercised. Startup recovered and hash-verified that content, the API
+reported runtime `ready`, `climate` returned 2,414 results and the first actual
+article returned HTTP 200 (48,333 bytes). Two cold starts succeeded from another
+working directory. The runtime regression also exercises Turkish/space ZIM paths.
+
+The installer was then uninstalled and reinstalled with its actual uninstaller:
+ZIM, SQLite database, a partial transfer and a Turkish settings file remained
+byte-identical across both operations before application restart. The settings
+row remained readable after startup, and the preserved ZIM was searchable and
+readable again. Start menu shortcut files were created, removed and recreated;
+activation through the native Windows Start menu was not observed.
+
+The complete uninstall/reinstall and preserved-content read/search was repeated
+in a new Linux user/network namespace containing **only `lo` and no external
+routes**. That test had no Internet route and passed. This establishes the
+Wine candidate's disconnected behavior; the Windows disconnected scenario is
+still pending. The default browser was intentionally not counted from headless
+runs.
+
+Nine frontend tests, Go test/vet/race, exact-toolchain application notice
+verification, 13 packaging safety tests, patch reversal dry-runs, build-script
+syntax and both strict OpenSpec validations passed. Native PR CI results are
+recorded separately; its installer fixture remains a compiler check.
+
+Local logs are under `dist/windows-research/logs/`; installed-state and namespace
+evidence are under `dist/windows-research/candidate/`. No GitHub Release asset
+was created, replaced or modified.
