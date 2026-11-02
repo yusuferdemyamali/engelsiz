@@ -1,6 +1,6 @@
 {
   "status": "candidate sources; not an approved complete compliance bundle",
-  "researchedAt": "2026-10-31",
+  "researchedAt": "2026-11-02",
   "platform": "windows-amd64",
   "binarySha256": "fcd01ed2b93e9a68632c7863c83b9f66bf64406a66357be1df7b8b75596f3e45",
   "buildRecipe": {
@@ -33,12 +33,244 @@
       "bytes": 217752,
       "verified": true,
       "verification": "computed from official downloaded source; not a source-to-binary attestation"
+    },
+    {
+      "name": "icu4c-74_1-src.tgz",
+      "url": "https://github.com/unicode-org/icu/releases/download/release-74-1/icu4c-74_1-src.tgz",
+      "sha256": "86ce8e60681972e60e4dcb2490c697463fcec60dd400a5f9bffba26d0b52b8d0",
+      "bytes": 26625850
+    },
+    {
+      "name": "regex-boost-1.86.0.zip",
+      "url": "https://codeload.github.com/boostorg/regex/zip/refs/tags/boost-1.86.0",
+      "sha256": "2e82451dba7021bdee9202a4ac7352e1c37f82dc1cb70b6a07e8fdfb33b90852",
+      "bytes": 936059
+    },
+    {
+      "name": "xapian-meson-d3efba1.tar.gz",
+      "url": "https://codeload.github.com/openzim/xapian-meson/tar.gz/d3efba172e832ce9b0860996576e96eef7850d83",
+      "sha256": "9aef4919ebc6755edff63d8d50d88d7da3af6b978ee46aee5eac8b033b14761f",
+      "commit": "d3efba172e832ce9b0860996576e96eef7850d83",
+      "versionObserved": "1.4.23 (meson.build), not the recipe versions.py value 1.4.26",
+      "verification": "Current HEAD equals latest commit before release; recipe selects mutable main; expired build logs cannot establish an attestation."
+    },
+    {
+      "name": "icu4c-74_1-Win64-MSVC2022.zip",
+      "url": "https://github.com/unicode-org/icu/releases/download/release-74-1/icu4c-74_1-Win64-MSVC2022.zip",
+      "sha256": "9cb6a48786dbd53e5f529cacdbf26d56064cd8df1d622116c5cbaad71e0fd3e3",
+      "verification": "All five ICU DLLs in the pinned Kiwix ZIP match the Unicode release bytes."
     }
   ],
   "remaining": [
-    "Review Windows-specific xapian-meson and Boost.Regex source refs",
-    "Obtain ICU74.1 source and original notices for the included Windows ICU binary DLLs",
-    "Obtain authorized app-local Visual C++ redistributables and original redistribution terms",
-    "Include all transitive incorporated-code notices and application dependency notices"
-  ]
+    "No authorized MSVC redistribution entitlement/materials supplied; user selected alternate source build on 2026-11-02.",
+    "Review all transitive incorporated-code notices and source refs before approving official binary coverage.",
+    "Clean native Windows runtime/installer acceptance remains unexecuted."
+  ],
+  "icuBinaryMatches": [
+    {
+      "file": "icudt74.dll",
+      "sha256": "ce6f56b89f3c7163a166210977642559c87033b579ff129c61443de57fbd771b",
+      "upstreamMember": "bin64/icudt74.dll"
+    },
+    {
+      "file": "icuin74.dll",
+      "sha256": "a80efbe7966ecd99a86b9f1694bad6995c8b43febc1b42fbff5a3f5e9a6e36ff",
+      "upstreamMember": "bin64/icuin74.dll"
+    },
+    {
+      "file": "icuio74.dll",
+      "sha256": "febda93002c9e70a2dee1da316a799b5416a6ec5430fa88aa9af82bba3ada0a6",
+      "upstreamMember": "bin64/icuio74.dll"
+    },
+    {
+      "file": "icutu74.dll",
+      "sha256": "e533bd62973d215f5306b24c2bd473cc3b161c7f88819812284ee18132ca9560",
+      "upstreamMember": "bin64/icutu74.dll"
+    },
+    {
+      "file": "icuuc74.dll",
+      "sha256": "0e3ec2d0d821b6244b78129334aed0e7ebe3cde51f00d2ff77170c4900af7f67",
+      "upstreamMember": "bin64/icuuc74.dll"
+    }
+  ],
+  "peInventory": [
+    {
+      "file": "icudt74.dll",
+      "bytes": 30786560,
+      "sha256": "ce6f56b89f3c7163a166210977642559c87033b579ff129c61443de57fbd771b",
+      "imports": []
+    },
+    {
+      "file": "icuin74.dll",
+      "bytes": 3099648,
+      "sha256": "a80efbe7966ecd99a86b9f1694bad6995c8b43febc1b42fbff5a3f5e9a6e36ff",
+      "imports": [
+        "icuuc74.dll",
+        "kernel32.dll",
+        "vcruntime140_1.dll",
+        "vcruntime140.dll",
+        "api-ms-win-crt-convert-l1-1-0.dll",
+        "api-ms-win-crt-runtime-l1-1-0.dll",
+        "api-ms-win-crt-string-l1-1-0.dll",
+        "api-ms-win-crt-stdio-l1-1-0.dll",
+        "api-ms-win-crt-math-l1-1-0.dll",
+        "api-ms-win-crt-environment-l1-1-0.dll",
+        "api-ms-win-crt-heap-l1-1-0.dll"
+      ]
+    },
+    {
+      "file": "icuio74.dll",
+      "bytes": 61440,
+      "sha256": "febda93002c9e70a2dee1da316a799b5416a6ec5430fa88aa9af82bba3ada0a6",
+      "imports": [
+        "icuuc74.dll",
+        "icuin74.dll",
+        "msvcp140.dll",
+        "vcruntime140_1.dll",
+        "vcruntime140.dll",
+        "api-ms-win-crt-stdio-l1-1-0.dll",
+        "api-ms-win-crt-convert-l1-1-0.dll",
+        "api-ms-win-crt-runtime-l1-1-0.dll",
+        "kernel32.dll",
+        "api-ms-win-crt-string-l1-1-0.dll"
+      ]
+    },
+    {
+      "file": "icutu74.dll",
+      "bytes": 243712,
+      "sha256": "e533bd62973d215f5306b24c2bd473cc3b161c7f88819812284ee18132ca9560",
+      "imports": [
+        "icuuc74.dll",
+        "icuin74.dll",
+        "kernel32.dll",
+        "msvcp140.dll",
+        "vcruntime140_1.dll",
+        "vcruntime140.dll",
+        "api-ms-win-crt-stdio-l1-1-0.dll",
+        "api-ms-win-crt-filesystem-l1-1-0.dll",
+        "api-ms-win-crt-time-l1-1-0.dll",
+        "api-ms-win-crt-string-l1-1-0.dll",
+        "api-ms-win-crt-runtime-l1-1-0.dll",
+        "api-ms-win-crt-utility-l1-1-0.dll",
+        "api-ms-win-crt-convert-l1-1-0.dll",
+        "api-ms-win-crt-heap-l1-1-0.dll"
+      ]
+    },
+    {
+      "file": "icuuc74.dll",
+      "bytes": 2345984,
+      "sha256": "0e3ec2d0d821b6244b78129334aed0e7ebe3cde51f00d2ff77170c4900af7f67",
+      "imports": [
+        "icudt74.dll",
+        "kernel32.dll",
+        "advapi32.dll",
+        "msvcp140.dll",
+        "vcruntime140_1.dll",
+        "vcruntime140.dll",
+        "api-ms-win-crt-runtime-l1-1-0.dll",
+        "api-ms-win-crt-string-l1-1-0.dll",
+        "api-ms-win-crt-time-l1-1-0.dll",
+        "api-ms-win-crt-math-l1-1-0.dll",
+        "api-ms-win-crt-convert-l1-1-0.dll",
+        "api-ms-win-crt-stdio-l1-1-0.dll",
+        "api-ms-win-crt-environment-l1-1-0.dll",
+        "api-ms-win-crt-heap-l1-1-0.dll",
+        "api-ms-win-crt-utility-l1-1-0.dll"
+      ]
+    },
+    {
+      "file": "kiwix-manage.exe",
+      "bytes": 2870128,
+      "sha256": "43e9a19d3bf66d6d158a187b1799aee75b1797c06f8f17c6dd2bdebae56e177c",
+      "imports": [
+        "icuin74.dll",
+        "icuuc74.dll",
+        "rpcrt4.dll",
+        "ws2_32.dll",
+        "advapi32.dll",
+        "crypt32.dll",
+        "bcrypt.dll",
+        "kernel32.dll",
+        "user32.dll",
+        "msvcp140.dll",
+        "vcruntime140.dll",
+        "vcruntime140_1.dll",
+        "api-ms-win-crt-runtime-l1-1-0.dll",
+        "api-ms-win-crt-string-l1-1-0.dll",
+        "api-ms-win-crt-environment-l1-1-0.dll",
+        "api-ms-win-crt-math-l1-1-0.dll",
+        "api-ms-win-crt-convert-l1-1-0.dll",
+        "api-ms-win-crt-filesystem-l1-1-0.dll",
+        "api-ms-win-crt-stdio-l1-1-0.dll",
+        "api-ms-win-crt-heap-l1-1-0.dll",
+        "api-ms-win-crt-time-l1-1-0.dll",
+        "api-ms-win-crt-utility-l1-1-0.dll",
+        "api-ms-win-crt-locale-l1-1-0.dll"
+      ]
+    },
+    {
+      "file": "kiwix-search.exe",
+      "bytes": 1646960,
+      "sha256": "ebe683ab03d50bc6893e6d69d7f1753e5fd6ebdf89488adffd900574c24cdbb9",
+      "imports": [
+        "icuin74.dll",
+        "icuuc74.dll",
+        "rpcrt4.dll",
+        "ws2_32.dll",
+        "kernel32.dll",
+        "user32.dll",
+        "msvcp140.dll",
+        "vcruntime140.dll",
+        "vcruntime140_1.dll",
+        "api-ms-win-crt-runtime-l1-1-0.dll",
+        "api-ms-win-crt-heap-l1-1-0.dll",
+        "api-ms-win-crt-environment-l1-1-0.dll",
+        "api-ms-win-crt-string-l1-1-0.dll",
+        "api-ms-win-crt-convert-l1-1-0.dll",
+        "api-ms-win-crt-time-l1-1-0.dll",
+        "api-ms-win-crt-stdio-l1-1-0.dll",
+        "api-ms-win-crt-filesystem-l1-1-0.dll",
+        "api-ms-win-crt-math-l1-1-0.dll",
+        "api-ms-win-crt-locale-l1-1-0.dll"
+      ]
+    },
+    {
+      "file": "kiwix-serve.exe",
+      "bytes": 3883888,
+      "sha256": "619eccc76c112a57538e3ceb001d75e71caf5a040171b2c1399c4d19f8e9bc95",
+      "imports": [
+        "icuin74.dll",
+        "icuuc74.dll",
+        "iphlpapi.dll",
+        "winmm.dll",
+        "rpcrt4.dll",
+        "ws2_32.dll",
+        "advapi32.dll",
+        "crypt32.dll",
+        "bcrypt.dll",
+        "kernel32.dll",
+        "user32.dll",
+        "msvcp140.dll",
+        "vcruntime140.dll",
+        "vcruntime140_1.dll",
+        "api-ms-win-crt-runtime-l1-1-0.dll",
+        "api-ms-win-crt-filesystem-l1-1-0.dll",
+        "api-ms-win-crt-convert-l1-1-0.dll",
+        "api-ms-win-crt-string-l1-1-0.dll",
+        "api-ms-win-crt-environment-l1-1-0.dll",
+        "api-ms-win-crt-math-l1-1-0.dll",
+        "api-ms-win-crt-stdio-l1-1-0.dll",
+        "api-ms-win-crt-heap-l1-1-0.dll",
+        "api-ms-win-crt-time-l1-1-0.dll",
+        "api-ms-win-crt-utility-l1-1-0.dll",
+        "api-ms-win-crt-locale-l1-1-0.dll"
+      ]
+    }
+  ],
+  "upstreamBuild": {
+    "url": "https://github.com/kiwix/kiwix-build/actions/runs/19848940976/job/56871666813",
+    "startedAt": "2025-12-02T06:03:30Z",
+    "completedAt": "2025-12-02T06:17:17Z",
+    "logs": "GitHub HTTP 410 on 2026-11-02; not available"
+  }
 }

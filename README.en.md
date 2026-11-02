@@ -11,7 +11,7 @@ An open-source, offline-first Wikipedia reader powered by Kiwix and ZIM archives
 [![CI](https://github.com/yusuferdemyamali/engelsiz/actions/workflows/release.yml/badge.svg?branch=main)](https://github.com/yusuferdemyamali/engelsiz/actions/workflows/release.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-[Download for Linux](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.1/engelsiz-linux-x64.tar.gz) · [All releases](https://github.com/yusuferdemyamali/engelsiz/releases) · [Report a bug / suggest a feature](https://github.com/yusuferdemyamali/engelsiz/issues/new/choose)
+[Download for Windows](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.2/Engelsiz-Setup.exe) · [Download for Linux](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.1/engelsiz-linux-x64.tar.gz) · [All releases](https://github.com/yusuferdemyamali/engelsiz/releases) · [Report a bug / suggest a feature](https://github.com/yusuferdemyamali/engelsiz/issues/new/choose)
 
 Engelsiz keeps Wikipedia archives on your own computer. After downloading content, you can search and read articles offline. A Go application opens its embedded React interface in your default browser and serves installed content through the bundled Kiwix runtime. The current interface and supported catalog are focused on Turkish Wikipedia.
 
@@ -29,9 +29,17 @@ The interface and font files are bundled locally. The application listens only o
 | Platform | Status |
 | --- | --- |
 | Linux x86_64 | [v0.1.0-alpha.1 prerelease available](https://github.com/yusuferdemyamali/engelsiz/releases/tag/v0.1.0-alpha.1) |
-| Windows x86_64 | [Installer in development](https://github.com/yusuferdemyamali/engelsiz/issues/10); no published installer yet |
+| Windows x86_64 | [v0.1.0-alpha.2 installer available](https://github.com/yusuferdemyamali/engelsiz/releases/tag/v0.1.0-alpha.2) |
 
-Linux requires kernel 4.4+ and a desktop browser/opener. You do not need to install Go, Node, SQLite, or Kiwix separately. This is an alpha release; [full platform acceptance](docs/release-validation.md) is still in progress.
+The project owner tested the Windows package on Windows 11 x86_64; Windows 10 has not yet been tested. Linux requires kernel 4.4+ and a desktop browser/opener. You do not need to install Go, Node, SQLite, or Kiwix separately. This is an alpha release; [full platform acceptance](docs/release-validation.md) is still in progress.
+
+### Windows
+
+1. Download [Engelsiz-Setup.exe](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.2/Engelsiz-Setup.exe) and its [SHA-256 file](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.2/Engelsiz-Setup.exe.sha256). In PowerShell, compare `Get-FileHash .\Engelsiz-Setup.exe -Algorithm SHA256` with the checksum file.
+2. Run setup and launch Engelsiz from the Start menu. Administrator privileges and separate Go, Node, SQLite, or Kiwix installs are not required.
+3. Download and install an archive in Bilgi Paketleri, then use Ara to search. Uninstalling preserves downloaded content and settings.
+
+### Linux
 
 1. Download the [Linux archive](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.1/engelsiz-linux-x64.tar.gz) and its [SHA-256 file](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.1/engelsiz-linux-x64.tar.gz.sha256) into the same directory.
 2. Verify, extract, and launch:
@@ -44,7 +52,7 @@ Linux requires kernel 4.4+ and a desktop browser/opener. You do not need to inst
 
 3. In **Bilgi Paketleri** (knowledge packages), choose a Wikipedia archive, download it, and install it. Use **Ara** (search) to search installed content.
 
-Wikipedia content is not included in the application download. The initial content download needs an internet connection and enough free disk space for the selected archive. The application package is approximately 295 MiB because it also includes the runtime’s corresponding sources and licenses.
+Wikipedia content is not included in the application download. The initial content download needs an internet connection and enough free disk space for the selected archive. The packages include the runtime’s corresponding sources and licenses; the Linux archive is approximately 295 MiB and the Windows installer approximately 237 MiB.
 
 You can open the local address printed in the terminal manually. The preferred port is `17321`; if occupied, the app chooses another available loopback port. Press `Ctrl+C` in the terminal to stop the application.
 

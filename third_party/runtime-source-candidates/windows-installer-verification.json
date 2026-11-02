@@ -1,0 +1,141 @@
+{
+  "format": 1,
+  "createdAt": "2026-11-02",
+  "status": "Engineering candidate; clean native Windows acceptance remains pending",
+  "sourceRepository": "https://github.com/yusuferdemyamali/engelsiz",
+  "sourceCommit": "8f51fa844fabd1875e1cea3ea1d3aa743c5da2a6",
+  "originMainAtStart": "dadf29f4c34408b414be6f056821d019150ff78a",
+  "version": "0.1.0-alpha.2",
+  "target": "windows-amd64",
+  "artifact": {
+    "name": "Engelsiz-Setup.exe",
+    "bytes": 248814662,
+    "sha256": "3d75e814029deacb61e608af76b7954a5d7e049d3518539be6414cb92161e70b"
+  },
+  "application": {
+    "sha256": "df19a2b408a8ebb0a558f85d5475a4fcd5b34e6cb5ddc200187078fbf2de98cf",
+    "CGO_ENABLED": "0",
+    "GOOS": "windows",
+    "GOARCH": "amd64",
+    "GOAMD64": "v1",
+    "embeddedFrontend": true,
+    "peImports": [
+      "kernel32.dll"
+    ]
+  },
+  "buildEnvironment": {
+    "host": "Linux-7.3.0-2-cachyos-bore-x86_64-with-glibc2.44",
+    "Go": "1.26.0",
+    "Node": "22.23.4",
+    "Python": "3.12.14",
+    "InnoSetup": "6.5.4 via isolated Wine 11.0",
+    "innoInstallerSha256": "fa73bf47a4da250d185d07561c2bfda387e5e20db77e4570004cf6a133cc10b1",
+    "ISCCSha256": "876b87e1f4261448bb682e597f5e62201594dd4b43e6779bc91fc1687f74d840"
+  },
+  "runtime": {
+    "version": "3.8.2",
+    "binarySha256": "f983ebb6a009d47a85f54ef99fe49f4772a854fa20b43c7d55f33273897f1040",
+    "archiveSha256": "b42623c579ed865fb175bddd8d1ad78e40319644ffe167e1f5e6b331f424bd9d",
+    "complianceManifestSha256": "3c4cc40fcc801500c886a86bef18b29b64b83fb45dcba518545a6ea7a2866017",
+    "sourcePayloadSha256": "f7a12a9f068b5c3b8dc962ecf574dbc686a95e20e326d461a4e5a9ede815deed",
+    "componentRecords": 21,
+    "MSVCRedistributablesBundled": false,
+    "peImports": [
+      "advapi32.dll",
+      "kernel32.dll",
+      "msvcrt.dll",
+      "winmm.dll",
+      "bcrypt.dll",
+      "iphlpapi.dll",
+      "rpcrt4.dll",
+      "ws2_32.dll"
+    ],
+    "audit": "third_party/runtime-source-candidates/windows-built-audit.json"
+  },
+  "validation": {
+    "packagingTests": 13,
+    "frontendTests": 9,
+    "goTest": "passed ./...",
+    "goVet": "passed ./...",
+    "goRace": "passed app/packages/download/runtime/kiwix",
+    "applicationNoticeCheck": "passed with exact Go 1.26.0",
+    "runtimeRegression": {
+      "host": "Linux-7.3.0-2-cachyos-bore-x86_64-with-glibc2.44",
+      "runner": "wine",
+      "cleanWindowsAcceptance": false,
+      "externalNetworkingDisabled": "not established by this tool",
+      "runtimeSha256": "f983ebb6a009d47a85f54ef99fe49f4772a854fa20b43c7d55f33273897f1040",
+      "zimSha256": "3485a2c475a2356331f33f137ce26ed7116e62c7062d73a7773362d6dff005f4",
+      "query": "climate",
+      "runs": [
+        {
+          "coldStart": 1,
+          "totalResults": 2414,
+          "articleHref": "/content/content/0123456789abcdef0123456789abcdef/Climate_change_in_the_Americas",
+          "articleBytes": 48333,
+          "articleSha256": "e26f82b4fa80f679bbe8dcbe06dce4d45b3a35d3ace4dd71d6584ee270a75b98",
+          "unicodeAndSpacePath": true
+        },
+        {
+          "coldStart": 2,
+          "totalResults": 2414,
+          "articleHref": "/content/content/0123456789abcdef0123456789abcdef/Climate_change_in_the_Americas",
+          "articleBytes": 48333,
+          "articleSha256": "e26f82b4fa80f679bbe8dcbe06dce4d45b3a35d3ace4dd71d6584ee270a75b98",
+          "unicodeAndSpacePath": true
+        }
+      ],
+      "passed": true
+    },
+    "installerWineVerification": {
+      "runner": "Wine 11.0 on Linux; not clean native Windows",
+      "setupSha256": "3d75e814029deacb61e608af76b7954a5d7e049d3518539be6414cb92161e70b",
+      "startMenuShortcutExists": true,
+      "shortcutActivation": "not tested",
+      "standardWindowsUserToken": "not tested",
+      "defaultBrowser": "not tested",
+      "before": {
+        "drive_c/users/yusuf/AppData/Local/Engelsiz/engelsiz.db": "5e27d73dac21656f3d7237496cbd2174bae7839570e8536e393af223bda034fc",
+        "drive_c/users/yusuf/AppData/Local/Engelsiz/content/kiwix/0123456789abcdef0123456789abcdef.zim": "3485a2c475a2356331f33f137ce26ed7116e62c7062d73a7773362d6dff005f4",
+        "drive_c/users/yusuf/AppData/Local/Engelsiz/downloads/preserve.part": "e220ab262363bfdf130115cbd5bebed9e99883c4c861b7f2e408ed4143c7df01",
+        "drive_c/users/yusuf/AppData/Roaming/Engelsiz/config/qa-settings.json": "2c31a01511c7e1674086ac178530b11d0f7e60cc943bbb7f4eb3b43d0c77768b"
+      },
+      "uninstallPreservedBytes": true,
+      "shortcutRemoved": true,
+      "reinstallPreservedBytes": true,
+      "reinstalledArticleBytes": 48333,
+      "reinstalledSearchTotal": 2414,
+      "settingsStillReadable": true,
+      "installedAppSha256": "df19a2b408a8ebb0a558f85d5475a4fcd5b34e6cb5ddc200187078fbf2de98cf",
+      "installedRuntimeSha256": "f983ebb6a009d47a85f54ef99fe49f4772a854fa20b43c7d55f33273897f1040",
+      "passed": true,
+      "networkIsolation": {
+        "method": "Linux unshare user/network namespace",
+        "interfaces": [
+          "lo"
+        ],
+        "routes": [],
+        "nativeWindows": false
+      }
+    },
+    "testedNativeWindowsVersions": [],
+    "cleanNativeWindows": false,
+    "defaultBrowserObserved": false,
+    "networkDisconnected": {
+      "WineLinuxNamespace": true,
+      "nativeWindows": false
+    },
+    "largeWikipediaDownloadResume": "not executed",
+    "signing": "No signing certificate provisioned; native SmartScreen behavior not observed"
+  },
+  "rebuildCommand": "python scripts/release.py --platform windows-amd64 --runtime-lock dist/windows-research/candidate/candidate-runtime-lock.json --runtime-archive dist/windows-research/candidate/kiwix-tools_windows-x86_64-3.8.2-known-source.zip --compliance dist/windows-research/candidate/compliance --output <empty-directory> --version 0.1.0-alpha.2",
+  "ownerWindows11Report": {
+    "reportedBy": "project owner",
+    "result": "all features tested individually on Windows 11; no problems reported",
+    "windowsBuild": "not provided",
+    "artifactSha256": "3d75e814029deacb61e608af76b7954a5d7e049d3518539be6414cb92161e70b",
+    "individualScenarios": "owner reported all features tested in response to question including search, reading, offline restart and uninstall/reinstall",
+    "environmentCleanliness": "not specified",
+    "evidenceType": "firsthand user report"
+  }
+}

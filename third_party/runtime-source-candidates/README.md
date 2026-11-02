@@ -33,3 +33,19 @@ Package: `dist/linux-source-candidate/release-final/engelsiz-linux-x64.tar.gz`, 
 The official ZIP timestamp is 2025-12-02 06:17 UTC; the [r_91 recipe](https://github.com/kiwix/kiwix-build/tree/6f3a27d3988c424b5dbb82a29ff508aad0055211) records the corresponding 3.8.1 release at 06:03 UTC with libkiwix 14.1.1 and libzim 9.4.0. Their official source archives and the recipe snapshot were downloaded and hashed; see windows-r91.json.
 
 The Linux source set does not establish Windows coverage. Review Windows-specific Xapian/Boost.Regex refs, ICU 74.1 sources/notices and the original Visual C++ redistribution files and terms before building a distribution bundle. The existing dependency gate continues to reject missing compiler DLLs.
+
+### Windows source-build investigation (2026-11-02)
+
+The 3.8.1 official archive and all eight PE import tables were rechecked. All
+five ICU DLLs match the official Unicode 74.1 Windows release. ICU 74.1 sources,
+Boost.Regex 1.86.0 and the Windows Xapian source snapshot have now been obtained
+and hashed in windows-r91.json; its remaining entries still block approval of
+that official MSVC binary. The upstream Windows build job exists but its logs
+return HTTP 410. No missing entitlement or source attestation is assumed.
+
+The maintainer selected a separate MinGW source build of Kiwix Tools 3.8.2.
+See [Windows candidate record](../../docs/windows-installer-validation.md),
+[build driver](build-windows-container-inner.sh) and [local patches](windows-patches/).
+That build's complete source/notice review is based on its actual Windows final
+link, including MinGW/GCC runtime inputs, not on the Linux binary's audit.
+Native clean Windows acceptance remains pending.

@@ -1,0 +1,39 @@
+--- a/src/search_renderer.cpp
++++ b/src/search_renderer.cpp
+@@ -223,6 +223,9 @@
+   }
+   kainjow::mustache::data results;
+   results.set("items", items);
++  // Engelsiz 2026-11-02: XML/OpenSearch numbers must not contain grouping.
++  results.set("countRaw", std::to_string(estimatedResultCount));
++  results.set("startRaw", std::to_string(resultStart));
+   results.set("count", kiwix::beautifyInteger(estimatedResultCount));
+   results.set("start", kiwix::beautifyInteger(resultStart));
+   results.set("startLabel", kiwix::beautifyInteger(resultStart+1));
+--- a/static/templates/search_result.xml
++++ b/static/templates/search_result.xml
+@@ -1,19 +1,20 @@
+ <?xml version="1.0" encoding="UTF-8"?>
++<!-- Engelsiz 2026-11-02: serialize OpenSearch numbers without display grouping. -->
+ <rss version="2.0"
+      xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/"
+      xmlns:atom="http://www.w3.org/2005/Atom">
+   <channel>
+     <title>Search: {{query.pattern}}</title>
+-    <link>{{query.unpaginatedQuery}}&amp;format=xml&amp;start={{results.start}}&amp;pageLength={{pagination.itemsPerPage}}</link>
++    <link>{{query.unpaginatedQuery}}&amp;format=xml&amp;start={{results.startRaw}}&amp;pageLength={{pagination.itemsPerPage}}</link>
+     <description>Search result for {{query.pattern}}</description>
+-    <opensearch:totalResults>{{results.count}}</opensearch:totalResults>
+-    <opensearch:startIndex>{{results.start}}</opensearch:startIndex>
++    <opensearch:totalResults>{{results.countRaw}}</opensearch:totalResults>
++    <opensearch:startIndex>{{results.startRaw}}</opensearch:startIndex>
+     <opensearch:itemsPerPage>{{pagination.itemsPerPage}}</opensearch:itemsPerPage>
+     <atom:link rel="search" type="application/opensearchdescription+xml" href="{{searchProtocolPrefix}}/searchdescription.xml"/>
+     <opensearch:Query role="request"
+       searchTerms="{{query.pattern}}"{{#query.lang}}
+       language="{{query.lang}}"{{/query.lang}}
+-      startIndex="{{results.start}}"
++      startIndex="{{results.startRaw}}"
+       count="{{pagination.itemsPerPage}}"
+     />
+     {{#results.items}}

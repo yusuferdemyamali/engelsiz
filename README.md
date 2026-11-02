@@ -11,7 +11,7 @@ An offline-first Wikipedia reader for Turkish Wikipedia, powered by Kiwix and ZI
 [![CI](https://github.com/yusuferdemyamali/engelsiz/actions/workflows/release.yml/badge.svg?branch=main)](https://github.com/yusuferdemyamali/engelsiz/actions/workflows/release.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-[Linux paketini indir](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.1/engelsiz-linux-x64.tar.gz) · [Tüm sürümler](https://github.com/yusuferdemyamali/engelsiz/releases) · [Hata bildir / öneri paylaş](https://github.com/yusuferdemyamali/engelsiz/issues/new/choose)
+[Windows için indir](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.2/Engelsiz-Setup.exe) · [Linux paketini indir](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.1/engelsiz-linux-x64.tar.gz) · [Tüm sürümler](https://github.com/yusuferdemyamali/engelsiz/releases) · [Hata bildir / öneri paylaş](https://github.com/yusuferdemyamali/engelsiz/issues/new/choose)
 
 Engelsiz, Wikipedia arşivlerini kendi bilgisayarında saklayan açık kaynaklı bir uygulamadır. İlk içerik indirmesinden sonra arama ve makale okuma yerel olarak çalışır. Go ile yazılmış uygulama, React arayüzünü varsayılan tarayıcında açar; içerikleri pakete dahil edilen Kiwix runtime’ı sunar.
 
@@ -29,9 +29,17 @@ Arayüz ve font dosyaları uygulamaya dahildir. Uygulama yalnızca `127.0.0.1` �
 | Platform | Durum |
 | --- | --- |
 | Linux x86_64 | [v0.1.0-alpha.1 ön sürümü hazır](https://github.com/yusuferdemyamali/engelsiz/releases/tag/v0.1.0-alpha.1) |
-| Windows x86_64 | [Kurulum paketi geliştiriliyor](https://github.com/yusuferdemyamali/engelsiz/issues/10); henüz yayımlanmış installer yok |
+| Windows x86_64 | [v0.1.0-alpha.2 kurulum paketini indir](https://github.com/yusuferdemyamali/engelsiz/releases/tag/v0.1.0-alpha.2) |
 
-Linux için kernel 4.4+ ve bir masaüstü tarayıcısı/opener gerekir. Go, Node, SQLite veya Kiwix’i ayrıca kurman gerekmez. Bu bir alpha yayınıdır; [tam platform kabul testleri](docs/release-validation.md) sürüyor.
+Windows paketi proje sahibi tarafından Windows 11 x86_64 üzerinde test edildi; Windows 10 henüz test edilmedi. Linux için kernel 4.4+ ve bir masaüstü tarayıcısı/opener gerekir. Go, Node, SQLite veya Kiwix’i ayrıca kurman gerekmez. Bu bir alpha yayınıdır; [tam platform kabul testleri](docs/release-validation.md) sürüyor.
+
+### Windows
+
+1. [Engelsiz-Setup.exe](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.2/Engelsiz-Setup.exe) ve [SHA-256 dosyasını](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.2/Engelsiz-Setup.exe.sha256) indir. PowerShell’de `Get-FileHash .\Engelsiz-Setup.exe -Algorithm SHA256` çıktısını SHA-256 dosyasındaki değerle karşılaştır.
+2. Kurulum dosyasını çalıştır ve Başlat menüsünden Engelsiz’i aç. Yönetici izni veya ayrıca Go, Node, SQLite ya da Kiwix kurulumu gerekmez.
+3. Bilgi Paketleri bölümünden bir arşiv indirip kur; ardından Ara bölümünden arama yap. Kaldırma işlemi indirilen içerikleri ve ayarları korur.
+
+### Linux
 
 1. [Linux arşivini](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.1/engelsiz-linux-x64.tar.gz) ve [SHA-256 dosyasını](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.1/engelsiz-linux-x64.tar.gz.sha256) aynı klasöre indir.
 2. O klasörde doğrula, arşivi aç ve uygulamayı başlat:
@@ -44,7 +52,7 @@ Linux için kernel 4.4+ ve bir masaüstü tarayıcısı/opener gerekir. Go, Node
 
 3. Açılan arayüzde **Bilgi Paketleri** bölümünden bir Wikipedia arşivi seçip indir ve kur. Kurulu içerikte **Ara** bölümünden arama yapabilirsin.
 
-Wikipedia verisi uygulama paketine dahil değildir. İlk içerik indirmesi için internet ve seçtiğin arşiv boyutuna uygun boş disk alanı gerekir. Paket, Kiwix’in karşılık gelen kaynak kodlarını ve lisanslarını da içerdiği için yaklaşık 295 MiB’dir.
+Wikipedia verisi uygulama paketine dahil değildir. İlk içerik indirmesi için internet ve seçtiğin arşiv boyutuna uygun boş disk alanı gerekir. Paketler, Kiwix’in karşılık gelen kaynak kodlarını ve lisanslarını da içerir; Linux arşivi yaklaşık 295 MiB, Windows installer yaklaşık 237 MiB’dir.
 
 Terminalde yazdırılan yerel adresi gerektiğinde elle açabilirsin. Varsayılan port `17321`’dir; doluysa uygulama uygun başka bir loopback portu seçer. Uygulamayı terminalde `Ctrl+C` ile kapatabilirsin.
 

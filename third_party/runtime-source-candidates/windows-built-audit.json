@@ -1,0 +1,469 @@
+{
+  "status": "Source/notice-audited Windows candidate; clean native acceptance pending",
+  "reviewedAt": "2026-11-02",
+  "runtimeVersion": "3.8.2",
+  "runtimeBinarySha256": "f983ebb6a009d47a85f54ef99fe49f4772a854fa20b43c7d55f33273897f1040",
+  "runtimeArchiveSha256": "b42623c579ed865fb175bddd8d1ad78e40319644ffe167e1f5e6b331f424bd9d",
+  "complianceManifestSha256": "3c4cc40fcc801500c886a86bef18b29b64b83fb45dcba518545a6ea7a2866017",
+  "sourcePayloadSha256": "f7a12a9f068b5c3b8dc962ecf574dbc686a95e20e326d461a4e5a9ede815deed",
+  "components": [
+    {
+      "name": "kiwix-tools",
+      "version": "3.8.2",
+      "licenseFile": "licenses/kiwix-tools.txt",
+      "licenseSha256": "ef28a4c49a8be3f38ae92e0c602f807638ec50aea09036e25e5a08913a324474"
+    },
+    {
+      "name": "libkiwix",
+      "version": "14.2.0",
+      "licenseFile": "licenses/libkiwix.txt",
+      "licenseSha256": "d6dcdd9056b672469072467b898e5aba28894e79963754e28154dd5ac5cdd12b"
+    },
+    {
+      "name": "libzim",
+      "version": "9.5.0",
+      "licenseFile": "licenses/libzim.txt",
+      "licenseSha256": "47e177fd7b008b9f77b762e9327821c3c913c92b214a1700c0172eb29f8ab273"
+    },
+    {
+      "name": "pugixml",
+      "version": "1.15",
+      "licenseFile": "licenses/pugixml.txt",
+      "licenseSha256": "e3b13a22d5f4da6c8293e76e4afb0be642764f99000058b2b22742cfd93f8044"
+    },
+    {
+      "name": "lzma",
+      "version": "5.2.6",
+      "licenseFile": "licenses/lzma.txt",
+      "licenseSha256": "03d28197dc759dc5ddde295d5da0b03db6f250b83263f6fff7ef39b9b2671273"
+    },
+    {
+      "name": "zstd",
+      "version": "1.5.7",
+      "licenseFile": "licenses/zstd.txt",
+      "licenseSha256": "cc294f07fbc98727d026490ca121dea3568a9b0e2e236acf72600169db9592cc"
+    },
+    {
+      "name": "zlib",
+      "version": "1.3.1",
+      "licenseFile": "licenses/zlib.txt",
+      "licenseSha256": "e237ae5cbfa9e0351facaf6e11467298f8417e797f562bb42c92399089ff0f75"
+    },
+    {
+      "name": "xapian",
+      "version": "1.4.23",
+      "licenseFile": "licenses/xapian.txt",
+      "licenseSha256": "b66605ec12458c7a88775f5806768191d2d28528b9d73712cb0ab16dd2299003"
+    },
+    {
+      "name": "icu",
+      "version": "73.2",
+      "licenseFile": "licenses/icu.txt",
+      "licenseSha256": "4fa8156e3e19bde5dccb1036459b84fb59548a2139d7ca566b55e52a50101e1a"
+    },
+    {
+      "name": "curl",
+      "version": "8.4.0",
+      "licenseFile": "licenses/curl.txt",
+      "licenseSha256": "e982991ebd8745ec38a6aef6db41466a26e32d661d9b7bb1feb913f8e861cba0"
+    },
+    {
+      "name": "microhttpd",
+      "version": "0.9.76",
+      "licenseFile": "licenses/microhttpd.txt",
+      "licenseSha256": "ef6d348bf199b8b3f7848d672533196e3964c977f6bf05b7dcf2c81535680da7"
+    },
+    {
+      "name": "mustache",
+      "version": "4.1",
+      "licenseFile": "licenses/mustache.txt",
+      "licenseSha256": "02c73b6271d63332a45e8c1db2d2d7d1269728f7a33c345c0780f87c6aaaf093"
+    },
+    {
+      "name": "docopt",
+      "version": "0.6.3",
+      "licenseFile": "licenses/docopt.txt",
+      "licenseSha256": "726b538f97a6a7f091896314619ebd1b972b061294cacbc25e215b52141c9333"
+    },
+    {
+      "name": "kiwix-build",
+      "version": "r_100",
+      "licenseFile": "licenses/kiwix-build.txt",
+      "licenseSha256": "889a9fcf3afd2118d8b24db1e3b6614590c7f122d2bd2150a8ef5595bf58558c"
+    },
+    {
+      "name": "embedded-browser-assets",
+      "version": "libkiwix14.2.0",
+      "licenseFile": "licenses/embedded-assets.txt",
+      "licenseSha256": "d156c0ff46e14d03f243075e1247ffb72c0b3c749258f270797ba4c787e9eb8f"
+    },
+    {
+      "name": "Poppins-font",
+      "version": "4.004",
+      "licenseFile": "licenses/assets/Poppins-OFL.txt",
+      "licenseSha256": "fbc4c9a72266d66689621c1c438f71e214c2141a6416b667f9c5e556bbc2e7b3"
+    },
+    {
+      "name": "DM-Sans-font",
+      "version": "4.004",
+      "licenseFile": "licenses/assets/DMSans-OFL.txt",
+      "licenseSha256": "9af36190332437f5ecd09974de43c1f7c77a310a996cdd8ceb25628b458840e1"
+    },
+    {
+      "name": "Roboto-font",
+      "version": "2.137",
+      "licenseFile": "licenses/assets/Roboto-Apache-2.0.txt",
+      "licenseSha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    },
+    {
+      "name": "Mustache-JavaScript",
+      "version": "4.2.0",
+      "licenseFile": "licenses/assets/mustache-4.2.0-LICENSE",
+      "licenseSha256": "e60b280838180a70cbb4b934f825c8119cdcf8912259ff4c6da20b284231c832"
+    },
+    {
+      "name": "MinGW-w64 CRT, import libraries and winpthreads",
+      "version": "8.0.0-1",
+      "licenseFile": "licenses/toolchain/mingw-w64-common-copyright",
+      "licenseSha256": "a88b3bc93337100ff09d32850afcc18d367cc6f069380029e40d4cf3fa6c40e2"
+    },
+    {
+      "name": "GCC libstdc++ and libgcc runtime",
+      "version": "10.3.0-14ubuntu1+24.3",
+      "licenseFile": "licenses/toolchain/gcc-mingw-w64-base-copyright",
+      "licenseSha256": "a481f772f7a53335f13b32c6c54eb1c8577ce97704edd3757ab7ed4287a8e96a"
+    }
+  ],
+  "linkInputs": [
+    {
+      "path": "/usr/lib/gcc/x86_64-w64-mingw32/10-posix/../../../../x86_64-w64-mingw32/lib/crt2u.o",
+      "resolved": "/usr/x86_64-w64-mingw32/lib/crt2u.o",
+      "sha256": "32a9cb9d75144eabd0733c67a49dc199560774700adc3874f21625b25934f6fe",
+      "owner": "mingw-w64-x86-64-dev: /usr/x86_64-w64-mingw32/lib/crt2u.o"
+    },
+    {
+      "path": "/usr/lib/gcc/x86_64-w64-mingw32/10-posix/../../../../x86_64-w64-mingw32/lib/libadvapi32.a",
+      "resolved": "/usr/x86_64-w64-mingw32/lib/libadvapi32.a",
+      "sha256": "082ed3d27b2421860f73560d99a44700f2901d61065a90a6ddc2a20d7e9fa310",
+      "owner": "mingw-w64-x86-64-dev: /usr/x86_64-w64-mingw32/lib/libadvapi32.a"
+    },
+    {
+      "path": "/usr/lib/gcc/x86_64-w64-mingw32/10-posix/../../../../x86_64-w64-mingw32/lib/libcomdlg32.a",
+      "resolved": "/usr/x86_64-w64-mingw32/lib/libcomdlg32.a",
+      "sha256": "38d60d592db4febe6fc236d044ea3b2ded9fc0a6b33c903c24389e6a73b75b72",
+      "owner": "mingw-w64-x86-64-dev: /usr/x86_64-w64-mingw32/lib/libcomdlg32.a"
+    },
+    {
+      "path": "/usr/lib/gcc/x86_64-w64-mingw32/10-posix/../../../../x86_64-w64-mingw32/lib/libgdi32.a",
+      "resolved": "/usr/x86_64-w64-mingw32/lib/libgdi32.a",
+      "sha256": "43b1ce6e4f305d04f31aba9eb19b96e6ceca23370fcaab048fc293c43a0e3a21",
+      "owner": "mingw-w64-x86-64-dev: /usr/x86_64-w64-mingw32/lib/libgdi32.a"
+    },
+    {
+      "path": "/usr/lib/gcc/x86_64-w64-mingw32/10-posix/../../../../x86_64-w64-mingw32/lib/libiphlpapi.a",
+      "resolved": "/usr/x86_64-w64-mingw32/lib/libiphlpapi.a",
+      "sha256": "d004529b64f7c9fef2494a2efc3566ec823821d82af2dabf51156577b57ce457",
+      "owner": "mingw-w64-x86-64-dev: /usr/x86_64-w64-mingw32/lib/libiphlpapi.a"
+    },
+    {
+      "path": "/usr/lib/gcc/x86_64-w64-mingw32/10-posix/../../../../x86_64-w64-mingw32/lib/libkernel32.a",
+      "resolved": "/usr/x86_64-w64-mingw32/lib/libkernel32.a",
+      "sha256": "a5b30056bf844dc0b92ebd4037d318fb60bf7c1cbae6e16b4c0e51a407539c84",
+      "owner": "mingw-w64-x86-64-dev: /usr/x86_64-w64-mingw32/lib/libkernel32.a"
+    },
+    {
+      "path": "/usr/lib/gcc/x86_64-w64-mingw32/10-posix/../../../../x86_64-w64-mingw32/lib/libm.a",
+      "resolved": "/usr/x86_64-w64-mingw32/lib/libm.a",
+      "sha256": "f2bc20480b8028dd2e4d42dbf069508d4c29a8635c0c56d9346459dcc704d235",
+      "owner": "mingw-w64-x86-64-dev: /usr/x86_64-w64-mingw32/lib/libm.a"
+    },
+    {
+      "path": "/usr/lib/gcc/x86_64-w64-mingw32/10-posix/../../../../x86_64-w64-mingw32/lib/libmingw32.a",
+      "resolved": "/usr/x86_64-w64-mingw32/lib/libmingw32.a",
+      "sha256": "031e92f2ae05f1b782fc99b53201d98b11d71b50d56ca7202b186014f2e4838a",
+      "owner": "mingw-w64-x86-64-dev: /usr/x86_64-w64-mingw32/lib/libmingw32.a"
+    },
+    {
+      "path": "/usr/lib/gcc/x86_64-w64-mingw32/10-posix/../../../../x86_64-w64-mingw32/lib/libmingwex.a",
+      "resolved": "/usr/x86_64-w64-mingw32/lib/libmingwex.a",
+      "sha256": "74635f9ec9bac33e4780c8db0ce08dd0834dec0ac1f05d1086fadc00adeb9a8f",
+      "owner": "mingw-w64-x86-64-dev: /usr/x86_64-w64-mingw32/lib/libmingwex.a"
+    },
+    {
+      "path": "/usr/lib/gcc/x86_64-w64-mingw32/10-posix/../../../../x86_64-w64-mingw32/lib/libmoldname.a",
+      "resolved": "/usr/x86_64-w64-mingw32/lib/libmoldname.a",
+      "sha256": "daa80bef8894b04feee523b65e7263961a022bdd09a9d38258c3a0c97028d5c2",
+      "owner": "mingw-w64-x86-64-dev: /usr/x86_64-w64-mingw32/lib/libmoldname.a"
+    },
+    {
+      "path": "/usr/lib/gcc/x86_64-w64-mingw32/10-posix/../../../../x86_64-w64-mingw32/lib/libmsvcrt.a",
+      "resolved": "/usr/x86_64-w64-mingw32/lib/libmsvcrt.a",
+      "sha256": "1f9e0d5de35c82ec7685e06058347b20bea0ca93f956d740d55d7cc03ad8c288",
+      "owner": "mingw-w64-x86-64-dev: /usr/x86_64-w64-mingw32/lib/libmsvcrt.a"
+    },
+    {
+      "path": "/usr/lib/gcc/x86_64-w64-mingw32/10-posix/../../../../x86_64-w64-mingw32/lib/libole32.a",
+      "resolved": "/usr/x86_64-w64-mingw32/lib/libole32.a",
+      "sha256": "5c589620b992ecf71fb7941689f92bbf14bba44107ac27aefe9b64e0f6d02bf9",
+      "owner": "mingw-w64-x86-64-dev: /usr/x86_64-w64-mingw32/lib/libole32.a"
+    },
+    {
+      "path": "/usr/lib/gcc/x86_64-w64-mingw32/10-posix/../../../../x86_64-w64-mingw32/lib/liboleaut32.a",
+      "resolved": "/usr/x86_64-w64-mingw32/lib/liboleaut32.a",
+      "sha256": "8cffc08708340d370724141d5c43be035f605c7f6c0e8801a5dd5770aa40c92d",
+      "owner": "mingw-w64-x86-64-dev: /usr/x86_64-w64-mingw32/lib/liboleaut32.a"
+    },
+    {
+      "path": "/usr/lib/gcc/x86_64-w64-mingw32/10-posix/../../../../x86_64-w64-mingw32/lib/libpthread.a",
+      "resolved": "/usr/x86_64-w64-mingw32/lib/libpthread.a",
+      "sha256": "b9308b7d46202d40f777170ff52e30559ef381f99971fe0c932beb92f9813bab",
+      "owner": "mingw-w64-x86-64-dev: /usr/x86_64-w64-mingw32/lib/libpthread.a"
+    },
+    {
+      "path": "/usr/lib/gcc/x86_64-w64-mingw32/10-posix/../../../../x86_64-w64-mingw32/lib/librpcrt4.a",
+      "resolved": "/usr/x86_64-w64-mingw32/lib/librpcrt4.a",
+      "sha256": "117625771a4cf8e2c27b8fb968a9ed5b1f5abeb63abd31eacb82a0fa1b9e7afa",
+      "owner": "mingw-w64-x86-64-dev: /usr/x86_64-w64-mingw32/lib/librpcrt4.a"
+    },
+    {
+      "path": "/usr/lib/gcc/x86_64-w64-mingw32/10-posix/../../../../x86_64-w64-mingw32/lib/libshell32.a",
+      "resolved": "/usr/x86_64-w64-mingw32/lib/libshell32.a",
+      "sha256": "daa9b500f81a47659c9a7ee0491448b127bb687350eeabe730c33b48515cf3ce",
+      "owner": "mingw-w64-x86-64-dev: /usr/x86_64-w64-mingw32/lib/libshell32.a"
+    },
+    {
+      "path": "/usr/lib/gcc/x86_64-w64-mingw32/10-posix/../../../../x86_64-w64-mingw32/lib/libshlwapi.a",
+      "resolved": "/usr/x86_64-w64-mingw32/lib/libshlwapi.a",
+      "sha256": "c3c0c77db8c3344f97c8e545d007d560cd33c4b3c5a4c0aac08ec3895d490eda",
+      "owner": "mingw-w64-x86-64-dev: /usr/x86_64-w64-mingw32/lib/libshlwapi.a"
+    },
+    {
+      "path": "/usr/lib/gcc/x86_64-w64-mingw32/10-posix/../../../../x86_64-w64-mingw32/lib/libuser32.a",
+      "resolved": "/usr/x86_64-w64-mingw32/lib/libuser32.a",
+      "sha256": "7ff2ea9c237b2c6df1d795b24982296799967772f071d1838f45224a1b598cf5",
+      "owner": "mingw-w64-x86-64-dev: /usr/x86_64-w64-mingw32/lib/libuser32.a"
+    },
+    {
+      "path": "/usr/lib/gcc/x86_64-w64-mingw32/10-posix/../../../../x86_64-w64-mingw32/lib/libuuid.a",
+      "resolved": "/usr/x86_64-w64-mingw32/lib/libuuid.a",
+      "sha256": "ef69f404361ae0c0b2abdf47ca9cde2ddb3866685447858de67a1de7051a6202",
+      "owner": "mingw-w64-x86-64-dev: /usr/x86_64-w64-mingw32/lib/libuuid.a"
+    },
+    {
+      "path": "/usr/lib/gcc/x86_64-w64-mingw32/10-posix/../../../../x86_64-w64-mingw32/lib/libwinmm.a",
+      "resolved": "/usr/x86_64-w64-mingw32/lib/libwinmm.a",
+      "sha256": "e752dda4cf61673447cee11c5924003b0516bb13081ff73bdf826bafb16907d8",
+      "owner": "mingw-w64-x86-64-dev: /usr/x86_64-w64-mingw32/lib/libwinmm.a"
+    },
+    {
+      "path": "/usr/lib/gcc/x86_64-w64-mingw32/10-posix/../../../../x86_64-w64-mingw32/lib/libwinspool.a",
+      "resolved": "/usr/x86_64-w64-mingw32/lib/libwinspool.a",
+      "sha256": "c9e10463f10f98fea84e44fdaeab0444507532022050881cca2775b9ba2e76e3",
+      "owner": "mingw-w64-x86-64-dev: /usr/x86_64-w64-mingw32/lib/libwinspool.a"
+    },
+    {
+      "path": "/usr/lib/gcc/x86_64-w64-mingw32/10-posix/../../../../x86_64-w64-mingw32/lib/libws2_32.a",
+      "resolved": "/usr/x86_64-w64-mingw32/lib/libws2_32.a",
+      "sha256": "ab2b43362b101e1861c244ae12b36cfffbdbf36fa05ddd31d27e1fe9497d6c82",
+      "owner": "mingw-w64-x86-64-dev: /usr/x86_64-w64-mingw32/lib/libws2_32.a"
+    },
+    {
+      "path": "/usr/lib/gcc/x86_64-w64-mingw32/10-posix/crtbegin.o",
+      "resolved": "/usr/lib/gcc/x86_64-w64-mingw32/10-posix/crtbegin.o",
+      "sha256": "5dc9e06e508b545b0eeecd30772e785318e1425814e24ee792103fe8829ba8bb",
+      "owner": "gcc-mingw-w64-x86-64-posix: /usr/lib/gcc/x86_64-w64-mingw32/10-posix/crtbegin.o"
+    },
+    {
+      "path": "/usr/lib/gcc/x86_64-w64-mingw32/10-posix/crtend.o",
+      "resolved": "/usr/lib/gcc/x86_64-w64-mingw32/10-posix/crtend.o",
+      "sha256": "ffd5aba2c2ed1df137b94d3d67e8cf89cb81529e1c5bd1d6900804cedea63b1b",
+      "owner": "gcc-mingw-w64-x86-64-posix: /usr/lib/gcc/x86_64-w64-mingw32/10-posix/crtend.o"
+    },
+    {
+      "path": "/usr/lib/gcc/x86_64-w64-mingw32/10-posix/libgcc.a",
+      "resolved": "/usr/lib/gcc/x86_64-w64-mingw32/10-posix/libgcc.a",
+      "sha256": "d41982aab279d6a668d28fe40195acd53994354b4e0ba109e832e4a5997dc03e",
+      "owner": "gcc-mingw-w64-x86-64-posix: /usr/lib/gcc/x86_64-w64-mingw32/10-posix/libgcc.a"
+    },
+    {
+      "path": "/usr/lib/gcc/x86_64-w64-mingw32/10-posix/libgcc_eh.a",
+      "resolved": "/usr/lib/gcc/x86_64-w64-mingw32/10-posix/libgcc_eh.a",
+      "sha256": "4c69b981e0f35e9b86059729419c50a7d07eb67675bdc61435ef99555209434a",
+      "owner": "gcc-mingw-w64-x86-64-posix: /usr/lib/gcc/x86_64-w64-mingw32/10-posix/libgcc_eh.a"
+    },
+    {
+      "path": "/usr/lib/gcc/x86_64-w64-mingw32/10-posix/libstdc++.a",
+      "resolved": "/usr/lib/gcc/x86_64-w64-mingw32/10-posix/libstdc++.a",
+      "sha256": "663ba4ed3c9be0de77ed7df02e66729affd6dbaa0a1b80d5aa436f1103367661",
+      "owner": "g++-mingw-w64-x86-64-posix: /usr/lib/gcc/x86_64-w64-mingw32/10-posix/libstdc++.a"
+    },
+    {
+      "path": "/usr/x86_64-w64-mingw32/lib/libadvapi32.a",
+      "resolved": "/usr/x86_64-w64-mingw32/lib/libadvapi32.a",
+      "sha256": "082ed3d27b2421860f73560d99a44700f2901d61065a90a6ddc2a20d7e9fa310",
+      "owner": "mingw-w64-x86-64-dev: /usr/x86_64-w64-mingw32/lib/libadvapi32.a"
+    },
+    {
+      "path": "/usr/x86_64-w64-mingw32/lib/libbcrypt.a",
+      "resolved": "/usr/x86_64-w64-mingw32/lib/libbcrypt.a",
+      "sha256": "759557fdda207f406bec65fd898e6e2af72e3bfe6b5300f41cca5f7cd595ccd2",
+      "owner": "mingw-w64-x86-64-dev: /usr/x86_64-w64-mingw32/lib/libbcrypt.a"
+    },
+    {
+      "path": "/usr/x86_64-w64-mingw32/lib/libcrypt32.a",
+      "resolved": "/usr/x86_64-w64-mingw32/lib/libcrypt32.a",
+      "sha256": "10a353427bb3100956a06a02228763d99f33159f2e3778ca339ec7157a636219",
+      "owner": "mingw-w64-x86-64-dev: /usr/x86_64-w64-mingw32/lib/libcrypt32.a"
+    },
+    {
+      "path": "/usr/x86_64-w64-mingw32/lib/libiphlpapi.a",
+      "resolved": "/usr/x86_64-w64-mingw32/lib/libiphlpapi.a",
+      "sha256": "d004529b64f7c9fef2494a2efc3566ec823821d82af2dabf51156577b57ce457",
+      "owner": "mingw-w64-x86-64-dev: /usr/x86_64-w64-mingw32/lib/libiphlpapi.a"
+    },
+    {
+      "path": "/usr/x86_64-w64-mingw32/lib/librpcrt4.a",
+      "resolved": "/usr/x86_64-w64-mingw32/lib/librpcrt4.a",
+      "sha256": "117625771a4cf8e2c27b8fb968a9ed5b1f5abeb63abd31eacb82a0fa1b9e7afa",
+      "owner": "mingw-w64-x86-64-dev: /usr/x86_64-w64-mingw32/lib/librpcrt4.a"
+    },
+    {
+      "path": "/usr/x86_64-w64-mingw32/lib/libws2_32.a",
+      "resolved": "/usr/x86_64-w64-mingw32/lib/libws2_32.a",
+      "sha256": "ab2b43362b101e1861c244ae12b36cfffbdbf36fa05ddd31d27e1fe9497d6c82",
+      "owner": "mingw-w64-x86-64-dev: /usr/x86_64-w64-mingw32/lib/libws2_32.a"
+    },
+    {
+      "path": "/work/cross-prefix/lib/libcurl.a",
+      "resolved": "/work/cross-prefix/lib/libcurl.a",
+      "sha256": "0ed4ce2f391ed86c7672226ed6a5468c0560c6666afb25def9c2cdac32bc1b2a",
+      "owner": null
+    },
+    {
+      "path": "/work/cross-prefix/lib/libdocopt.a",
+      "resolved": "/work/cross-prefix/lib/libdocopt.a",
+      "sha256": "509be3d2e9e4306e3578a8ba8e47e00009f9c25951f7eb9cb8e3becd8a9f31de",
+      "owner": null
+    },
+    {
+      "path": "/work/cross-prefix/lib/libicudt.a",
+      "resolved": "/work/cross-prefix/lib/libicudt.a",
+      "sha256": "ed61c252ec743e6113f00a61821bda5b4ca2fdefa9880c2f41500029fc96f928",
+      "owner": null
+    },
+    {
+      "path": "/work/cross-prefix/lib/libicuin.a",
+      "resolved": "/work/cross-prefix/lib/libicuin.a",
+      "sha256": "9e5e5ad197199c34efff0480cf93e8f1efc8eef8c664e253301eaac96591f88e",
+      "owner": null
+    },
+    {
+      "path": "/work/cross-prefix/lib/libicuuc.a",
+      "resolved": "/work/cross-prefix/lib/libicuuc.a",
+      "sha256": "6ea0f8d78d28ef282d22e0a9293ca75ad4172e064fc2b296a45e56852ba71d54",
+      "owner": null
+    },
+    {
+      "path": "/work/cross-prefix/lib/libkiwix.a",
+      "resolved": "/work/cross-prefix/lib/libkiwix.a",
+      "sha256": "36a937a3a6db8568b8c82ff0f542a2a92538ad289ed9cd384beb8476b5c7a328",
+      "owner": null
+    },
+    {
+      "path": "/work/cross-prefix/lib/liblzma.a",
+      "resolved": "/work/cross-prefix/lib/liblzma.a",
+      "sha256": "693be82b18e17b18be60d85351c1e64c0be5058c9e12f5f4694ee5db98612fe6",
+      "owner": null
+    },
+    {
+      "path": "/work/cross-prefix/lib/libmicrohttpd.a",
+      "resolved": "/work/cross-prefix/lib/libmicrohttpd.a",
+      "sha256": "fc863fe7b428d50dcc260af353eb4891d5eee2b4490e23db90b673a6535e9a8a",
+      "owner": null
+    },
+    {
+      "path": "/work/cross-prefix/lib/libpugixml.a",
+      "resolved": "/work/cross-prefix/lib/libpugixml.a",
+      "sha256": "2978deb927ff32262419355b3fa6ecf18b10c009c4ac1881c58ebc9d7907ead9",
+      "owner": null
+    },
+    {
+      "path": "/work/cross-prefix/lib/libxapian.a",
+      "resolved": "/work/cross-prefix/lib/libxapian.a",
+      "sha256": "9b1df56e11760bf6570c02fa302f57344009fe59ef1a96b35f3c8bd9e2fa2c84",
+      "owner": null
+    },
+    {
+      "path": "/work/cross-prefix/lib/libz.a",
+      "resolved": "/work/cross-prefix/lib/libz.a",
+      "sha256": "4acbc036a033116a46d2272a5ba941035ad93bc8fbb143a75589e8dac74c6134",
+      "owner": null
+    },
+    {
+      "path": "/work/cross-prefix/lib/libzim.a",
+      "resolved": "/work/cross-prefix/lib/libzim.a",
+      "sha256": "1cb3be65267aa2711d8d53188c4e8859f2876ff902e15ef5535a701e4ac44b45",
+      "owner": null
+    },
+    {
+      "path": "/work/cross-prefix/lib/libzstd.a",
+      "resolved": "/work/cross-prefix/lib/libzstd.a",
+      "sha256": "0ab49185ad8f48612d08ec926f691058eee3f490cb514f2d2a047800e2a80cfa",
+      "owner": null
+    }
+  ],
+  "peImports": [
+    "advapi32.dll",
+    "kernel32.dll",
+    "msvcrt.dll",
+    "winmm.dll",
+    "bcrypt.dll",
+    "iphlpapi.dll",
+    "rpcrt4.dll",
+    "ws2_32.dll"
+  ],
+  "runtimeSmoke": {
+    "host": "Linux-7.3.0-2-cachyos-bore-x86_64-with-glibc2.44",
+    "runner": "wine",
+    "cleanWindowsAcceptance": false,
+    "externalNetworkingDisabled": "not established by this tool",
+    "runtimeSha256": "f983ebb6a009d47a85f54ef99fe49f4772a854fa20b43c7d55f33273897f1040",
+    "zimSha256": "3485a2c475a2356331f33f137ce26ed7116e62c7062d73a7773362d6dff005f4",
+    "query": "climate",
+    "runs": [
+      {
+        "coldStart": 1,
+        "totalResults": 2414,
+        "articleHref": "/content/content/0123456789abcdef0123456789abcdef/Climate_change_in_the_Americas",
+        "articleBytes": 48333,
+        "articleSha256": "e26f82b4fa80f679bbe8dcbe06dce4d45b3a35d3ace4dd71d6584ee270a75b98",
+        "unicodeAndSpacePath": true
+      },
+      {
+        "coldStart": 2,
+        "totalResults": 2414,
+        "articleHref": "/content/content/0123456789abcdef0123456789abcdef/Climate_change_in_the_Americas",
+        "articleBytes": 48333,
+        "articleSha256": "e26f82b4fa80f679bbe8dcbe06dce4d45b3a35d3ace4dd71d6584ee270a75b98",
+        "unicodeAndSpacePath": true
+      }
+    ],
+    "passed": true
+  },
+  "nativeWindowsTested": [],
+  "sourceRoot": "dist/windows-research/candidate/compliance",
+  "limitations": [
+    "No clean native Windows 10/11 execution",
+    "Wine app/runtime smoke does not prove default-browser, network-disconnected or clean-machine acceptance",
+    "Whole-build bit reproducibility from mutable package repositories is not asserted"
+  ],
+  "ownerWindows11Report": {
+    "reportedBy": "project owner",
+    "result": "all features tested individually on Windows 11; no problems reported",
+    "windowsBuild": "not provided",
+    "artifactSha256": "3d75e814029deacb61e608af76b7954a5d7e049d3518539be6414cb92161e70b",
+    "individualScenarios": "owner reported all features tested in response to question including search, reading, offline restart and uninstall/reinstall",
+    "environmentCleanliness": "not specified",
+    "evidenceType": "firsthand user report"
+  }
+}
