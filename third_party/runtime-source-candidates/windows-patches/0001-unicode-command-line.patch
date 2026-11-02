@@ -1,0 +1,43 @@
+--- a/src/server/kiwix-serve.cpp
++++ b/src/server/kiwix-serve.cpp
+@@ -205,8 +205,31 @@
+ // Older version of docopt doesn't declare Options. Let's declare it ourself.
+ using Options = std::map<std::string, docopt::value>;
+ 
++// Engelsiz 2026-11-02: preserve Unicode Windows command-line paths.
++#ifdef _WIN32
++int wmain(int argc, wchar_t** wideArgv)
++{
++  std::vector<std::string> utf8Args;
++  std::vector<char*> argvStorage;
++  utf8Args.reserve(argc);
++  argvStorage.reserve(argc + 1);
++  for (int i = 0; i < argc; ++i) {
++    const int count = WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS,
++                                        wideArgv[i], -1, nullptr, 0, nullptr, nullptr);
++    if (count <= 0) return 1;
++    std::string arg(count, '\0');
++    if (!WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, wideArgv[i], -1,
++                             &arg[0], count, nullptr, nullptr)) return 1;
++    arg.resize(count - 1);
++    utf8Args.push_back(std::move(arg));
++  }
++  for (auto& arg : utf8Args) argvStorage.push_back(&arg[0]);
++  argvStorage.push_back(nullptr);
++  char** argv = argvStorage.data();
++#else
+ int main(int argc, char** argv)
+ {
++#endif
+ #ifndef _WIN32
+   setup_sighandlers();
+ #endif
+--- a/src/server/meson.build
++++ b/src/server/meson.build
+@@ -2,5 +2,6 @@
+ sources = ['kiwix-serve.cpp']
+ 
+ executable('kiwix-serve', sources,
++  link_args: host_machine.system() == 'windows' ? ['-municode'] : [],
+   dependencies:all_deps,
+   install:true)

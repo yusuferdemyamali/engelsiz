@@ -228,6 +228,18 @@ class ReleaseSafetyTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'Delay-load'):
             release.windows_dependencies(runtime)
 
+    def test_mingw_system_crt_does_not_allow_versioned_redistributables(self):
+        runtime = self.root / 'mingw-runtime'
+        runtime.mkdir()
+        app = runtime / 'kiwix-serve.exe'
+        self.pe_fixture(app, 'msvcrt.dll')
+        release.windows_dependencies(runtime)
+        for name in ('msvcr100.dll', 'msvcp140.dll', 'vcruntime140.dll',
+                     'libgcc_s_seh-1.dll', 'libwinpthread-1.dll'):
+            self.pe_fixture(app, name)
+            with self.subTest(dependency=name), self.assertRaisesRegex(ValueError, name):
+                release.windows_dependencies(runtime)
+
     def test_acceptance_matrix_is_complete(self):
         text = (release.ROOT / 'docs/release-validation.md').read_text()
         for i in range(1, 19):

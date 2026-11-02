@@ -29,6 +29,8 @@ That command uses the audited local source build rather than the default officia
 
 Supported targets: Windows 10/11 x86_64 and Linux x86_64 kernel 4.4+ desktop with browser/xdg-open. Kernel4.4 is a conservative Engelsiz product baseline, not a claim about [Go's minimum kernel requirement](https://go.dev/wiki/MinimumRequirements). Linux app/runtime packaging requires static ELF without PT_INTERP/PT_DYNAMIC; no particular installed glibc version is required by those binaries. Browser/opener/desktop availability remains a host prerequisite. Windows CI version/dependency smoke cannot replace clean VM acceptance.
 
+A separate [Windows source-built candidate and evidence record](windows-installer-validation.md) tracks the MSVC-free runtime work for #10. It does not close AC-01 or clean-machine acceptance.
+
 ## Clean-machine procedures
 
 Windows: use separate clean Windows 10 and11 x64 VM snapshots with no Go, Node, SQLite, Kiwix or developer PATH. Verify package hash, run setup as a standard user, start via Start menu, confirm browser health and loopback binding, install a test ZIM, close cleanly, reopen with network disconnected, search/read, uninstall, verify app-data content/hash unchanged, reinstall and search/read again. Test installation path containing spaces and non-ASCII username. Record SmartScreen/signing behavior; no signing certificate is provisioned here.
