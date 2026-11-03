@@ -71,6 +71,75 @@ class ReleaseSafetyTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 release.safe_member(name, 'tools')
 
+    def test_pmtiles_requires_matching_dependency_notices(self):
+        bundle = self.root / 'pmtiles-notices'
+        bundle.mkdir()
+        notice = bundle / 'notices.txt'
+        notice.write_text('Synthetic notices')
+        lock = {'sha256': '1' * 64, 'noticeSha256': release.digest(notice)}
+        document = {'format': 1, 'archiveSha256': {'linux-amd64': lock['sha256']},
+                    'goModVerify': True, 'binaryModuleGraphMatchesSource': True,
+                    'noticeSha256': lock['noticeSha256']}
+        inventory = bundle / 'inventory.json'
+        inventory.write_text(json.dumps(document))
+        lock['noticeInventorySha256'] = release.digest(inventory)
+        release.pmtiles_notices(bundle, lock, 'linux-amd64')
+        with self.assertRaisesRegex(ValueError, 'does not match'):
+            release.pmtiles_notices(bundle, lock, 'windows-amd64')
+        notice.write_text('tampered')
+        with self.assertRaisesRegex(ValueError, 'SHA-256'):
+            release.pmtiles_notices(bundle, lock, 'linux-amd64')
+
+    def test_pmtiles_linux_executable_is_executable_in_tarball(self):
+        stage = self.root / 'stage'
+        executable = stage / 'runtime/pmtiles/pmtiles'
+        executable.parent.mkdir(parents=True)
+        executable.write_bytes(b'synthetic pmtiles')
+        artifact = self.root / 'release.tar.gz'
+        release.tarball(stage, artifact)
+        with tarfile.open(artifact) as bundle:
+            info = bundle.getmember('engelsiz/runtime/pmtiles/pmtiles')
+            self.assertEqual(info.mode, 0o755)
+
+    def map_asset_fixture(self):
+        for name, body in [('README.txt', b'Synthetic map asset docs\n'),
+                           ('fonts/OFL.txt', b'Synthetic font license\n'),
+                           ('sprites/LICENSE.txt', b'Synthetic sprite license\n')]:
+            path = self.root / 'frontend/public/maps' / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(body)
+        return {name: (self.root / 'frontend/public/maps' / name).read_bytes()
+                for name in ('README.txt', 'fonts/OFL.txt', 'sprites/LICENSE.txt')}
+
+    def test_map_asset_notices_preserve_bytes_and_subpaths(self):
+        original = self.map_asset_fixture()
+        stage = self.root / 'stage'
+        release.map_asset_notices(stage, project=self.root)
+        for name, body in original.items():
+            staged = stage / 'LICENSES/map-assets' / name
+            self.assertTrue(staged.is_file())
+            self.assertEqual(staged.read_bytes(), body)
+
+    def test_map_asset_notices_reject_missing_and_symlink(self):
+        self.map_asset_fixture()
+        stage = self.root / 'stage'
+        (self.root / 'frontend/public/maps/README.txt').unlink()
+        with self.assertRaisesRegex(ValueError, 'Missing compliance file'):
+            release.map_asset_notices(stage, project=self.root)
+        self.map_asset_fixture()
+        target = self.root / 'frontend/public/maps/fonts/OFL.txt'
+        target.unlink()
+        outside = self.root / 'outside-license.txt'
+        outside.write_text('outside')
+        try:
+            target.symlink_to(outside)
+        except OSError as error:
+            if getattr(error, 'winerror', None) == 1314:
+                self.skipTest('Creating symlinks requires Windows developer mode or privilege')
+            raise
+        with self.assertRaisesRegex(ValueError, 'Symlink'):
+            release.map_asset_notices(stage, project=self.root)
+
     def test_windows_zip_preserves_runtime_dlls(self):
         path = self.root / 'runtime.zip'
         with zipfile.ZipFile(path, 'w') as bundle:

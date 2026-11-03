@@ -96,3 +96,11 @@
   }
   body::before { display: none; }
 }
+
+.map-canvas { height: min(68vh, 720px); min-height: 360px; background: #2a2a24; }
+.map-canvas .maplibregl-ctrl-group { background: #2a2a24; border: 1px solid #8b7963; }
+.map-canvas .maplibregl-ctrl-group button + button { border-top-color: #8b7963; }
+.map-canvas .maplibregl-ctrl-icon { filter: invert(1); }
+.map-canvas .maplibregl-ctrl-attrib { background: rgba(33, 31, 27, 0.9); color: #e6d7a3; }
+.map-canvas .maplibregl-ctrl-attrib a { color: #e6d7a3; text-decoration: underline; }
+@media (max-width: 640px) { .map-canvas { height: 60vh; min-height: 320px; } }

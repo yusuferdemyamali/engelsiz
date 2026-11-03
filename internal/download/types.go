@@ -31,7 +31,16 @@ var (
 	ErrSource   = &Error{"source_unavailable", "İndirme kaynağına güvenli biçimde erişilemiyor. Lütfen tekrar deneyin."}
 )
 
+// ExternalProvider exposes non-file transfer operations through the same
+// download lifecycle without directing the HTTP file worker at their sources.
+type ExternalProvider interface {
+	ListDownloads() ([]Snapshot, error)
+	GetDownload(string) (Snapshot, error)
+	ControlDownload(string, string) (Snapshot, error)
+}
+
 type Snapshot struct {
+	Indeterminate     bool     `json:"indeterminate,omitempty"`
 	ID                string   `json:"id"`
 	Provider          string   `json:"provider"`
 	ProviderPackageID string   `json:"providerPackageId"`

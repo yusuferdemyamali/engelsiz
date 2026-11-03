@@ -2,7 +2,7 @@ Engelsiz - Linux x86_64
 
 Desteklenen temel ortam: Linux kernel 4.4 veya üstü, x86_64 masaüstü, varsayılan
 web tarayıcısı ve xdg-open. Uygulama ve Kiwix statik ELF dosyalarıdır; belirli bir
-host glibc sürümü veya ayrıca Go/Node/SQLite/Kiwix kurulumu gerekmez.
+host glibc sürümü veya ayrıca Go/Node/SQLite/Kiwix/PMTiles kurulumu gerekmez.
 
 Arşivi açın ve engelsiz dosyasını çalıştırın:
   tar -xzf engelsiz-linux-x64.tar.gz
@@ -19,5 +19,5 @@ $XDG_CONFIG_HOME/engelsiz (varsayılan ~/.config/engelsiz), önbellek
 $XDG_CACHE_HOME/engelsiz (varsayılan ~/.cache/engelsiz) altındadır.
 Program klasörünü silmek indirilen kullanıcı içeriğini silmez.
 
-İlk katalog/indirme internet gerektirir. Kurulu içerikte arama/okuma çevrimdışıdır.
+İlk katalog/indirme ve harita çıkarma internet gerektirir. Kurulu içerik ve haritalar çevrimdışı kullanılabilir.
 LICENSES/ altında lisanslar ve runtime corresponding-source materyali vardır.

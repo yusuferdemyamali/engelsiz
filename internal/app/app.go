@@ -23,6 +23,7 @@ import (
 	"engelsiz/internal/packages"
 	"engelsiz/internal/providers"
 	"engelsiz/internal/providers/kiwix"
+	"engelsiz/internal/providers/maps"
 	"engelsiz/internal/web"
 )
 
@@ -134,6 +135,12 @@ func Run(ctx context.Context, opts Options) (runErr error) {
 			runErr = errors.Join(runErr, fmt.Errorf("close downloads: %w", err))
 		}
 	}()
+	mapService, err := maps.New(db, dirs.DataRoot, maps.Options{Source: os.Getenv("ENGELSIZ_MAPS_SOURCE"), Binary: os.Getenv("ENGELSIZ_PMTILES_BINARY")})
+	if err != nil {
+		return fmt.Errorf("initialize maps: %w", err)
+	}
+	defer mapService.Close()
+	manager.RegisterExternalProvider(mapService)
 	if ctx.Err() != nil {
 		return nil
 	}
@@ -165,6 +172,8 @@ func Run(ctx context.Context, opts Options) (runErr error) {
 	logger.Printf("listening on http://127.0.0.1:%d", port)
 
 	mux := api.NewMux()
+	mux.HandleFunc("/api/maps", api.MapsHandler(mapService))
+	mux.HandleFunc("/api/maps/", api.MapsHandler(mapService))
 	mux.HandleFunc("/api/catalog", api.CatalogHandler(provider, logger))
 	mux.HandleFunc("/api/packages", api.PackagesHandler(packageService))
 	mux.HandleFunc("/api/packages/", api.UpdatePackageHandler(packageService, manager, provider))

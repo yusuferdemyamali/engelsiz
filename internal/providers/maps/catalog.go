@@ -1,0 +1,89 @@
+// Code generated from Nominatim lookup 2026-11-03T12:14:58.213164+00:00; DO NOT EDIT.
+// Source: Nominatim (nominatim.openstreetmap.org) search API (81 requests).
+// Each bounding box [west,south,east,north] comes from the OSM relation
+// recorded alongside (osm_type/osm_id in iller-bbox.json).
+package maps
+
+var catalog = []Region{
+	{ID: "adana", Title: "Adana", Bounds: [4]float64{34.7392967, 36.2630414, 36.4095784, 38.4046019}, MaxZoom: 15, Version: "20261102"},                   // relation/167216
+	{ID: "adiyaman", Title: "Adıyaman", Bounds: [4]float64{37.4330263, 37.4096946, 39.2632665, 38.2100626}, MaxZoom: 15, Version: "20261102"},             // relation/223141
+	{ID: "afyonkarahisar", Title: "Afyonkarahisar", Bounds: [4]float64{29.6588901, 37.7774879, 31.7319863, 39.2708544}, MaxZoom: 15, Version: "20261102"}, // relation/223171
+	{ID: "agri", Title: "Ağrı", Bounds: [4]float64{42.2789918, 38.9299742, 44.4871135, 40.0023008}, MaxZoom: 15, Version: "20261102"},                     // relation/186433
+	{ID: "aksaray", Title: "Aksaray", Bounds: [4]float64{33.1710559, 37.9769869, 34.4944352, 39.0509266}, MaxZoom: 15, Version: "20261102"},               // relation/154454
+	{ID: "amasya", Title: "Amasya", Bounds: [4]float64{34.9788445, 40.2330084, 36.5122462, 41.0775982}, MaxZoom: 15, Version: "20261102"},                 // relation/223452
+	{ID: "ankara", Title: "Ankara", Bounds: [4]float64{30.8343831, 38.6728587, 33.8732462, 40.7562828}, MaxZoom: 15, Version: "20261102"},                 // relation/223422
+	{ID: "antalya", Title: "Antalya", Bounds: [4]float64{29.1916608, 35.9229585, 32.6262830, 37.4572863}, MaxZoom: 15, Version: "20261102"},               // relation/223132
+	{ID: "ardahan", Title: "Ardahan", Bounds: [4]float64{42.3159224, 40.6291667, 43.4741450, 41.6002690}, MaxZoom: 15, Version: "20261102"},               // relation/1251450
+	{ID: "artvin", Title: "Artvin", Bounds: [4]float64{41.0363073, 40.5572232, 42.5921057, 41.6120000}, MaxZoom: 15, Version: "20261102"},                 // relation/223448
+	{ID: "aydin", Title: "Aydın", Bounds: [4]float64{26.9420495, 37.2540866, 28.8782095, 38.1292952}, MaxZoom: 15, Version: "20261102"},                   // relation/223166
+	{ID: "balikesir", Title: "Balıkesir", Bounds: [4]float64{26.4718764, 39.0719739, 28.9995273, 40.7969321}, MaxZoom: 15, Version: "20261102"},           // relation/223464
+	{ID: "bartin", Title: "Bartın", Bounds: [4]float64{32.0585246, 41.3029432, 32.9389811, 42.0430000}, MaxZoom: 15, Version: "20261102"},                 // relation/223458
+	{ID: "batman", Title: "Batman", Bounds: [4]float64{40.9864447, 37.4951640, 41.8219157, 38.5421200}, MaxZoom: 15, Version: "20261102"},                 // relation/223437
+	{ID: "bayburt", Title: "Bayburt", Bounds: [4]float64{39.6470831, 39.9271543, 40.7078413, 40.5683545}, MaxZoom: 15, Version: "20261102"},               // relation/223446
+	{ID: "bilecik", Title: "Bilecik", Bounds: [4]float64{29.7205920, 39.6598670, 30.6637000, 40.5513660}, MaxZoom: 15, Version: "20261102"},               // relation/223420
+	{ID: "bingol", Title: "Bingöl", Bounds: [4]float64{39.9235438, 38.4767007, 41.2659873, 39.5650207}, MaxZoom: 15, Version: "20261102"},                 // relation/223444
+	{ID: "bitlis", Title: "Bitlis", Bounds: [4]float64{41.4871800, 37.9692375, 43.2009955, 39.0240651}, MaxZoom: 15, Version: "20261102"},                 // relation/223441
+	{ID: "bolu", Title: "Bolu", Bounds: [4]float64{30.5624420, 40.1343970, 32.5821450, 41.0980789}, MaxZoom: 15, Version: "20261102"},                     // relation/223461
+	{ID: "burdur", Title: "Burdur", Bounds: [4]float64{29.3255914, 36.7981724, 30.9889037, 37.8326588}, MaxZoom: 15, Version: "20261102"},                 // relation/2319368
+	{ID: "bursa", Title: "Bursa", Bounds: [4]float64{28.0876836, 39.5935135, 29.9100426, 40.7577300}, MaxZoom: 15, Version: "20261102"},                   // relation/223463
+	{ID: "canakkale", Title: "Çanakkale", Bounds: [4]float64{25.5656305, 39.3876973, 27.5486965, 40.7571400}, MaxZoom: 15, Version: "20261102"},           // relation/223471
+	{ID: "cankiri", Title: "Çankırı", Bounds: [4]float64{32.5682190, 40.2493300, 34.1656867, 41.0971313}, MaxZoom: 15, Version: "20261102"},               // relation/223454
+	{ID: "corum", Title: "Çorum", Bounds: [4]float64{33.9589119, 39.9394362, 35.5309346, 41.3475309}, MaxZoom: 15, Version: "20261102"},                   // relation/223453
+	{ID: "denizli", Title: "Denizli", Bounds: [4]float64{28.5690471, 36.8466001, 30.0831852, 38.4740857}, MaxZoom: 15, Version: "20261102"},               // relation/223169
+	{ID: "diyarbakir", Title: "Diyarbakır", Bounds: [4]float64{39.1065400, 37.5128299, 41.3665813, 38.7145841}, MaxZoom: 15, Version: "20261102"},         // relation/223435
+	{ID: "duzce", Title: "Düzce", Bounds: [4]float64{30.7781768, 40.6217510, 31.8498560, 41.2970000}, MaxZoom: 15, Version: "20261102"},                   // relation/223460
+	{ID: "edirne", Title: "Edirne", Bounds: [4]float64{25.9497581, 40.5136802, 27.0132149, 42.0028017}, MaxZoom: 15, Version: "20261102"},                 // relation/223465
+	{ID: "elazig", Title: "Elazığ", Bounds: [4]float64{38.3573921, 38.2400668, 40.3515814, 39.1914034}, MaxZoom: 15, Version: "20261102"},                 // relation/223443
+	{ID: "erzincan", Title: "Erzincan", Bounds: [4]float64{38.2814312, 39.0092000, 40.7558780, 40.0830928}, MaxZoom: 15, Version: "20261102"},             // relation/223445
+	{ID: "erzurum", Title: "Erzurum", Bounds: [4]float64{40.2460417, 39.1521025, 42.6201865, 40.9759977}, MaxZoom: 15, Version: "20261102"},               // relation/186432
+	{ID: "eskisehir", Title: "Eskişehir", Bounds: [4]float64{29.9883672, 39.0349197, 32.0115423, 40.1872590}, MaxZoom: 15, Version: "20261102"},           // relation/223421
+	{ID: "gaziantep", Title: "Gaziantep", Bounds: [4]float64{36.4434139, 36.7039154, 38.0850505, 37.5373378}, MaxZoom: 15, Version: "20261102"},           // relation/223139
+	{ID: "giresun", Title: "Giresun", Bounds: [4]float64{37.9596658, 40.0457644, 39.1824983, 41.2790000}, MaxZoom: 15, Version: "20261102"},               // relation/223449
+	{ID: "gumushane", Title: "Gümüşhane", Bounds: [4]float64{38.7505230, 39.8361941, 40.1033255, 40.8373207}, MaxZoom: 15, Version: "20261102"},           // relation/223541
+	{ID: "hakkari", Title: "Hakkari", Bounds: [4]float64{43.3064872, 36.9628963, 44.8151910, 37.8105835}, MaxZoom: 15, Version: "20261102"},               // relation/174742
+	{ID: "hatay", Title: "Hatay", Bounds: [4]float64{35.4025760, 35.8058974, 36.7048834, 37.0340084}, MaxZoom: 15, Version: "20261102"},                   // relation/223122
+	{ID: "igdir", Title: "Iğdır", Bounds: [4]float64{43.2842723, 39.6273360, 44.8176638, 40.1315779}, MaxZoom: 15, Version: "20261102"},                   // relation/186434
+	{ID: "isparta", Title: "Isparta", Bounds: [4]float64{30.1216185, 37.3430424, 31.5397153, 38.5052980}, MaxZoom: 15, Version: "20261102"},               // relation/223134
+	{ID: "istanbul", Title: "İstanbul", Bounds: [4]float64{27.9708481, 40.7376735, 29.9588048, 41.6710000}, MaxZoom: 15, Version: "20261102"},             // relation/223474
+	{ID: "izmir", Title: "İzmir", Bounds: [4]float64{26.1707911, 37.8152305, 28.4930754, 39.3854872}, MaxZoom: 15, Version: "20261102"},                   // relation/223167
+	{ID: "kahramanmaras", Title: "Kahramanmaraş", Bounds: [4]float64{36.2013033, 37.1949375, 37.7516841, 38.6090909}, MaxZoom: 15, Version: "20261102"},   // relation/223138
+	{ID: "karabuk", Title: "Karabük", Bounds: [4]float64{32.0896870, 40.7975020, 33.1556224, 41.5878589}, MaxZoom: 15, Version: "20261102"},               // relation/223455
+	{ID: "karaman", Title: "Karaman", Bounds: [4]float64{32.4635695, 36.4358367, 34.2606355, 37.5657304}, MaxZoom: 15, Version: "20261102"},               // relation/223137
+	{ID: "kars", Title: "Kars", Bounds: [4]float64{42.1006618, 39.9346359, 43.7499540, 41.0964801}, MaxZoom: 15, Version: "20261102"},                     // relation/186431
+	{ID: "kastamonu", Title: "Kastamonu", Bounds: [4]float64{32.6565426, 40.8133361, 34.6067604, 42.2190000}, MaxZoom: 15, Version: "20261102"},           // relation/223456
+	{ID: "kayseri", Title: "Kayseri", Bounds: [4]float64{34.8469256, 37.6914408, 36.9597697, 39.3223264}, MaxZoom: 15, Version: "20261102"},               // relation/154451
+	{ID: "kilis", Title: "Kilis", Bounds: [4]float64{36.7141413, 36.6320594, 37.5685848, 37.0383676}, MaxZoom: 15, Version: "20261102"},                   // relation/223140
+	{ID: "kirikkale", Title: "Kırıkkale", Bounds: [4]float64{33.1860925, 39.3967394, 34.2078037, 40.3424225}, MaxZoom: 15, Version: "20261102"},           // relation/223423
+	{ID: "kirklareli", Title: "Kırklareli", Bounds: [4]float64{26.8686797, 41.2199858, 28.4151633, 42.1048008}, MaxZoom: 15, Version: "20261102"},         // relation/223469
+	{ID: "kirsehir", Title: "Kırşehir", Bounds: [4]float64{33.4206467, 38.8199336, 34.7048405, 39.7987628}, MaxZoom: 15, Version: "20261102"},             // relation/154452
+	{ID: "kocaeli", Title: "Kocaeli", Bounds: [4]float64{29.3157266, 40.5235400, 30.5117269, 41.4170000}, MaxZoom: 15, Version: "20261102"},               // relation/223473
+	{ID: "konya", Title: "Konya", Bounds: [4]float64{31.2376994, 36.7333815, 34.4620114, 39.3073600}, MaxZoom: 15, Version: "20261102"},                   // relation/223133
+	{ID: "kutahya", Title: "Kütahya", Bounds: [4]float64{28.6077116, 38.7904784, 30.4645727, 39.8788571}, MaxZoom: 15, Version: "20261102"},               // relation/223172
+	{ID: "malatya", Title: "Malatya", Bounds: [4]float64{37.2606253, 37.8865090, 39.1663894, 39.1429424}, MaxZoom: 15, Version: "20261102"},               // relation/223426
+	{ID: "manisa", Title: "Manisa", Bounds: [4]float64{27.1124124, 38.0835037, 29.1186319, 39.4071160}, MaxZoom: 15, Version: "20261102"},                 // relation/223168
+	{ID: "mardin", Title: "Mardin", Bounds: [4]float64{39.8841047, 36.9112598, 41.8974018, 37.7386500}, MaxZoom: 15, Version: "20261102"},                 // relation/223436
+	{ID: "mersin", Title: "Mersin", Bounds: [4]float64{32.3951003, 35.8170000, 35.1516494, 37.4283469}, MaxZoom: 15, Version: "20261102"},                 // relation/223131
+	{ID: "mugla", Title: "Muğla", Bounds: [4]float64{27.1182670, 36.2350456, 29.7932051, 37.6017545}, MaxZoom: 15, Version: "20261102"},                   // relation/223136
+	{ID: "mus", Title: "Muş", Bounds: [4]float64{41.1044966, 38.4829853, 42.7126062, 39.5382483}, MaxZoom: 15, Version: "20261102"},                       // relation/223440
+	{ID: "nevsehir", Title: "Nevşehir", Bounds: [4]float64{34.2388048, 38.2902503, 35.1664006, 39.3836464}, MaxZoom: 15, Version: "20261102"},             // relation/154449
+	{ID: "nigde", Title: "Niğde", Bounds: [4]float64{33.9755405, 37.3665684, 35.3111078, 38.3902473}, MaxZoom: 15, Version: "20261102"},                   // relation/154456
+	{ID: "ordu", Title: "Ordu", Bounds: [4]float64{36.6810122, 40.3305741, 38.1679404, 41.3460000}, MaxZoom: 15, Version: "20261102"},                     // relation/223450
+	{ID: "osmaniye", Title: "Osmaniye", Bounds: [4]float64{35.8764549, 36.9297265, 36.7239797, 37.7499239}, MaxZoom: 15, Version: "20261102"},             // relation/167232
+	{ID: "rize", Title: "Rize", Bounds: [4]float64{40.1516455, 40.5164169, 41.4296025, 41.4620000}, MaxZoom: 15, Version: "20261102"},                     // relation/223542
+	{ID: "sakarya", Title: "Sakarya", Bounds: [4]float64{29.9669815, 40.2944101, 31.0126662, 41.3510000}, MaxZoom: 15, Version: "20261102"},               // relation/223462
+	{ID: "samsun", Title: "Samsun", Bounds: [4]float64{34.8786647, 40.8219504, 37.2633749, 41.9350000}, MaxZoom: 15, Version: "20261102"},                 // relation/223451
+	{ID: "sanliurfa", Title: "Şanlıurfa", Bounds: [4]float64{37.8352759, 36.6688697, 40.2384707, 38.0205169}, MaxZoom: 15, Version: "20261102"},           // relation/223434
+	{ID: "siirt", Title: "Siirt", Bounds: [4]float64{41.3573300, 37.5892507, 42.8845218, 38.2621400}, MaxZoom: 15, Version: "20261102"},                   // relation/223543
+	{ID: "sinop", Title: "Sinop", Bounds: [4]float64{34.2237142, 41.2108053, 35.5866120, 42.2970000}, MaxZoom: 15, Version: "20261102"},                   // relation/223457
+	{ID: "sirnak", Title: "Şırnak", Bounds: [4]float64{41.5454871, 37.1069599, 43.4991914, 37.7698422}, MaxZoom: 15, Version: "20261102"},                 // relation/223438
+	{ID: "sivas", Title: "Sivas", Bounds: [4]float64{35.8392905, 38.5370853, 38.7723577, 40.5269285}, MaxZoom: 15, Version: "20261102"},                   // relation/223425
+	{ID: "tekirdag", Title: "Tekirdağ", Bounds: [4]float64{26.6933334, 40.5190975, 28.3203487, 41.6163247}, MaxZoom: 15, Version: "20261102"},             // relation/223470
+	{ID: "tokat", Title: "Tokat", Bounds: [4]float64{35.4395771, 39.8621196, 37.6224580, 40.9103090}, MaxZoom: 15, Version: "20261102"},                   // relation/223424
+	{ID: "trabzon", Title: "Trabzon", Bounds: [4]float64{39.1233252, 40.5135382, 40.5077656, 41.3060000}, MaxZoom: 15, Version: "20261102"},               // relation/223447
+	{ID: "tunceli", Title: "Tunceli", Bounds: [4]float64{38.7319234, 38.7631676, 40.4038294, 39.6149985}, MaxZoom: 15, Version: "20261102"},               // relation/223537
+	{ID: "usak", Title: "Uşak", Bounds: [4]float64{28.7446311, 38.1658584, 30.0238323, 38.9484645}, MaxZoom: 15, Version: "20261102"},                     // relation/223170
+	{ID: "van", Title: "Van", Bounds: [4]float64{42.6622008, 37.7200905, 44.5125473, 39.3709684}, MaxZoom: 15, Version: "20261102"},                       // relation/223442
+	{ID: "yalova", Title: "Yalova", Bounds: [4]float64{28.6579968, 40.4182285, 29.5583037, 40.7679112}, MaxZoom: 15, Version: "20261102"},                 // relation/223472
+	{ID: "yozgat", Title: "Yozgat", Bounds: [4]float64{34.0606553, 38.9860247, 36.1635588, 40.2550786}, MaxZoom: 15, Version: "20261102"},                 // relation/154450
+	{ID: "zonguldak", Title: "Zonguldak", Bounds: [4]float64{31.1267334, 41.0038038, 32.2947040, 41.8450000}, MaxZoom: 15, Version: "20261102"},           // relation/223459
+}

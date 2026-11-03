@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useRef, useState } from "react"
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react"
 import { buttonClass, downloadRequest, DownloadsView, type Download } from "./downloads"
 import { PackagesView } from "./packages"
 import { SearchView } from "./search"
+const MapsView = lazy(() => import("./maps").then((module) => ({ default: module.MapsView })))
 
 const variants = [
   { id: "mini", label: "Mini" },
@@ -82,6 +83,7 @@ const navEntries = [
   { id: "downloads", label: "İndirmeler", code: "02" },
   { id: "packages", label: "Yerel Paketler", code: "03" },
   { id: "search", label: "Ara", code: "04" },
+  { id: "maps", label: "Haritalar", code: "05" },
 ] as const
 
 type ViewId = (typeof navEntries)[number]["id"]
@@ -178,7 +180,7 @@ export default function App() {
           </div>
         </header>
 
-        <nav aria-label="Ana menü" className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
+        <nav aria-label="Ana menü" className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-5">
           {navEntries.map((entry) => {
             const active = view === entry.id
             return (
@@ -199,7 +201,7 @@ export default function App() {
         <p role="status" className={notice ? "terminal-panel mt-4 border-olive/40 px-4 py-3 text-sm leading-6 text-parchment" : "sr-only"}>{notice}</p>
 
         <main className="terminal-panel mt-4 px-5 py-6 sm:px-7 sm:py-8">
-          {view === "search" ? <SearchView onOpenPackages={() => setView("packages")} /> : view === "downloads" ? <DownloadsView refreshKey={downloadRefresh} /> : view === "packages" ? <PackagesView onOpenDownloads={() => setView("downloads")} /> : (
+          {view === "maps" ? <Suspense fallback={<p role="status" className="text-sm text-sand">Haritalar yükleniyor…</p>}><MapsView /></Suspense> : view === "search" ? <SearchView onOpenPackages={() => setView("packages")} /> : view === "downloads" ? <DownloadsView refreshKey={downloadRefresh} /> : view === "packages" ? <PackagesView onOpenDownloads={() => setView("downloads")} /> : (
           <section aria-labelledby="catalog-heading">
             <p className="terminal-label">01 / Katalog</p>
             <h2 id="catalog-heading" className="mt-2 font-display text-4xl tracking-wide text-parchment">BİLGİ PAKETLERİ</h2>

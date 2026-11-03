@@ -65,6 +65,7 @@ candidate explicitly:
 python scripts/release.py --platform windows-amd64 \
   --runtime-lock dist/windows-research/candidate/candidate-runtime-lock.json \
   --runtime-archive dist/windows-research/candidate/kiwix-tools_windows-x86_64-3.8.2-known-source.zip \
+  --download-pmtiles \
   --compliance dist/windows-research/candidate/compliance \
   --output dist/windows-research/candidate/release --version 0.1.0-alpha.2
 ```
@@ -73,6 +74,13 @@ Packaging uses Go 1.26.0, Node 22, Python 3.12+ and Inno Setup 6.5.4. On this
 Linux host, an isolated Wine prefix runs the actual Inno compiler via a path
 adapter named `iscc`. The release builder's compliance/hash/dependency checks
 remain active. This does not replace native installer acceptance.
+
+The original candidate manifest binds the application notices from that build.
+After dependency changes such as `offline-maps`, use a separately revalidated
+bundle with current authenticated notices and its own manifest pin; retain the
+original source/build audit and do not relabel this MinGW 3.8.2 material as the
+official MSVC 3.8.1 runtime. The documented material audit does not require a
+separate human sign-off, and does not certify legal sufficiency automatically.
 
 The real-runtime regression tool runs natively on Windows or explicitly under
 Wine. Supply an indexed ZIM and a query with results:

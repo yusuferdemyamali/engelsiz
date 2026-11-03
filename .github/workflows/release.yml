@@ -77,7 +77,7 @@ jobs:
           if [ "$RUNNER_OS" = Windows ]; then
             export PATH="/c/Program Files (x86)/Inno Setup 6:$PATH"
           fi
-          python scripts/release.py --platform "$RELEASE_PLATFORM" --download-runtime --compliance "third_party/compliance/$RELEASE_PLATFORM" --output "release-output" --version "$RELEASE_VERSION"
+          python scripts/release.py --platform "$RELEASE_PLATFORM" --download-runtime --download-pmtiles --compliance "third_party/compliance/$RELEASE_PLATFORM" --output "release-output" --version "$RELEASE_VERSION"
       - name: Upload reviewable packages and checksums
         if: github.event_name == 'workflow_dispatch' && inputs.package
         uses: actions/upload-artifact@v4

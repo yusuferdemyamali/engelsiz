@@ -12,8 +12,11 @@
     "@fontsource/bebas-neue": "^5.3.0",
     "@fontsource/inter": "^5.3.0",
     "@fontsource/jetbrains-mono": "^5.3.0",
+    "@protomaps/basemaps": "5.7.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "maplibre-gl": "6.16.0",
+    "pmtiles": "4.5.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "tailwind-merge": "^2.5.4"

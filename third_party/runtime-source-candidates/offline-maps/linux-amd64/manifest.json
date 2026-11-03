@@ -1,0 +1,278 @@
+{
+  "applicationDependencies": {
+    "frontend": {
+      "noticeFile": "application/frontend.txt",
+      "noticeSha256": "46683e6a212c66588f36baec9b29aa3f36a60197f76aaf253c4e8fd332221d2d"
+    },
+    "go": {
+      "noticeFile": "application/go.txt",
+      "noticeSha256": "b7b70ab9edbff358c84ddb02036bb1f988fa0f4778aa468f57dd1a6e4bbbe065"
+    }
+  },
+  "auditEvidence": {
+    "limits": "Not official-binary reproduction, not a clean desktop release acceptance or automated legal certification",
+    "linkMap": "sources/linux-known-source.tar.gz:provenance/kiwix-serve.link-map",
+    "linkTrace": "sources/linux-known-source.tar.gz:provenance/kiwix-serve.link-trace.txt",
+    "runtimeBinarySha256": "d90ee80c33685187f4fbb4e57284e4ad81666fe374a981bfd1c7fdf1d1541cae",
+    "sourceBuildPlatform": "Ubuntu22.04, genericx64, ABI3.2"
+  },
+  "completeCorrespondingSource": true,
+  "components": [
+    {
+      "buildInstructions": "build/BUILD.md",
+      "buildInstructionsSha256": "abc18d4add7a1842b5b07b03943cec076f9c457e10812bca603b64954b7f6a92",
+      "license": "Original upstream license terms reproduced verbatim in the listed notice file and complete source tree",
+      "licenseFile": "licenses/kiwix-tools.txt",
+      "licenseSha256": "ef28a4c49a8be3f38ae92e0c602f807638ec50aea09036e25e5a08913a324474",
+      "name": "kiwix-tools",
+      "sourceArchive": "sources/linux-known-source.tar.gz",
+      "sourceSha256": "089dfc70cd2e9192cf351b003f4e2d300f7f47e276820ead0f6437175d9feb13",
+      "version": "3.8.2"
+    },
+    {
+      "buildInstructions": "build/BUILD.md",
+      "buildInstructionsSha256": "abc18d4add7a1842b5b07b03943cec076f9c457e10812bca603b64954b7f6a92",
+      "license": "Original upstream license terms reproduced verbatim in the listed notice file and complete source tree",
+      "licenseFile": "licenses/libkiwix.txt",
+      "licenseSha256": "d6dcdd9056b672469072467b898e5aba28894e79963754e28154dd5ac5cdd12b",
+      "name": "libkiwix",
+      "sourceArchive": "sources/linux-known-source.tar.gz",
+      "sourceSha256": "089dfc70cd2e9192cf351b003f4e2d300f7f47e276820ead0f6437175d9feb13",
+      "version": "14.2.0"
+    },
+    {
+      "buildInstructions": "build/BUILD.md",
+      "buildInstructionsSha256": "abc18d4add7a1842b5b07b03943cec076f9c457e10812bca603b64954b7f6a92",
+      "license": "Original upstream license terms reproduced verbatim in the listed notice file and complete source tree",
+      "licenseFile": "licenses/libzim.txt",
+      "licenseSha256": "47e177fd7b008b9f77b762e9327821c3c913c92b214a1700c0172eb29f8ab273",
+      "name": "libzim",
+      "sourceArchive": "sources/linux-known-source.tar.gz",
+      "sourceSha256": "089dfc70cd2e9192cf351b003f4e2d300f7f47e276820ead0f6437175d9feb13",
+      "version": "9.5.0"
+    },
+    {
+      "buildInstructions": "build/BUILD.md",
+      "buildInstructionsSha256": "abc18d4add7a1842b5b07b03943cec076f9c457e10812bca603b64954b7f6a92",
+      "license": "Original upstream license terms reproduced verbatim in the listed notice file and complete source tree",
+      "licenseFile": "licenses/pugixml.txt",
+      "licenseSha256": "e3b13a22d5f4da6c8293e76e4afb0be642764f99000058b2b22742cfd93f8044",
+      "name": "pugixml",
+      "sourceArchive": "sources/linux-known-source.tar.gz",
+      "sourceSha256": "089dfc70cd2e9192cf351b003f4e2d300f7f47e276820ead0f6437175d9feb13",
+      "version": "1.15"
+    },
+    {
+      "buildInstructions": "build/BUILD.md",
+      "buildInstructionsSha256": "abc18d4add7a1842b5b07b03943cec076f9c457e10812bca603b64954b7f6a92",
+      "license": "Original upstream license terms reproduced verbatim in the listed notice file and complete source tree",
+      "licenseFile": "licenses/lzma.txt",
+      "licenseSha256": "03d28197dc759dc5ddde295d5da0b03db6f250b83263f6fff7ef39b9b2671273",
+      "name": "lzma",
+      "sourceArchive": "sources/linux-known-source.tar.gz",
+      "sourceSha256": "089dfc70cd2e9192cf351b003f4e2d300f7f47e276820ead0f6437175d9feb13",
+      "version": "5.2.6"
+    },
+    {
+      "buildInstructions": "build/BUILD.md",
+      "buildInstructionsSha256": "abc18d4add7a1842b5b07b03943cec076f9c457e10812bca603b64954b7f6a92",
+      "license": "Original upstream license terms reproduced verbatim in the listed notice file and complete source tree",
+      "licenseFile": "licenses/zstd.txt",
+      "licenseSha256": "cc294f07fbc98727d026490ca121dea3568a9b0e2e236acf72600169db9592cc",
+      "name": "zstd",
+      "sourceArchive": "sources/linux-known-source.tar.gz",
+      "sourceSha256": "089dfc70cd2e9192cf351b003f4e2d300f7f47e276820ead0f6437175d9feb13",
+      "version": "1.5.7"
+    },
+    {
+      "buildInstructions": "build/BUILD.md",
+      "buildInstructionsSha256": "abc18d4add7a1842b5b07b03943cec076f9c457e10812bca603b64954b7f6a92",
+      "license": "Original upstream license terms reproduced verbatim in the listed notice file and complete source tree",
+      "licenseFile": "licenses/zlib.txt",
+      "licenseSha256": "e237ae5cbfa9e0351facaf6e11467298f8417e797f562bb42c92399089ff0f75",
+      "name": "zlib",
+      "sourceArchive": "sources/linux-known-source.tar.gz",
+      "sourceSha256": "089dfc70cd2e9192cf351b003f4e2d300f7f47e276820ead0f6437175d9feb13",
+      "version": "1.3.1"
+    },
+    {
+      "buildInstructions": "build/BUILD.md",
+      "buildInstructionsSha256": "abc18d4add7a1842b5b07b03943cec076f9c457e10812bca603b64954b7f6a92",
+      "license": "Original upstream license terms reproduced verbatim in the listed notice file and complete source tree",
+      "licenseFile": "licenses/uuid.txt",
+      "licenseSha256": "23956002365070811293d37611ef2a07d874d12ba0a1de69736bf1fd814b72f6",
+      "name": "uuid",
+      "sourceArchive": "sources/linux-known-source.tar.gz",
+      "sourceSha256": "089dfc70cd2e9192cf351b003f4e2d300f7f47e276820ead0f6437175d9feb13",
+      "version": "1.47.3"
+    },
+    {
+      "buildInstructions": "build/BUILD.md",
+      "buildInstructionsSha256": "abc18d4add7a1842b5b07b03943cec076f9c457e10812bca603b64954b7f6a92",
+      "license": "Original upstream license terms reproduced verbatim in the listed notice file and complete source tree",
+      "licenseFile": "licenses/xapian.txt",
+      "licenseSha256": "b66605ec12458c7a88775f5806768191d2d28528b9d73712cb0ab16dd2299003",
+      "name": "xapian",
+      "sourceArchive": "sources/linux-known-source.tar.gz",
+      "sourceSha256": "089dfc70cd2e9192cf351b003f4e2d300f7f47e276820ead0f6437175d9feb13",
+      "version": "1.4.23"
+    },
+    {
+      "buildInstructions": "build/BUILD.md",
+      "buildInstructionsSha256": "abc18d4add7a1842b5b07b03943cec076f9c457e10812bca603b64954b7f6a92",
+      "license": "Original upstream license terms reproduced verbatim in the listed notice file and complete source tree",
+      "licenseFile": "licenses/icu.txt",
+      "licenseSha256": "4fa8156e3e19bde5dccb1036459b84fb59548a2139d7ca566b55e52a50101e1a",
+      "name": "icu",
+      "sourceArchive": "sources/linux-known-source.tar.gz",
+      "sourceSha256": "089dfc70cd2e9192cf351b003f4e2d300f7f47e276820ead0f6437175d9feb13",
+      "version": "73.2"
+    },
+    {
+      "buildInstructions": "build/BUILD.md",
+      "buildInstructionsSha256": "abc18d4add7a1842b5b07b03943cec076f9c457e10812bca603b64954b7f6a92",
+      "license": "Original upstream license terms reproduced verbatim in the listed notice file and complete source tree",
+      "licenseFile": "licenses/curl.txt",
+      "licenseSha256": "e982991ebd8745ec38a6aef6db41466a26e32d661d9b7bb1feb913f8e861cba0",
+      "name": "curl",
+      "sourceArchive": "sources/linux-known-source.tar.gz",
+      "sourceSha256": "089dfc70cd2e9192cf351b003f4e2d300f7f47e276820ead0f6437175d9feb13",
+      "version": "8.4.0"
+    },
+    {
+      "buildInstructions": "build/BUILD.md",
+      "buildInstructionsSha256": "abc18d4add7a1842b5b07b03943cec076f9c457e10812bca603b64954b7f6a92",
+      "license": "Original upstream license terms reproduced verbatim in the listed notice file and complete source tree",
+      "licenseFile": "licenses/microhttpd.txt",
+      "licenseSha256": "ef6d348bf199b8b3f7848d672533196e3964c977f6bf05b7dcf2c81535680da7",
+      "name": "microhttpd",
+      "sourceArchive": "sources/linux-known-source.tar.gz",
+      "sourceSha256": "089dfc70cd2e9192cf351b003f4e2d300f7f47e276820ead0f6437175d9feb13",
+      "version": "0.9.76"
+    },
+    {
+      "buildInstructions": "build/BUILD.md",
+      "buildInstructionsSha256": "abc18d4add7a1842b5b07b03943cec076f9c457e10812bca603b64954b7f6a92",
+      "license": "Original upstream license terms reproduced verbatim in the listed notice file and complete source tree",
+      "licenseFile": "licenses/mustache.txt",
+      "licenseSha256": "02c73b6271d63332a45e8c1db2d2d7d1269728f7a33c345c0780f87c6aaaf093",
+      "name": "mustache",
+      "sourceArchive": "sources/linux-known-source.tar.gz",
+      "sourceSha256": "089dfc70cd2e9192cf351b003f4e2d300f7f47e276820ead0f6437175d9feb13",
+      "version": "4.1"
+    },
+    {
+      "buildInstructions": "build/BUILD.md",
+      "buildInstructionsSha256": "abc18d4add7a1842b5b07b03943cec076f9c457e10812bca603b64954b7f6a92",
+      "license": "Original upstream license terms reproduced verbatim in the listed notice file and complete source tree",
+      "licenseFile": "licenses/docopt.txt",
+      "licenseSha256": "726b538f97a6a7f091896314619ebd1b972b061294cacbc25e215b52141c9333",
+      "name": "docopt",
+      "sourceArchive": "sources/linux-known-source.tar.gz",
+      "sourceSha256": "089dfc70cd2e9192cf351b003f4e2d300f7f47e276820ead0f6437175d9feb13",
+      "version": "0.6.3"
+    },
+    {
+      "buildInstructions": "build/BUILD.md",
+      "buildInstructionsSha256": "abc18d4add7a1842b5b07b03943cec076f9c457e10812bca603b64954b7f6a92",
+      "license": "Original upstream license terms reproduced verbatim in the listed notice file and complete source tree",
+      "licenseFile": "licenses/kiwix-build.txt",
+      "licenseSha256": "889a9fcf3afd2118d8b24db1e3b6614590c7f122d2bd2150a8ef5595bf58558c",
+      "name": "kiwix-build",
+      "sourceArchive": "sources/linux-known-source.tar.gz",
+      "sourceSha256": "089dfc70cd2e9192cf351b003f4e2d300f7f47e276820ead0f6437175d9feb13",
+      "version": "r_100"
+    },
+    {
+      "buildInstructions": "build/BUILD.md",
+      "buildInstructionsSha256": "abc18d4add7a1842b5b07b03943cec076f9c457e10812bca603b64954b7f6a92",
+      "license": "Original applicable notices and complete source/patches are included; see notice file",
+      "licenseFile": "licenses/libc6-dev-copyright",
+      "licenseSha256": "d3c95b56fa33e28b57860580f0baf4e4f4de2a268a2b80f1d031a5191bade265",
+      "name": "glibc-static",
+      "sourceArchive": "sources/linux-known-source.tar.gz",
+      "sourceSha256": "089dfc70cd2e9192cf351b003f4e2d300f7f47e276820ead0f6437175d9feb13",
+      "version": "2.35-0ubuntu3.15"
+    },
+    {
+      "buildInstructions": "build/BUILD.md",
+      "buildInstructionsSha256": "abc18d4add7a1842b5b07b03943cec076f9c457e10812bca603b64954b7f6a92",
+      "license": "Original applicable notices and complete source/patches are included; see notice file",
+      "licenseFile": "licenses/libstdc++-11-dev-copyright",
+      "licenseSha256": "c2ff6bea4ff8eb81e93a10878e3a03db5015051b32272b363a6f23d3b86b11a2",
+      "name": "gcc-static-runtime",
+      "sourceArchive": "sources/linux-known-source.tar.gz",
+      "sourceSha256": "089dfc70cd2e9192cf351b003f4e2d300f7f47e276820ead0f6437175d9feb13",
+      "version": "11.4.0-1ubuntu1~22.04.3"
+    },
+    {
+      "buildInstructions": "build/BUILD.md",
+      "buildInstructionsSha256": "abc18d4add7a1842b5b07b03943cec076f9c457e10812bca603b64954b7f6a92",
+      "license": "Original applicable notices and complete source/patches are included; see notice file",
+      "licenseFile": "licenses/embedded-assets.txt",
+      "licenseSha256": "d156c0ff46e14d03f243075e1247ffb72c0b3c749258f270797ba4c787e9eb8f",
+      "name": "embedded-browser-assets",
+      "sourceArchive": "sources/linux-known-source.tar.gz",
+      "sourceSha256": "089dfc70cd2e9192cf351b003f4e2d300f7f47e276820ead0f6437175d9feb13",
+      "version": "libkiwix14.2.0"
+    },
+    {
+      "buildInstructions": "build/BUILD.md",
+      "buildInstructionsSha256": "abc18d4add7a1842b5b07b03943cec076f9c457e10812bca603b64954b7f6a92",
+      "license": "OFL-1.1",
+      "licenseFile": "licenses/assets/Poppins-OFL.txt",
+      "licenseSha256": "fbc4c9a72266d66689621c1c438f71e214c2141a6416b667f9c5e556bbc2e7b3",
+      "name": "Poppins-font",
+      "sourceArchive": "sources/linux-known-source.tar.gz",
+      "sourceSha256": "089dfc70cd2e9192cf351b003f4e2d300f7f47e276820ead0f6437175d9feb13",
+      "version": "4.004"
+    },
+    {
+      "buildInstructions": "build/BUILD.md",
+      "buildInstructionsSha256": "abc18d4add7a1842b5b07b03943cec076f9c457e10812bca603b64954b7f6a92",
+      "license": "OFL-1.1",
+      "licenseFile": "licenses/assets/DMSans-OFL.txt",
+      "licenseSha256": "9af36190332437f5ecd09974de43c1f7c77a310a996cdd8ceb25628b458840e1",
+      "name": "DM-Sans-font",
+      "sourceArchive": "sources/linux-known-source.tar.gz",
+      "sourceSha256": "089dfc70cd2e9192cf351b003f4e2d300f7f47e276820ead0f6437175d9feb13",
+      "version": "4.004"
+    },
+    {
+      "buildInstructions": "build/BUILD.md",
+      "buildInstructionsSha256": "abc18d4add7a1842b5b07b03943cec076f9c457e10812bca603b64954b7f6a92",
+      "license": "Apache-2.0",
+      "licenseFile": "licenses/assets/Roboto-Apache-2.0.txt",
+      "licenseSha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+      "name": "Roboto-font",
+      "sourceArchive": "sources/linux-known-source.tar.gz",
+      "sourceSha256": "089dfc70cd2e9192cf351b003f4e2d300f7f47e276820ead0f6437175d9feb13",
+      "version": "2.137"
+    },
+    {
+      "buildInstructions": "build/BUILD.md",
+      "buildInstructionsSha256": "abc18d4add7a1842b5b07b03943cec076f9c457e10812bca603b64954b7f6a92",
+      "license": "MIT",
+      "licenseFile": "licenses/assets/mustache-4.2.0-LICENSE",
+      "licenseSha256": "e60b280838180a70cbb4b934f825c8119cdcf8912259ff4c6da20b284231c832",
+      "name": "Mustache-JavaScript",
+      "sourceArchive": "sources/linux-known-source.tar.gz",
+      "sourceSha256": "089dfc70cd2e9192cf351b003f4e2d300f7f47e276820ead0f6437175d9feb13",
+      "version": "4.2.0"
+    }
+  ],
+  "inheritedSourceReview": {
+    "componentCount": 22,
+    "componentEntriesUnchanged": true,
+    "manifestSha256": "9dd04c0521e623445f58d571db32f416e9f69a5efbeb9674e8375b24e3557f30",
+    "reviewedAt": "2026-10-31",
+    "reviewedBy": "Codex documented source/patch/notice and byte-identical final-link audit",
+    "scope": "all component license/source/build hashes revalidated byte-identical; factual evidence inherited, not a newly performed full source rebuild"
+  },
+  "originalManifestSha256": "9dd04c0521e623445f58d571db32f416e9f69a5efbeb9674e8375b24e3557f30",
+  "refreshScope": "application/go.txt unchanged (b7b70ab9); application/frontend.txt 4f63aacc -> 46683e6a (30 map packages added: maplibre-gl 6.16.0, pmtiles 4.5.0, @protomaps/basemaps 5.7.2, 27 others; none removed, none version-changed); map glyph (Noto OFL, upstream commit 028c18f byte-verified) and sprite (Mapzen MIT Tangram derivation) licenses reviewed",
+  "reviewedAt": "2026-11-03",
+  "reviewedBy": "opencode packaging subagent automated refresh audit 2026-11-03 (application-notice refresh only; 22-component source closure inherited unchanged and hash-revalidated; no human signoff claimed)",
+  "runtimeSha256": "fd18dc8e60a1b4c70cda173db15cfea1ffcd1e2ea502aec2de2b4fa2401cbadb",
+  "runtimeVersion": "3.8.2"
+}

@@ -1,0 +1,11 @@
+{
+  "linux-amd64": {
+    "complianceManifestSha256": "2e8353cd2b8920178d11c1dc4b60b112b9c3aed8e70711b54269b66074dfe5f9",
+    "executable": "kiwix-serve",
+    "root": "kiwix-tools_linux-x86_64-3.8.2",
+    "sha256": "fd18dc8e60a1b4c70cda173db15cfea1ffcd1e2ea502aec2de2b4fa2401cbadb",
+    "sourceBuild": true,
+    "url": null,
+    "version": "3.8.2"
+  }
+}

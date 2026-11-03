@@ -22,6 +22,13 @@ GENERATED_OUTPUT = {
     'vite': 'conservative inclusion for generated module-preload helper; full published license retained',
     'esbuild': 'conservative inclusion for generated bundler helpers',
 }
+# These npm archives omit their upstream LICENSE files. Version, source commit,
+# and exact license bytes are pinned; package contents remain npm-integrity checked.
+SUPPLEMENTAL_NOTICES = {
+    ('@protomaps/basemaps', '5.7.2'): ('upstream/protomaps-basemaps-5.7.2-LICENSE.md', '74f975cfedd168098c43b5cfd6e587e40604684c4ffcec3e90d24b3b09c061b0', 'https://github.com/protomaps/basemaps/blob/3ea8293a28131c3dc63f1bb20827bdb8a76df06f/LICENSE.md'),
+    ('pmtiles', '4.5.0'): ('upstream/pmtiles-4.5.0-LICENSE', '0371c38f338835f7fc13ed71176f3d92144e22c8b736a31cced57adbbeb647b3', 'https://github.com/protomaps/PMTiles/blob/3b10e67edb65c6b04549f74c0279cef8328d859c/LICENSE'),
+}
+
 
 
 def sha(body):
@@ -138,15 +145,29 @@ def frontend_components():
         if not location:
             continue
         name = location.split('node_modules/')[-1]
-        if info.get('dev') and name not in GENERATED_OUTPUT:
-            excluded.append({'name': name, 'version': info['version'], 'reason': 'build-only dependency; not included by this notice scope'})
+        if (info.get('dev') and name not in GENERATED_OUTPUT) or name.startswith('@types/'):
+            excluded.append({'name': name, 'version': info['version'], 'reason': 'type or build-only dependency; not included by this notice scope'})
             continue
         directory = ROOT / 'frontend' / location
         installed = json.loads((directory / 'package.json').read_text(encoding='utf-8'))
         if installed['name'] != name or installed['version'] != info['version']:
             raise ValueError(f'Installed frontend package differs from package-lock: {name}')
-        notices = root_notices(directory)
-        authenticated_files = {notice['path'] for notice in notices}
+        supplemental = SUPPLEMENTAL_NOTICES.get((name, info['version']))
+        if supplemental:
+            filename, expected, upstream = supplemental
+            data = (OUTPUT / filename).read_bytes()
+            if sha(data) != expected:
+                raise ValueError(f'Pinned upstream license changed: {name}')
+            notices = [{'path': upstream, 'sha256': expected, 'text': data.decode('utf-8')}]
+            authenticated_files = {'package.json'}
+        elif (name, info['version']) == ('murmurhash-js', '1.0.0'):
+            # This npm release contains its complete MIT notice in README.md.
+            data = (directory / 'README.md').read_bytes()
+            notices = [{'path': 'README.md', 'sha256': sha(data), 'text': data.decode('utf-8')}]
+            authenticated_files = {'README.md'}
+        else:
+            notices = root_notices(directory)
+            authenticated_files = {notice['path'] for notice in notices}
         # Apache-2.0 cva's attribution appears in its source header rather than
         # its generic Apache LICENSE. Keep all public entry-point headers too.
         for relative in ('dist/index.js', 'index.js'):

@@ -10,6 +10,7 @@ export type Download = {
   fileName: string
   status: "queued" | "downloading" | "paused" | "failed" | "cancelled" | "completed"
   downloadedBytes: number
+  indeterminate?: boolean
   totalBytes: number | null
   percentage: number | null
   error: { code: string; message: string } | null
@@ -185,7 +186,8 @@ export function DownloadsView({ refreshKey }: { refreshKey: number }) {
         <ul className="mt-8 divide-y divide-sand/15 border-y border-sand/15">
           {downloads.map((item) => {
             const percentage = item.percentage === null ? null : Math.max(0, Math.min(100, item.percentage))
-            const actions = eligibleActions(item.status)
+            const mapDownload = item.provider === "maps"
+            const actions = mapDownload ? eligibleActions(item.status).filter(action => action !== "pause" && action !== "resume") : eligibleActions(item.status)
             const localPackage = packages.items.find((entry) => entry.downloadId === item.id)
             return (
               <li key={item.id} className="space-y-4 py-6" aria-busy={pending?.id === item.id}>
@@ -203,14 +205,15 @@ export function DownloadsView({ refreshKey }: { refreshKey: number }) {
                     aria-label={`${item.title} ${variantsLabel(item.variant)} indirme ilerlemesi`}
                     aria-valuetext={percentage === null ? "Toplam boyut bilinmiyor" : `%${numberFormatter.format(percentage)}`}
                   />
-                  <p className="flex flex-wrap justify-between gap-2 font-mono text-xs tabular-nums text-sand/80">
+                  {!mapDownload && <p className="flex flex-wrap justify-between gap-2 font-mono text-xs tabular-nums text-sand/80">
                     <span>{formatBytes(item.downloadedBytes)} / {item.totalBytes === null ? "Toplam boyut bilinmiyor" : formatBytes(item.totalBytes)}</span>
                     {percentage !== null && <span>%{numberFormatter.format(percentage)}</span>}
-                  </p>
+                  </p>}
+                  {mapDownload && <p className="font-mono text-xs text-sand/80">Kesin ilerleme bilgisi bulunmuyor.</p>}
                 </div>
                 {item.error && <p role="alert" className="max-w-prose rounded border border-blood/60 bg-blood/10 px-3 py-2 text-sm leading-6 text-parchment">{item.error.message}</p>}
                 {actionError?.id === item.id && <p role="alert" className="max-w-prose rounded border border-blood/60 bg-blood/10 px-3 py-2 text-sm leading-6 text-parchment">{actionError.message}</p>}
-                {item.status === "completed" && (
+                {item.status === "completed" && !mapDownload && (
                   <PackageState
                     item={localPackage}
                     downloadId={item.id}

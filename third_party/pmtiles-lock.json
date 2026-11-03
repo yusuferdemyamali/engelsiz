@@ -1,0 +1,20 @@
+{
+  "linux-amd64": {
+    "version": "1.31.2",
+    "url": "https://github.com/protomaps/go-pmtiles/releases/download/v1.31.2/go-pmtiles_1.31.2_Linux_x86_64.tar.gz",
+    "sha256": "3ed7dbf4ec2e6dfe5e25b6f70d1ffc932729f93c86db353bf514dd71010a312f",
+    "root": "",
+    "executable": "pmtiles",
+    "noticeInventorySha256": "4144324eb8d114b162c9fb21224d1eb589be266789b417ea73ad63ef1e5cb62e",
+    "noticeSha256": "839b45a2520bd8130ef9b4f7b4375bb775f5f4cb584d766232246a295028d02c"
+  },
+  "windows-amd64": {
+    "version": "1.31.2",
+    "url": "https://github.com/protomaps/go-pmtiles/releases/download/v1.31.2/go-pmtiles_1.31.2_Windows_x86_64.zip",
+    "sha256": "a658baa4d7e55020aef6ca17bd9ff9faa1582671266b36f58c52db0ac8e785a1",
+    "root": "",
+    "executable": "pmtiles.exe",
+    "noticeInventorySha256": "4144324eb8d114b162c9fb21224d1eb589be266789b417ea73ad63ef1e5cb62e",
+    "noticeSha256": "839b45a2520bd8130ef9b4f7b4375bb775f5f4cb584d766232246a295028d02c"
+  }
+}

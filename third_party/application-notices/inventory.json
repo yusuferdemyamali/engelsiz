@@ -47,6 +47,171 @@
       "version": "5.3.0"
     },
     {
+      "archiveIntegrity": "sha512-0SElaV0uMxEnxzBhhX9WTuPyUeMsAN/SS0i16tjuba4/mio63MG9khjC1a0JAiPGXAwvwm4UfHJURCN7nyudQg==",
+      "declaredLicense": "MIT",
+      "name": "@mapbox/jsonlint-lines-primitives",
+      "noticePayloadsVerifiedAgainstArchive": true,
+      "noticeSources": [
+        {
+          "path": "LICENSE",
+          "sha256": "5dcae6b71018b5454d00228bd08ccbcd9801ee27b19959b88ebcb55602604e6d"
+        }
+      ],
+      "scope": "locked production dependency (conservative superset of tree-shaken bundle)",
+      "source": "https://registry.npmjs.org/@mapbox/jsonlint-lines-primitives/-/jsonlint-lines-primitives-2.0.3.tgz",
+      "version": "2.0.3"
+    },
+    {
+      "archiveIntegrity": "sha512-YGcBz1cg4ATXDCM/71L9xveh4dynfGmcLDqufR+nQQy3fKwsAZsWd/x4621/6uJaeB9mwOHE6hPeDgXz9uViUQ==",
+      "declaredLicense": "ISC",
+      "name": "@mapbox/point-geometry",
+      "noticePayloadsVerifiedAgainstArchive": true,
+      "noticeSources": [
+        {
+          "path": "LICENSE",
+          "sha256": "0c0ede0036a425ff8b2d49341ea9aa8eccbeeae1ac4eb59874c9dd8bcf5186d3"
+        }
+      ],
+      "scope": "locked production dependency (conservative superset of tree-shaken bundle)",
+      "source": "https://registry.npmjs.org/@mapbox/point-geometry/-/point-geometry-1.1.0.tgz",
+      "version": "1.1.0"
+    },
+    {
+      "archiveIntegrity": "sha512-gBvcNDBBB66bgQYvnaJ6Jk+VCaMmVq5+IZR2kWPisT88Z8s0kBQt6hfVi8QgRW8Vpg0UWZzBA4ZSyzHHC+VeRA==",
+      "declaredLicense": "BSD-2-Clause",
+      "name": "@mapbox/tiny-sdf",
+      "noticePayloadsVerifiedAgainstArchive": true,
+      "noticeSources": [
+        {
+          "path": "LICENSE.txt",
+          "sha256": "4f78063c6c0757df950aa3440cef9a2a6bd1c552c994c32237c3acc283e72ee6"
+        }
+      ],
+      "scope": "locked production dependency (conservative superset of tree-shaken bundle)",
+      "source": "https://registry.npmjs.org/@mapbox/tiny-sdf/-/tiny-sdf-2.3.0.tgz",
+      "version": "2.3.0"
+    },
+    {
+      "archiveIntegrity": "sha512-fqd515fjBmANKGGsQ286E2Wvj/XvDFpGzwJxq4CI6jMQue6Oy04uCKp+JWKF00xRTmk6cEu1jPJ9p3xqH8YWqQ==",
+      "declaredLicense": "BSD-2-Clause",
+      "name": "@mapbox/unitbezier",
+      "noticePayloadsVerifiedAgainstArchive": true,
+      "noticeSources": [
+        {
+          "path": "LICENSE",
+          "sha256": "f0dc305ad097eddbc66eebb79288c92d8a5043818ace81206383a4c1a3268fe3"
+        }
+      ],
+      "scope": "locked production dependency (conservative superset of tree-shaken bundle)",
+      "source": "https://registry.npmjs.org/@mapbox/unitbezier/-/unitbezier-1.0.0.tgz",
+      "version": "1.0.0"
+    },
+    {
+      "archiveIntegrity": "sha512-Qf10S1uIHMk20ri/IVBnpS+esUEkVaR5Hftmz88jTInrpmWgPGJfPe3LVjjlE77trLx8tH6qjTG7uWH9hIq/0Q==",
+      "declaredLicense": "BSD-3-Clause",
+      "name": "@mapbox/vector-tile",
+      "noticePayloadsVerifiedAgainstArchive": true,
+      "noticeSources": [
+        {
+          "path": "LICENSE.txt",
+          "sha256": "5b09a507df6f21d6c2112c46dcaf2927b9dbd8b580a08b542d8ec2f9191d783d"
+        }
+      ],
+      "scope": "locked production dependency (conservative superset of tree-shaken bundle)",
+      "source": "https://registry.npmjs.org/@mapbox/vector-tile/-/vector-tile-3.0.0.tgz",
+      "version": "3.0.0"
+    },
+    {
+      "archiveIntegrity": "sha512-3Zw2jsU9pIJG3G2CQFbLjWj2MlAHodhD7cSY+15iywUuLmmkgzcKRnueVRZ4AcC/5wOtfhidcJAAzBpoBNs3Xg==",
+      "declaredLicense": "ISC",
+      "name": "@maplibre/geojson-vt",
+      "noticePayloadsVerifiedAgainstArchive": true,
+      "noticeSources": [
+        {
+          "path": "LICENSE",
+          "sha256": "9eb90e1c920aeccc6d630bd48c1512683d454c669701d46ff8c4c41f922dc4f3"
+        }
+      ],
+      "scope": "locked production dependency (conservative superset of tree-shaken bundle)",
+      "source": "https://registry.npmjs.org/@maplibre/geojson-vt/-/geojson-vt-6.3.0.tgz",
+      "version": "6.3.0"
+    },
+    {
+      "archiveIntegrity": "sha512-9ufQ5LR+Ldn87SILPVyRNz4wVm/sBrM2ZRv9VfjLRKYKIGAcvC1VFw/DEkJLAHqfMV8m03zDz1DUNTIUj/GvdA==",
+      "declaredLicense": "ISC",
+      "name": "@maplibre/maplibre-gl-style-spec",
+      "noticePayloadsVerifiedAgainstArchive": true,
+      "noticeSources": [
+        {
+          "path": "LICENSE.txt",
+          "sha256": "bfd4cb919eec574e9213e1e61f880831eb5fc372d467be429fd0a8d51d1df890"
+        }
+      ],
+      "scope": "locked production dependency (conservative superset of tree-shaken bundle)",
+      "source": "https://registry.npmjs.org/@maplibre/maplibre-gl-style-spec/-/maplibre-gl-style-spec-26.5.1.tgz",
+      "version": "26.5.1"
+    },
+    {
+      "archiveIntegrity": "sha512-7M2O7ABM80Oi8XPkfkrjKB8mOBIxGoVgkA52Mu4RMWoBvvMdagQ522+WxVYujZsMpqIr3BpzrTbXrm4k8lCzCQ==",
+      "declaredLicense": "(MIT OR Apache-2.0)",
+      "name": "@maplibre/mlt",
+      "noticePayloadsVerifiedAgainstArchive": true,
+      "noticeSources": [
+        {
+          "path": "LICENSE.txt",
+          "sha256": "3c0a2cc8dfe44b856c2577b4d6fe30a999557c795686d52b159a6e1659ea8023"
+        }
+      ],
+      "scope": "locked production dependency (conservative superset of tree-shaken bundle)",
+      "source": "https://registry.npmjs.org/@maplibre/mlt/-/mlt-1.3.0.tgz",
+      "version": "1.3.0"
+    },
+    {
+      "archiveIntegrity": "sha512-dEe5XUd64RQbxNxy2OzIkJnwNDWjVmSXjCd0A7zLirm7QJ/WWbmtDFIkfsiM4yt1cplqzG6oSivRYeWx1SM1yg==",
+      "declaredLicense": "MIT",
+      "name": "@maplibre/vt-pbf",
+      "noticePayloadsVerifiedAgainstArchive": true,
+      "noticeSources": [
+        {
+          "path": "LICENSE",
+          "sha256": "4c61c5753d4b021bc3b07f21d2a830506974ce200c19cfadf3d4a25e747fc853"
+        }
+      ],
+      "scope": "locked production dependency (conservative superset of tree-shaken bundle)",
+      "source": "https://registry.npmjs.org/@maplibre/vt-pbf/-/vt-pbf-4.3.3.tgz",
+      "version": "4.3.3"
+    },
+    {
+      "archiveIntegrity": "sha512-K1Yk6bWdULulYg+R2QRVXx4NzJZan5YQhpejEG0c1/sXruJrfPIPZuakpf3jwAgVmjIRVQwAv+yRafDeN0aaUQ==",
+      "declaredLicense": "BSD-3-Clause",
+      "name": "@protomaps/basemaps",
+      "noticePayloadsVerifiedAgainstArchive": true,
+      "noticeSources": [
+        {
+          "path": "https://github.com/protomaps/basemaps/blob/3ea8293a28131c3dc63f1bb20827bdb8a76df06f/LICENSE.md",
+          "sha256": "74f975cfedd168098c43b5cfd6e587e40604684c4ffcec3e90d24b3b09c061b0"
+        }
+      ],
+      "scope": "locked production dependency (conservative superset of tree-shaken bundle)",
+      "source": "https://registry.npmjs.org/@protomaps/basemaps/-/basemaps-5.7.2.tgz",
+      "version": "5.7.2"
+    },
+    {
+      "archiveIntegrity": "sha512-fX1Onk0tdVPC7obPWB5EbJ1z7NVhLq4m2xZLq2YXBkxzMXIGRpNMU88n0EPgWseKl12J7zXs7qrDxPK4sRs2fg==",
+      "declaredLicense": "MIT",
+      "name": "bidi-js",
+      "noticePayloadsVerifiedAgainstArchive": true,
+      "noticeSources": [
+        {
+          "path": "LICENSE.txt",
+          "sha256": "49d4d143fed599deb502a0fe6e02f49832f87e9a3a4cd0502e469596d50faa6d"
+        }
+      ],
+      "scope": "locked production dependency (conservative superset of tree-shaken bundle)",
+      "source": "https://registry.npmjs.org/bidi-js/-/bidi-js-1.1.0.tgz",
+      "version": "1.1.0"
+    },
+    {
       "archiveIntegrity": "sha512-Ka+9Trutv7G8M6WT6SeiRWz792K5qEqIGEGzXKhAE6xOWAY6pPH8U+9IY3oCMv6kqTmLsv7Xh/2w2RigkePMsg==",
       "declaredLicense": "Apache-2.0",
       "name": "class-variance-authority",
@@ -81,6 +246,21 @@
       "version": "2.1.1"
     },
     {
+      "archiveIntegrity": "sha512-FHc6yNpnTORB0tM5kmZ03iD2mDuNakDE2lvf4Hw1XkfxtEHIGVi01B/GqUSwx+NcC1WGjidAfpTXzeALtPtfpg==",
+      "declaredLicense": "ISC",
+      "name": "earcut",
+      "noticePayloadsVerifiedAgainstArchive": true,
+      "noticeSources": [
+        {
+          "path": "LICENSE",
+          "sha256": "0b348fff56384b43dbb37593906904e56d0f9deb51eae590d4dc6d427fbf1808"
+        }
+      ],
+      "scope": "locked production dependency (conservative superset of tree-shaken bundle)",
+      "source": "https://registry.npmjs.org/earcut/-/earcut-3.2.4.tgz",
+      "version": "3.2.4"
+    },
+    {
       "archiveIntegrity": "sha512-bbPBYYrtZbkt6Os6FiTLCTFxvq4tt3JKall1vRwshA3fdVztsLAatFaZobhkBC8/BrPetoa0oksYoKXoG4ryJg==",
       "declaredLicense": "MIT",
       "name": "esbuild",
@@ -94,6 +274,36 @@
       "scope": "conservative inclusion for generated bundler helpers",
       "source": "https://registry.npmjs.org/esbuild/-/esbuild-0.25.12.tgz",
       "version": "0.25.12"
+    },
+    {
+      "archiveIntegrity": "sha512-tbZNuJrLwGUp3zshBtdy4W+ORxZuIh8a5ilyIEQDC5rY1f3U20JMry0Ll3WBzU58EZKsEuJFXhb5gwv8CsPvgA==",
+      "declaredLicense": "MIT",
+      "name": "fflate",
+      "noticePayloadsVerifiedAgainstArchive": true,
+      "noticeSources": [
+        {
+          "path": "LICENSE",
+          "sha256": "0a1df3a083d0c010560aa342e87959c8c1070e6fd54545741f083f22d0c8b551"
+        }
+      ],
+      "scope": "locked production dependency (conservative superset of tree-shaken bundle)",
+      "source": "https://registry.npmjs.org/fflate/-/fflate-0.8.3.tgz",
+      "version": "0.8.3"
+    },
+    {
+      "archiveIntegrity": "sha512-latSnyDNt/8zYUB6VIJ6PCh2jBjJX6gnDsoCZ7LyW7GkqrD51EWwa9qCoGixj8YqBtETQK/xY7OmpTF8xz1DdQ==",
+      "declaredLicense": "MIT",
+      "name": "gl-matrix",
+      "noticePayloadsVerifiedAgainstArchive": true,
+      "noticeSources": [
+        {
+          "path": "LICENSE.md",
+          "sha256": "af62d31a0cdc1bf95d5e19428c3e0de368b727d9d5b6b6cdb466f8a52e68ad06"
+        }
+      ],
+      "scope": "locked production dependency (conservative superset of tree-shaken bundle)",
+      "source": "https://registry.npmjs.org/gl-matrix/-/gl-matrix-3.4.4.tgz",
+      "version": "3.4.4"
     },
     {
       "archiveIntegrity": "sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==",
@@ -115,6 +325,36 @@
       "version": "4.0.0"
     },
     {
+      "archiveIntegrity": "sha512-3CNZ2DnrpByG9Nqj6Xo8vqbjT4F6N+tb4Gb28ESAZjYZ5yqvmc56J+/kuIwkaAMOyblTQhUW7PxMkUb8Q36N3Q==",
+      "declaredLicense": "MIT",
+      "name": "json-stringify-pretty-compact",
+      "noticePayloadsVerifiedAgainstArchive": true,
+      "noticeSources": [
+        {
+          "path": "LICENSE",
+          "sha256": "2d51145876dda3dd13253463b852aa83b78aa598b90fca1709f39f1740ff9a2f"
+        }
+      ],
+      "scope": "locked production dependency (conservative superset of tree-shaken bundle)",
+      "source": "https://registry.npmjs.org/json-stringify-pretty-compact/-/json-stringify-pretty-compact-4.0.0.tgz",
+      "version": "4.0.0"
+    },
+    {
+      "archiveIntegrity": "sha512-e9vurzrXJQrFX6ckpHP3bvj5l+9CnYzkxDNnNQ1h2QTqdWsUAJgXiKdGNcOa1EY85dU8KbQ+z/FdQdB7P+9yfQ==",
+      "declaredLicense": "ISC",
+      "name": "kdbush",
+      "noticePayloadsVerifiedAgainstArchive": true,
+      "noticeSources": [
+        {
+          "path": "LICENSE",
+          "sha256": "0aba693a2c2e5b1b1465f9e06d29c21769450add9dbb7dc915b41a60e900196f"
+        }
+      ],
+      "scope": "locked production dependency (conservative superset of tree-shaken bundle)",
+      "source": "https://registry.npmjs.org/kdbush/-/kdbush-4.1.0.tgz",
+      "version": "4.1.0"
+    },
+    {
       "archiveIntegrity": "sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==",
       "declaredLicense": "MIT",
       "name": "loose-envify",
@@ -128,6 +368,126 @@
       "scope": "locked production dependency (conservative superset of tree-shaken bundle)",
       "source": "https://registry.npmjs.org/loose-envify/-/loose-envify-1.4.0.tgz",
       "version": "1.4.0"
+    },
+    {
+      "archiveIntegrity": "sha512-gApO66EMtoDZuio680RUBvskR7ahFd/NNhLN4tBAs+Y7FeT4gQV8zVFgYVMRmFxQznOEzecW19w6xOd9XjZjiA==",
+      "declaredLicense": "BSD-3-Clause",
+      "name": "maplibre-gl",
+      "noticePayloadsVerifiedAgainstArchive": true,
+      "noticeSources": [
+        {
+          "path": "LICENSE.txt",
+          "sha256": "ee5fc05a0677eaf69601d2c7db0d9ecd6cc27c3abc1d0733bc9ed34707cf8ef2"
+        }
+      ],
+      "scope": "locked production dependency (conservative superset of tree-shaken bundle)",
+      "source": "https://registry.npmjs.org/maplibre-gl/-/maplibre-gl-6.16.0.tgz",
+      "version": "6.16.0"
+    },
+    {
+      "archiveIntegrity": "sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==",
+      "declaredLicense": "MIT",
+      "name": "minimist",
+      "noticePayloadsVerifiedAgainstArchive": true,
+      "noticeSources": [
+        {
+          "path": "LICENSE",
+          "sha256": "435a6722c786b0a56fbe7387028f1d9d3f3a2d0fb615bb8fee118727c3f59b7b"
+        }
+      ],
+      "scope": "locked production dependency (conservative superset of tree-shaken bundle)",
+      "source": "https://registry.npmjs.org/minimist/-/minimist-1.2.8.tgz",
+      "version": "1.2.8"
+    },
+    {
+      "archiveIntegrity": "sha512-TvmkNhkv8yct0SVBSy+o8wYzXjE4Zz3PCesbfs8HiCXXdcTuocApFv11UWlNFWKYsP2okqrhb7JNlSm9InBhIw==",
+      "declaredLicense": "MIT",
+      "name": "murmurhash-js",
+      "noticePayloadsVerifiedAgainstArchive": true,
+      "noticeSources": [
+        {
+          "path": "README.md",
+          "sha256": "e137ced8967fc334ec9b5fc5c8500992f9e49d2e9cc0f6e2439e46af2f2481a4"
+        }
+      ],
+      "scope": "locked production dependency (conservative superset of tree-shaken bundle)",
+      "source": "https://registry.npmjs.org/murmurhash-js/-/murmurhash-js-1.0.0.tgz",
+      "version": "1.0.0"
+    },
+    {
+      "archiveIntegrity": "sha512-mnvGdvOrIvJOBGUEdGkrVXjN8E/VkIJCkf2eS1DH2yv82ORUlLttmDt0rWY38yYZmVwciZwBUvHM20qxBZf40w==",
+      "declaredLicense": "BSD-3-Clause",
+      "name": "pbf",
+      "noticePayloadsVerifiedAgainstArchive": true,
+      "noticeSources": [
+        {
+          "path": "LICENSE",
+          "sha256": "fdf1d5279107d760c7df8c6edab1faab2b72ba17528273a8b417b08f1e12ebbe"
+        }
+      ],
+      "scope": "locked production dependency (conservative superset of tree-shaken bundle)",
+      "source": "https://registry.npmjs.org/pbf/-/pbf-5.1.2.tgz",
+      "version": "5.1.2"
+    },
+    {
+      "archiveIntegrity": "sha512-CBeD4SoUluFziGdy/8k7FOjQxQy486n+929W/tWophauvMICpkZ26vGBWhDt/6b1FZQWNaf4jFdT/5+q0Wii5w==",
+      "declaredLicense": "BSD-3-Clause",
+      "name": "pmtiles",
+      "noticePayloadsVerifiedAgainstArchive": true,
+      "noticeSources": [
+        {
+          "path": "https://github.com/protomaps/PMTiles/blob/3b10e67edb65c6b04549f74c0279cef8328d859c/LICENSE",
+          "sha256": "0371c38f338835f7fc13ed71176f3d92144e22c8b736a31cced57adbbeb647b3"
+        }
+      ],
+      "scope": "locked production dependency (conservative superset of tree-shaken bundle)",
+      "source": "https://registry.npmjs.org/pmtiles/-/pmtiles-4.5.0.tgz",
+      "version": "4.5.0"
+    },
+    {
+      "archiveIntegrity": "sha512-pcaShQc1Shq0y+E7GqJqvZj8DTthWV1KeHGdi0Z6IAin2Oi3JnLCOfwnCo84qc+HAp52wT9nK9H7FAJp5a44GQ==",
+      "declaredLicense": "ISC",
+      "name": "potpack",
+      "noticePayloadsVerifiedAgainstArchive": true,
+      "noticeSources": [
+        {
+          "path": "LICENSE",
+          "sha256": "cfec0482fb785fe27e3b368a2d9e84bf7a61b275e83ec582bf288e98cd530bb0"
+        }
+      ],
+      "scope": "locked production dependency (conservative superset of tree-shaken bundle)",
+      "source": "https://registry.npmjs.org/potpack/-/potpack-2.1.0.tgz",
+      "version": "2.1.0"
+    },
+    {
+      "archiveIntegrity": "sha512-VG2K63Igkiv9p76tk1lilczEK1cT+kCjKtkdhw1dQZV3k3IXJbd3o6Ho8b9zJZaHSnT2hKe4I+ObmX9w6m5SmQ==",
+      "declaredLicense": "MIT",
+      "name": "protocol-buffers-schema",
+      "noticePayloadsVerifiedAgainstArchive": true,
+      "noticeSources": [
+        {
+          "path": "LICENSE",
+          "sha256": "3fe8d55a98dbf260eace67c00cf9bc53edb46234e840098a0b93df3096b97fb6"
+        }
+      ],
+      "scope": "locked production dependency (conservative superset of tree-shaken bundle)",
+      "source": "https://registry.npmjs.org/protocol-buffers-schema/-/protocol-buffers-schema-3.6.1.tgz",
+      "version": "3.6.1"
+    },
+    {
+      "archiveIntegrity": "sha512-XdjUArbK4Bm5fLLvlm5KpTFOiOThgfWWI4axAZDWg4E/0mKdZyI9tNEfds27qCi1ze/vwTR16kvmmGhRra3c2g==",
+      "declaredLicense": "ISC",
+      "name": "quickselect",
+      "noticePayloadsVerifiedAgainstArchive": true,
+      "noticeSources": [
+        {
+          "path": "LICENSE",
+          "sha256": "238ddb00e12a420a54e060afa19bdab4f70bf49e0e2a8ebb1a5e851f9ef447df"
+        }
+      ],
+      "scope": "locked production dependency (conservative superset of tree-shaken bundle)",
+      "source": "https://registry.npmjs.org/quickselect/-/quickselect-3.0.0.tgz",
+      "version": "3.0.0"
     },
     {
       "archiveIntegrity": "sha512-wS+hAgJShR0KhEvPJArfuPVN1+Hz1t0Y6n5jLrGQbkb4urgPE/0Rve+1kMB1v/oWgHgm4WIcV+i7F2pTVj+2iQ==",
@@ -158,6 +518,36 @@
       "scope": "locked production dependency (conservative superset of tree-shaken bundle)",
       "source": "https://registry.npmjs.org/react-dom/-/react-dom-18.3.1.tgz",
       "version": "18.3.1"
+    },
+    {
+      "archiveIntegrity": "sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw==",
+      "declaredLicense": "MIT",
+      "name": "require-from-string",
+      "noticePayloadsVerifiedAgainstArchive": true,
+      "noticeSources": [
+        {
+          "path": "license",
+          "sha256": "6ee0feb1f6ef996ff5a68600f8cf98909cf412d39ef3cdceaefd87d636fa1b7f"
+        }
+      ],
+      "scope": "locked production dependency (conservative superset of tree-shaken bundle)",
+      "source": "https://registry.npmjs.org/require-from-string/-/require-from-string-2.0.2.tgz",
+      "version": "2.0.2"
+    },
+    {
+      "archiveIntegrity": "sha512-kI5ffTiZWmJaS/huM8wZfEMer1eRd7oJQhDuxeCLe3t7N7mX3z94CN0xPxBQxFYQTSNz9T0i+v6inKqSdK8xrQ==",
+      "declaredLicense": "MIT",
+      "name": "resolve-protobuf-schema",
+      "noticePayloadsVerifiedAgainstArchive": true,
+      "noticeSources": [
+        {
+          "path": "LICENSE",
+          "sha256": "c0993ca46cd47c09710a977d3a3d51602cff96f19e8d2eb8d5887aa20a7beead"
+        }
+      ],
+      "scope": "locked production dependency (conservative superset of tree-shaken bundle)",
+      "source": "https://registry.npmjs.org/resolve-protobuf-schema/-/resolve-protobuf-schema-2.1.0.tgz",
+      "version": "2.1.0"
     },
     {
       "archiveIntegrity": "sha512-UOShsPwz7NrMUqhR6t0hWjFduvOzbtv7toDH1/hIrfRNIDBnnBWd0CwJTGvTpngVlmwGCdP9/Zl/tVrDqcuYzQ==",
@@ -220,6 +610,21 @@
       "version": "1.0.7"
     },
     {
+      "archiveIntegrity": "sha512-gRa9gwYU3ECmQYv3lslts5hxuIa90veaEcxDYuu3QGOIAEM2mOZkVHp48ANJuu1CURtRdHKUBY5Lm1tHV+sD4g==",
+      "declaredLicense": "ISC",
+      "name": "tinyqueue",
+      "noticePayloadsVerifiedAgainstArchive": true,
+      "noticeSources": [
+        {
+          "path": "LICENSE",
+          "sha256": "780453e05abdc22307ee01c706a2e73f508d3e484fc4c804485ebf6fe0964694"
+        }
+      ],
+      "scope": "locked production dependency (conservative superset of tree-shaken bundle)",
+      "source": "https://registry.npmjs.org/tinyqueue/-/tinyqueue-3.0.0.tgz",
+      "version": "3.0.0"
+    },
+    {
       "archiveIntegrity": "sha512-4enwjFfi4IwtEh0w+jPzpLVOFQiPHmmzPxcHXQOyEur47o6u0jE573DmGpjA+7irXoMLYRZD5ZaFUEneS3abPg==",
       "declaredLicense": "MIT",
       "name": "vite",
@@ -238,902 +643,907 @@
   "frontendBuildOnlyExcluded": [
     {
       "name": "@alloc/quick-lru",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "5.3.0"
     },
     {
       "name": "@babel/code-frame",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "7.29.7"
     },
     {
       "name": "@babel/compat-data",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "7.29.7"
     },
     {
       "name": "@babel/core",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "7.29.7"
     },
     {
       "name": "@babel/generator",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "7.29.8"
     },
     {
       "name": "@babel/helper-compilation-targets",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "7.29.7"
     },
     {
       "name": "@babel/helper-globals",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "7.29.7"
     },
     {
       "name": "@babel/helper-module-imports",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "7.29.7"
     },
     {
       "name": "@babel/helper-module-transforms",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "7.29.7"
     },
     {
       "name": "@babel/helper-plugin-utils",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "7.29.7"
     },
     {
       "name": "@babel/helper-string-parser",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "7.29.7"
     },
     {
       "name": "@babel/helper-validator-identifier",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "7.29.7"
     },
     {
       "name": "@babel/helper-validator-option",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "7.29.7"
     },
     {
       "name": "@babel/helpers",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "7.29.7"
     },
     {
       "name": "@babel/parser",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "7.29.9"
     },
     {
       "name": "@babel/plugin-transform-react-jsx-self",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "7.29.7"
     },
     {
       "name": "@babel/plugin-transform-react-jsx-source",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "7.29.7"
     },
     {
       "name": "@babel/template",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "7.29.7"
     },
     {
       "name": "@babel/traverse",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "7.29.8"
     },
     {
       "name": "@babel/types",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "7.29.8"
     },
     {
       "name": "@esbuild/aix-ppc64",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "0.25.12"
     },
     {
       "name": "@esbuild/android-arm",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "0.25.12"
     },
     {
       "name": "@esbuild/android-arm64",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "0.25.12"
     },
     {
       "name": "@esbuild/android-x64",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "0.25.12"
     },
     {
       "name": "@esbuild/darwin-arm64",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "0.25.12"
     },
     {
       "name": "@esbuild/darwin-x64",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "0.25.12"
     },
     {
       "name": "@esbuild/freebsd-arm64",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "0.25.12"
     },
     {
       "name": "@esbuild/freebsd-x64",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "0.25.12"
     },
     {
       "name": "@esbuild/linux-arm",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "0.25.12"
     },
     {
       "name": "@esbuild/linux-arm64",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "0.25.12"
     },
     {
       "name": "@esbuild/linux-ia32",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "0.25.12"
     },
     {
       "name": "@esbuild/linux-loong64",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "0.25.12"
     },
     {
       "name": "@esbuild/linux-mips64el",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "0.25.12"
     },
     {
       "name": "@esbuild/linux-ppc64",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "0.25.12"
     },
     {
       "name": "@esbuild/linux-riscv64",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "0.25.12"
     },
     {
       "name": "@esbuild/linux-s390x",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "0.25.12"
     },
     {
       "name": "@esbuild/linux-x64",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "0.25.12"
     },
     {
       "name": "@esbuild/netbsd-arm64",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "0.25.12"
     },
     {
       "name": "@esbuild/netbsd-x64",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "0.25.12"
     },
     {
       "name": "@esbuild/openbsd-arm64",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "0.25.12"
     },
     {
       "name": "@esbuild/openbsd-x64",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "0.25.12"
     },
     {
       "name": "@esbuild/openharmony-arm64",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "0.25.12"
     },
     {
       "name": "@esbuild/sunos-x64",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "0.25.12"
     },
     {
       "name": "@esbuild/win32-arm64",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "0.25.12"
     },
     {
       "name": "@esbuild/win32-ia32",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "0.25.12"
     },
     {
       "name": "@esbuild/win32-x64",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "0.25.12"
     },
     {
       "name": "@jridgewell/gen-mapping",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "0.3.13"
     },
     {
       "name": "@jridgewell/remapping",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "2.3.5"
     },
     {
       "name": "@jridgewell/resolve-uri",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "3.1.2"
     },
     {
       "name": "@jridgewell/sourcemap-codec",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "1.6.0"
     },
     {
       "name": "@jridgewell/trace-mapping",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "0.3.31"
     },
     {
       "name": "@napi-rs/lzma-linux-x64-gnu",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "1.5.1"
     },
     {
       "name": "@nodelib/fs.scandir",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "2.1.5"
     },
     {
       "name": "@nodelib/fs.stat",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "2.0.5"
     },
     {
       "name": "@nodelib/fs.walk",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "1.2.8"
     },
     {
       "name": "@rolldown/pluginutils",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "1.0.0-beta.27"
     },
     {
       "name": "@rollup/rollup-android-arm-eabi",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "4.63.5"
     },
     {
       "name": "@rollup/rollup-android-arm64",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "4.63.5"
     },
     {
       "name": "@rollup/rollup-darwin-arm64",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "4.63.5"
     },
     {
       "name": "@rollup/rollup-darwin-x64",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "4.63.5"
     },
     {
       "name": "@rollup/rollup-freebsd-arm64",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "4.63.5"
     },
     {
       "name": "@rollup/rollup-freebsd-x64",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "4.63.5"
     },
     {
       "name": "@rollup/rollup-linux-arm-gnueabihf",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "4.63.5"
     },
     {
       "name": "@rollup/rollup-linux-arm-musleabihf",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "4.63.5"
     },
     {
       "name": "@rollup/rollup-linux-arm64-gnu",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "4.63.5"
     },
     {
       "name": "@rollup/rollup-linux-arm64-musl",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "4.63.5"
     },
     {
       "name": "@rollup/rollup-linux-loong64-gnu",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "4.63.5"
     },
     {
       "name": "@rollup/rollup-linux-loong64-musl",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "4.63.5"
     },
     {
       "name": "@rollup/rollup-linux-ppc64-gnu",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "4.63.5"
     },
     {
       "name": "@rollup/rollup-linux-ppc64-musl",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "4.63.5"
     },
     {
       "name": "@rollup/rollup-linux-riscv64-gnu",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "4.63.5"
     },
     {
       "name": "@rollup/rollup-linux-riscv64-musl",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "4.63.5"
     },
     {
       "name": "@rollup/rollup-linux-s390x-gnu",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "4.63.5"
     },
     {
       "name": "@rollup/rollup-linux-x64-gnu",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "4.63.5"
     },
     {
       "name": "@rollup/rollup-linux-x64-musl",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "4.63.5"
     },
     {
       "name": "@rollup/rollup-openbsd-x64",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "4.63.5"
     },
     {
       "name": "@rollup/rollup-openharmony-arm64",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "4.63.5"
     },
     {
       "name": "@rollup/rollup-win32-arm64-msvc",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "4.63.5"
     },
     {
       "name": "@rollup/rollup-win32-ia32-msvc",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "4.63.5"
     },
     {
       "name": "@rollup/rollup-win32-x64-gnu",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "4.63.5"
     },
     {
       "name": "@rollup/rollup-win32-x64-msvc",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "4.63.5"
     },
     {
       "name": "@types/babel__core",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "7.20.5"
     },
     {
       "name": "@types/babel__generator",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "7.27.0"
     },
     {
       "name": "@types/babel__template",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "7.4.4"
     },
     {
       "name": "@types/babel__traverse",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "7.28.0"
     },
     {
       "name": "@types/estree",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "1.0.9"
     },
     {
+      "name": "@types/geojson",
+      "reason": "type or build-only dependency; not included by this notice scope",
+      "version": "7946.0.16"
+    },
+    {
       "name": "@types/node",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "26.6.3"
     },
     {
       "name": "@types/prop-types",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "15.7.15"
     },
     {
       "name": "@types/react",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "18.3.31"
     },
     {
       "name": "@types/react-dom",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "18.3.7"
     },
     {
       "name": "@vitejs/plugin-react",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "4.7.0"
     },
     {
       "name": "any-promise",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "1.3.0"
     },
     {
       "name": "anymatch",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "3.1.3"
     },
     {
       "name": "arg",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "5.0.2"
     },
     {
       "name": "autoprefixer",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "10.6.1"
     },
     {
       "name": "baseline-browser-mapping",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "2.11.26"
     },
     {
       "name": "binary-extensions",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "2.3.0"
     },
     {
       "name": "braces",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "3.0.3"
     },
     {
       "name": "browserslist",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "4.29.2"
     },
     {
       "name": "camelcase-css",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "2.0.1"
     },
     {
       "name": "caniuse-lite",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "1.0.30001813"
     },
     {
       "name": "chokidar",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "3.6.0"
     },
     {
       "name": "glob-parent",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "5.1.2"
     },
     {
       "name": "commander",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "4.1.1"
     },
     {
       "name": "convert-source-map",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "2.0.0"
     },
     {
       "name": "cssesc",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "3.0.0"
     },
     {
       "name": "csstype",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "3.2.3"
     },
     {
       "name": "debug",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "4.4.3"
     },
     {
       "name": "didyoumean",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "1.2.2"
     },
     {
       "name": "dlv",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "1.1.3"
     },
     {
       "name": "electron-to-chromium",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "1.5.440"
     },
     {
       "name": "es-errors",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "1.3.0"
     },
     {
       "name": "escalade",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "3.2.0"
     },
     {
       "name": "fast-glob",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "3.3.3"
     },
     {
       "name": "glob-parent",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "5.1.2"
     },
     {
       "name": "fastq",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "1.20.3"
     },
     {
       "name": "fill-range",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "7.1.1"
     },
     {
       "name": "fraction.js",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "5.3.4"
     },
     {
       "name": "fsevents",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "2.3.3"
     },
     {
       "name": "function-bind",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "1.1.2"
     },
     {
       "name": "gensync",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "1.0.0-beta.2"
     },
     {
       "name": "glob-parent",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "6.0.2"
     },
     {
       "name": "hasown",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "2.0.4"
     },
     {
       "name": "is-binary-path",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "2.1.0"
     },
     {
       "name": "is-core-module",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "2.17.0"
     },
     {
       "name": "is-extglob",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "2.1.1"
     },
     {
       "name": "is-glob",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "4.0.3"
     },
     {
       "name": "is-number",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "7.0.0"
     },
     {
       "name": "jiti",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "1.21.7"
     },
     {
       "name": "jsesc",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "3.1.0"
     },
     {
       "name": "json5",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "2.2.3"
     },
     {
       "name": "lilconfig",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "3.1.3"
     },
     {
       "name": "lines-and-columns",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "1.2.4"
     },
     {
       "name": "lru-cache",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "5.1.1"
     },
     {
       "name": "merge2",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "1.4.1"
     },
     {
       "name": "micromatch",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "4.0.8"
     },
     {
       "name": "ms",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "2.1.3"
     },
     {
       "name": "mz",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "2.7.0"
     },
     {
       "name": "nanoid",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "3.3.19"
     },
     {
       "name": "node-releases",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "2.0.57"
     },
     {
       "name": "normalize-path",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "3.0.0"
     },
     {
       "name": "object-assign",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "4.1.1"
     },
     {
       "name": "object-hash",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "3.0.0"
     },
     {
       "name": "path-parse",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "1.0.7"
     },
     {
       "name": "picocolors",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "1.1.1"
     },
     {
       "name": "picomatch",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "2.3.2"
     },
     {
       "name": "pirates",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "4.0.7"
     },
     {
       "name": "postcss",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "8.5.28"
     },
     {
       "name": "postcss-import",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "15.1.0"
     },
     {
       "name": "postcss-js",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "4.1.0"
     },
     {
       "name": "postcss-load-config",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "6.0.1"
     },
     {
       "name": "postcss-nested",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "6.2.0"
     },
     {
       "name": "postcss-selector-parser",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "6.1.5"
     },
     {
       "name": "postcss-value-parser",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "4.2.0"
     },
     {
       "name": "queue-microtask",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "1.2.3"
     },
     {
       "name": "react-refresh",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "0.17.0"
     },
     {
       "name": "read-cache",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "1.0.2"
     },
     {
       "name": "readdirp",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "3.6.0"
     },
     {
       "name": "resolve",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "1.22.12"
     },
     {
       "name": "reusify",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "1.1.0"
     },
     {
       "name": "rollup",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "4.63.5"
     },
     {
       "name": "run-parallel",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "1.2.0"
     },
     {
       "name": "semver",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "6.3.1"
     },
     {
       "name": "source-map-js",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "1.2.2"
     },
     {
       "name": "sucrase",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "3.35.1"
     },
     {
       "name": "supports-preserve-symlinks-flag",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "1.0.0"
     },
     {
       "name": "thenify",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "3.3.1"
     },
     {
       "name": "thenify-all",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "1.6.0"
     },
     {
       "name": "tinyglobby",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "0.2.17"
     },
     {
       "name": "fdir",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "6.5.0"
     },
     {
       "name": "picomatch",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "4.0.7"
     },
     {
       "name": "to-regex-range",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "5.0.1"
     },
     {
       "name": "ts-interface-checker",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "0.1.13"
     },
     {
       "name": "typescript",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "5.6.3"
     },
     {
       "name": "undici-types",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "8.9.0"
     },
     {
       "name": "update-browserslist-db",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "1.3.3"
     },
     {
       "name": "util-deprecate",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "1.0.2"
     },
     {
       "name": "fdir",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "6.5.0"
     },
     {
       "name": "picomatch",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "4.0.7"
     },
     {
       "name": "yallist",
-      "reason": "build-only dependency; not included by this notice scope",
+      "reason": "type or build-only dependency; not included by this notice scope",
       "version": "3.1.1"
     }
   ],
@@ -9390,6 +9800,7 @@
       "engelsiz/internal/packages",
       "engelsiz/internal/providers",
       "engelsiz/internal/providers/kiwix",
+      "engelsiz/internal/providers/maps",
       "engelsiz/internal/runtime/kiwix",
       "engelsiz/internal/web",
       "errors",
@@ -9612,6 +10023,7 @@
       "engelsiz/internal/packages",
       "engelsiz/internal/providers",
       "engelsiz/internal/providers/kiwix",
+      "engelsiz/internal/providers/maps",
       "engelsiz/internal/runtime/kiwix",
       "engelsiz/internal/web",
       "errors",
@@ -9753,15 +10165,15 @@
     ]
   },
   "inputs": {
-    "frontend/package-lock.json": "36d702ad601ab46c91ff2622318b7dede4c1a533f603e540085f16a0991d8c10",
+    "frontend/package-lock.json": "3b2763a79e180eec132d20b3be8c43ecacc8f7d1ed015e455bed3c115139d593",
     "frontend/tailwind.config.js": "13a666df112e383bae888a16ae34e8769cdd92d0daca566cd244067b40f88609",
     "go.mod": "6615e9cdf2fb9e21d13eaa349cd07bd2d1ee95a45bf41b0ebc2ae080df683e10",
     "go.sum": "3ca6de191cbcf41056b3b2c7abdcbe4b55c7ececa358c900df16bad0a700ee95"
   },
   "outputs": {
     "frontend.txt": {
-      "bytes": 154465,
-      "sha256": "fa66fbd1f4ac808b1c8cde4c3fc12435dd409fce59a8c81f8ef26b5d703273e9"
+      "bytes": 215443,
+      "sha256": "46683e6a212c66588f36baec9b29aa3f36a60197f76aaf253c4e8fd332221d2d"
     },
     "go.txt": {
       "bytes": 375163,

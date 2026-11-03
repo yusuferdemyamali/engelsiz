@@ -17,7 +17,7 @@ func TestMigrateFreshAndIdempotent(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, table := range []string{"settings", "providers", "schema_migrations"} {
+	for _, table := range []string{"settings", "providers", "schema_migrations", "map_packages"} {
 		var n int
 		if err := db.QueryRow(`SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name=?`, table).Scan(&n); err != nil || n != 1 {
 			t.Fatalf("table %s missing: %v", table, err)
@@ -33,8 +33,8 @@ func TestMigrateFreshAndIdempotent(t *testing.T) {
 	if err := db2.QueryRow(`SELECT COUNT(*) FROM schema_migrations`).Scan(&count); err != nil {
 		t.Fatal(err)
 	}
-	if count != 4 {
-		t.Fatalf("expected 4 applied migrations, got %d", count)
+	if count != 5 {
+		t.Fatalf("expected 5 applied migrations, got %d", count)
 	}
 	db2.Close()
 }

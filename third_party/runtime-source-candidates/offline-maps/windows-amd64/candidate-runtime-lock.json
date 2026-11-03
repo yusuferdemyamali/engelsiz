@@ -1,0 +1,10 @@
+{
+  "windows-amd64": {
+    "version": "3.8.2",
+    "url": null,
+    "sha256": "b42623c579ed865fb175bddd8d1ad78e40319644ffe167e1f5e6b331f424bd9d",
+    "root": "",
+    "executable": "kiwix-serve.exe",
+    "complianceManifestSha256": "ed93ec51300f43bc1de57320ca10255b04e7679a46d46610abd228aa8bda9707"
+  }
+}

@@ -10,8 +10,8 @@ The Windows CI job compiles the installer definition on every run using `scripts
 
 ```
 python -m unittest discover -s scripts/tests -v
-python scripts/release.py --platform linux-amd64 --runtime-archive /path/to/pinned.tar.gz --compliance third_party/compliance/linux-amd64 --output /tmp/engelsiz-release
-python scripts/release.py --platform windows-amd64 --runtime-archive C:\path\to\pinned.zip --compliance third_party/compliance/windows-amd64 --output C:\temp\engelsiz-release
+python scripts/release.py --platform linux-amd64 --runtime-archive /path/to/pinned.tar.gz --download-pmtiles --compliance third_party/compliance/linux-amd64 --output /tmp/engelsiz-release
+python scripts/release.py --platform windows-amd64 --runtime-archive C:\path\to\pinned.zip --download-pmtiles --compliance third_party/compliance/windows-amd64 --output C:\temp\engelsiz-release
 ```
 
 Or run the GitHub Actions workflow manually with package=true after committing reviewed compliance manifests/payloads. Digest pins precede extraction; missing LICENSE/source/notices block packaging. Packaging rebuilds and embeds the frontend and makes a static Go build. Only an empty output directory is accepted. Generated packages have companion `.sha256` files. Source payloads/notices are included under LICENSES; see [runtime distribution gate](../third_party/README.md).
@@ -22,10 +22,10 @@ The source-built local Linux candidate can be reproduced from its supplied immut
 python scripts/release.py --platform linux-amd64 \
   --runtime-lock dist/linux-source-candidate/candidate-runtime-lock.json \
   --runtime-archive dist/linux-source-candidate/kiwix-tools_linux-x86_64-3.8.2-known-source.tar.gz \
-  --compliance dist/linux-source-candidate/compliance --output /tmp/engelsiz-candidate-repack
+  --download-pmtiles --compliance dist/linux-source-candidate/compliance --output /tmp/engelsiz-candidate-repack
 ```
 
-That command uses the audited local source build rather than the default official download. Its source/material audit and extracted-package headless tests passed; clean desktop/browser acceptance and native Windows CI remain pending. See [packaging review](packaging-review.md).
+That command uses the audited local source build rather than the default official download. Its original application notices predate `offline-maps`; do not reuse its manifest unchanged with newer dependency inputs. Revalidate the unchanged runtime/source material and include authenticated current application notices in a separately pinned candidate bundle. `completeCorrespondingSource` documents that review; it is not a separate mandatory human-approval step. Clean desktop/browser acceptance and native Windows CI remain pending. See [packaging review](packaging-review.md).
 
 Supported targets: Windows 10/11 x86_64 and Linux x86_64 kernel 4.4+ desktop with browser/xdg-open. Kernel4.4 is a conservative Engelsiz product baseline, not a claim about [Go's minimum kernel requirement](https://go.dev/wiki/MinimumRequirements). Linux app/runtime packaging requires static ELF without PT_INTERP/PT_DYNAMIC; no particular installed glibc version is required by those binaries. Browser/opener/desktop availability remains a host prerequisite. Windows CI version/dependency smoke cannot replace clean VM acceptance.
 

@@ -85,6 +85,31 @@ def compliance(root, lock, project=ROOT):
     return data
 
 
+def pmtiles_notices(root, lock, platform):
+    # The official executable links many Go modules. Preserve their generated,
+    # independently authenticated attribution, not just the upstream LICENSE.
+    inventory = checked(Path(root) / 'inventory.json', lock.get('noticeInventorySha256'))
+    document = json.loads(inventory.read_text(encoding='utf-8'))
+    if (document.get('format') != 1 or document.get('archiveSha256', {}).get(platform) != lock['sha256'] or
+            document.get('goModVerify') is not True or document.get('binaryModuleGraphMatchesSource') is not True or
+            document.get('noticeSha256') != lock.get('noticeSha256')):
+        raise ValueError('PMTiles attribution inventory does not match the pinned binary')
+    checked(Path(root) / 'notices.txt', lock.get('noticeSha256'))
+
+
+def map_asset_notices(stage, project=ROOT):
+    # Map fonts+sprites license/source docs live in the embedded frontend.
+    # Stage directly readable copies alongside both distributables.
+    names = ('README.txt', 'fonts/OFL.txt', 'sprites/LICENSE.txt')
+    destination = Path(stage) / 'LICENSES/map-assets'
+    for name in names:
+        source = owned_file(project, 'frontend/public/maps/' + name)
+        target = destination / name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(source, target)
+    return destination
+
+
 def application_notice_inventory(project):
     """Bind bundled attribution to the app inputs being packaged now."""
     inventory_path = owned_file(project, 'third_party/application-notices/inventory.json')
@@ -264,7 +289,7 @@ def tarball(stage, output):
             for path in [Path(stage), *sorted(Path(stage).rglob('*'))]:
                 info = bundle.gettarinfo(str(path), arcname=str(Path('engelsiz') / path.relative_to(stage)))
                 relative = path.relative_to(stage).as_posix()
-                info.mode = 0o755 if path.is_dir() or relative in ('engelsiz', 'runtime/kiwix-serve', 'runtime/kiwix-search', 'runtime/kiwix-manage') else 0o644
+                info.mode = 0o755 if path.is_dir() or relative in ('engelsiz', 'runtime/kiwix-serve', 'runtime/kiwix-search', 'runtime/kiwix-manage', 'runtime/pmtiles/pmtiles') else 0o644
                 info.uid = info.gid = info.mtime = 0
                 info.uname = info.gname = ''
                 if path.is_symlink() or (not path.is_dir() and not path.is_file()):
@@ -287,6 +312,8 @@ def main():
     parser.add_argument('--download-runtime', action='store_true')
     parser.add_argument('--runtime-lock', type=Path, default=ROOT / 'third_party/runtime-lock.json',
                         help='Hash-pinned runtime inventory (defaults to the official runtime lock)')
+    parser.add_argument('--pmtiles-archive', type=Path)
+    parser.add_argument('--download-pmtiles', action='store_true')
     parser.add_argument('--compliance', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--version', default='0.1.0')
@@ -310,6 +337,16 @@ def main():
                 raise ValueError('Missing reviewed runtime SHA-256 pin')
             urllib.request.urlretrieve(lock['url'], args.runtime_archive)
         checked(args.runtime_archive, lock['sha256'])
+        pmtiles_locks = json.loads((ROOT / 'third_party/pmtiles-lock.json').read_text(encoding='utf-8'))
+        pmtiles_lock = pmtiles_locks[args.platform]
+        pmtiles_notices(ROOT / 'third_party/pmtiles-notices', pmtiles_lock, args.platform)
+        if args.pmtiles_archive is None:
+            if not args.download_pmtiles:
+                raise ValueError('Supply --pmtiles-archive or --download-pmtiles')
+            pmtiles_download = resources.enter_context(tempfile.TemporaryDirectory(prefix='engelsiz-pmtiles-download-'))
+            args.pmtiles_archive = Path(pmtiles_download) / Path(pmtiles_lock['url']).name
+            urllib.request.urlretrieve(pmtiles_lock['url'], args.pmtiles_archive)
+        checked(args.pmtiles_archive, pmtiles_lock['sha256'])
         output = args.output.resolve()
         if output.exists() and any(output.iterdir()):
             raise ValueError('Output directory must be empty')
@@ -330,24 +367,36 @@ def main():
             stage = Path(temporary) / 'stage'
             stage.mkdir()
             executable = extract_runtime(args.runtime_archive, lock, stage / 'runtime')
+            pmtiles_executable = extract_runtime(args.pmtiles_archive, pmtiles_lock, stage / 'runtime/pmtiles')
+            if not (stage / 'runtime/pmtiles/LICENSE').is_file():
+                raise ValueError('PMTiles upstream license is missing')
+            pmtiles_executable.chmod(0o755)
             target_os = args.platform.split('-')[0]
             if target_os == 'windows':
                 runtime_extras(args.compliance, manifest, stage / 'runtime')
                 windows_dependencies(stage / 'runtime')
+                windows_dependencies(stage / 'runtime/pmtiles')
             app = stage / ('engelsiz.exe' if target_os == 'windows' else 'engelsiz')
             env = {**os.environ, 'GOOS': target_os, 'GOARCH': 'amd64', 'GOAMD64': 'v1', 'CGO_ENABLED': '0'}
             run('go', 'build', '-trimpath', '-buildvcs=false', '-o', str(app), './cmd/engelsiz', env=env)
             if target_os == 'linux':
                 static_elf(app)
                 static_elf(executable)
+                static_elf(pmtiles_executable)
             if target_os == ('windows' if os.name == 'nt' else 'linux'):
                 result = subprocess.run([str(executable), '--version'], check=True, capture_output=True, text=True, encoding='utf-8')
                 if f'kiwix-tools {lock["version"]}' not in result.stdout:
                     raise ValueError('Unexpected runtime version')
+                pmtiles_version = subprocess.run([str(pmtiles_executable), 'version'], check=True, capture_output=True, text=True, encoding='utf-8')
+                if f'pmtiles {pmtiles_lock["version"]}' not in pmtiles_version.stdout:
+                    raise ValueError('Unexpected PMTiles runtime version')
             shutil.copytree(args.compliance, stage / 'LICENSES/runtime-corresponding-source')
             compliance(stage / 'LICENSES/runtime-corresponding-source', lock)
+            shutil.copytree(ROOT / 'third_party/pmtiles-notices', stage / 'LICENSES/pmtiles-notices')
+            pmtiles_notices(stage / 'LICENSES/pmtiles-notices', pmtiles_lock, args.platform)
             shutil.copy2(ROOT / 'LICENSE', stage / 'LICENSES/Engelsiz-LICENSE')
             shutil.copy2(ROOT / 'third_party/README.md', stage / 'LICENSES/THIRD-PARTY-NOTICES.md')
+            map_asset_notices(stage)
             shutil.copy2(ROOT / f'packaging/{target_os}/README.txt', stage / 'README.txt')
             output.mkdir(parents=True, exist_ok=True)
             if target_os == 'linux':

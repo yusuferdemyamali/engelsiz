@@ -39,6 +39,7 @@ type Manager struct {
 	active     *worker
 	closed     bool
 	persistErr error
+	external   []ExternalProvider
 	wake       chan struct{}
 	stop       chan struct{}
 	finished   chan struct{}
@@ -212,6 +213,19 @@ func (m *Manager) Create(d Descriptor) (snapshot Snapshot, result error) {
 	m.signal()
 	return r.snapshot(), nil
 }
+
+// RegisterExternalProvider registers a provider-owned transfer lifecycle.
+// Register during application startup, before serving requests.
+func (m *Manager) RegisterExternalProvider(provider ExternalProvider) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	m.external = append(m.external, provider)
+}
+func (m *Manager) externalProviders() []ExternalProvider {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	return append([]ExternalProvider(nil), m.external...)
+}
 func (m *Manager) List() ([]Snapshot, error) {
 	if e := m.healthy(); e != nil {
 		return nil, e
@@ -224,6 +238,13 @@ func (m *Manager) List() ([]Snapshot, error) {
 	for _, r := range records {
 		out = append(out, r.snapshot())
 	}
+	for _, provider := range m.externalProviders() {
+		items, err := provider.ListDownloads()
+		if err != nil {
+			return nil, ErrStorage
+		}
+		out = append(out, items...)
+	}
 	return out, nil
 }
 func (m *Manager) Get(id string) (Snapshot, error) {
@@ -231,6 +252,14 @@ func (m *Manager) Get(id string) (Snapshot, error) {
 		return Snapshot{}, e
 	}
 	r, e := m.get(id)
+	if errors.Is(e, ErrNotFound) {
+		for _, provider := range m.externalProviders() {
+			item, err := provider.GetDownload(id)
+			if !errors.Is(err, ErrNotFound) {
+				return item, err
+			}
+		}
+	}
 	if e != nil {
 		return Snapshot{}, publicError(e)
 	}
@@ -248,6 +277,14 @@ func (m *Manager) Control(id, action string) (snapshot Snapshot, result error) {
 		return Snapshot{}, e
 	}
 	r, e := m.get(id)
+	if errors.Is(e, ErrNotFound) {
+		for _, provider := range m.externalProviders() {
+			item, err := provider.ControlDownload(id, action)
+			if !errors.Is(err, ErrNotFound) {
+				return item, err
+			}
+		}
+	}
 	if e != nil {
 		return Snapshot{}, publicError(e)
 	}

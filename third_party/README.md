@@ -45,3 +45,7 @@ Repeat components for every incorporated dependency, including statically linked
 No binary/source payload is checked into this directory. Missing default pins/bundles deliberately stop official-runtime packaging before an artifact is produced.
 
 A separately source-built Linux candidate is now available locally under `dist/linux-source-candidate/`, with its full source/notice bundle, its own immutable runtime/manifest hashes and extracted-package verification. Select it explicitly with `--runtime-lock dist/linux-source-candidate/candidate-runtime-lock.json` and its matching `--runtime-archive`; the default official-runtime pins remain unchanged. See [source-build audit](runtime-source-candidates/README.md). This candidate does not establish Windows redistribution rights or clean desktop release acceptance.
+
+## PMTiles extractor
+
+Official go-pmtiles 1.31.2 release archives and the generated dependency notice inventory are pinned in `pmtiles-lock.json`. The release builder requires `--pmtiles-archive PATH` or `--download-pmtiles`, verifies the archive, stages the executable and upstream license under `runtime/pmtiles/`, and packages `pmtiles-notices/` under LICENSES. See `pmtiles-notices/README.md` for source-graph and notice verification. This does not bypass the Kiwix corresponding-source gate above.

@@ -2,10 +2,10 @@ Engelsiz - Windows 10/11 x86_64
 
 Engelsiz-Setup.exe dosyasını çalıştırın. Yönetici izni gerekmez. Başlat menüsündeki
 Engelsiz kısayolunu açın; varsayılan tarayıcı yerel arayüze bağlanır.
-Go, Node, SQLite veya Kiwix kurmanız gerekmez.
+Go, Node, SQLite, Kiwix veya PMTiles kurmanız gerekmez.
 
 Uygulama yalnızca 127.0.0.1 üzerinde çalışır. İlk içerik indirmesi internet gerektirir.
-İçerik kurulduktan sonra arama ve okuma çevrimdışı kullanılabilir.
+İçerik ve harita kurulduktan sonra çevrimdışı kullanılabilir.
 Konsol penceresini Ctrl+C ile kapatmak uygulamayı temiz biçimde durdurur.
 
 Program dosyaları: %LOCALAPPDATA%\Programs\Engelsiz
