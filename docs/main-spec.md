@@ -131,6 +131,7 @@ v0.1 aşağıdakileri içerecektir:
 - `kiwix-serve` lifecycle yönetimi
 - Kiwix araması
 - Wikipedia makale görüntüleme
+- 81 il çevrimdışı haritası (Haritalar: il ara, indir, çevrimdışı görüntüle; Z0–Z15 PMTiles, Türkçe etiketler, yerel glyph/sprite)
 - browser'ın otomatik açılması
 - temiz uygulama kapanışı
 - temel loglama
@@ -144,8 +145,6 @@ Aşağıdakiler v0.1 kapsamında değildir:
 - RAG
 - embeddings
 - vector database
-- offline haritalar
-- OpenStreetMap / PMTiles
 - Kolibri
 - Gutenberg
 - WikiHow için özel entegrasyon
@@ -1540,7 +1539,7 @@ Bu özelliklerin hiçbiri v0.1 geliştirme kapsamını genişletmemelidir.
 | Download | Resume + `.part` + retry + checksum |
 | Update | Kullanıcı onaylı |
 | v0.1 AI | Yok |
-| v0.1 Maps | Yok |
+| v0.1 Maps | 81 il çevrimdışı harita (Haritalar) |
 | Mimari yön | Provider tabanlı, minimum abstraction |
 
 ---

@@ -51,7 +51,7 @@ Temel sistem oturduktan sonra Engelsiz farklı offline bilgi kaynaklarını dest
 
 ### 🗺️ Haritalar
 
-Türkiye için offline harita ve OpenStreetMap verileri.
+Türkiye için offline harita ve OpenStreetMap verileri. **v0.1.0-alpha.3 ile teslim edildi:** 81 il, ayrı indirilebilir Z0–Z15 paketleri, çevrimdışı Türkçe etiketli görüntüleme.
 
 ### 🚑 Acil Durum
 
