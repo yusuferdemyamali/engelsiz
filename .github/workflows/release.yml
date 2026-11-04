@@ -105,20 +105,17 @@ jobs:
             tar -xzf "$RUNNER_TEMP/alpha3-linux.tar.gz" -C "$RUNNER_TEMP/alpha3root" engelsiz/LICENSES/runtime-corresponding-source
             cp -a "$RUNNER_TEMP/alpha3root/engelsiz/LICENSES/runtime-corresponding-source/." "$SRC/"
           else
-            # Never EXECUTE the downloaded installer here: an unsigned setup
-            # with Mark-of-the-Web can hang on SmartScreen with no console
-            # output, and 7-Zip cannot open Inno Setup archives. Extract with
-            # innoextract (pinned) and fail closed when the compliance tree
-            # is absent.
+            # innoextract 1.9 cannot open Inno 6.5 setups and 7-Zip cannot
+            # open Inno archives at all, so fall back to a silent install.
+            # Unblock-File first: an unsigned download with Mark-of-the-Web
+            # can otherwise hang on SmartScreen with no console output.
             gh release download v0.1.0-alpha.3 --pattern 'Engelsiz-Setup.exe' --output "$RUNNER_TEMP/alpha3-setup.exe" --clobber
-            choco install innoextract --version=1.9 -y --no-progress
+            powershell -NoProfile -Command "Unblock-File -Path \"$RUNNER_TEMP/alpha3-setup.exe\""
             SRC_DIR="$RUNNER_TEMP/alpha3src"
             rm -rf "$SRC_DIR"
-            mkdir -p "$SRC_DIR"
-            innoextract -d "$SRC_DIR" "$RUNNER_TEMP/alpha3-setup.exe"
-            FOUND="$(find "$SRC_DIR" -name manifest.json -path '*runtime-corresponding-source*' -print -quit)"
-            test -n "$FOUND" || { echo 'compliance tree not found in extracted installer'; exit 1; }
-            cp -a "$(dirname "$FOUND")/." "$SRC/"
+            "$RUNNER_TEMP/alpha3-setup.exe" /VERYSILENT /SUPPRESSMSGBOXES /NORESTART "/DIR=$SRC_DIR"
+            cp -a "$SRC_DIR/LICENSES/runtime-corresponding-source/." "$SRC/"
+            "$SRC_DIR/unins000.exe" /VERYSILENT /SUPPRESSMSGBOXES /NORESTART || true
           fi
           test -f "$SRC/manifest.json" || { echo 'compliance materialization failed'; exit 1; }
       - name: Build verified distributable package
