@@ -6,12 +6,14 @@ Status: NOT RELEASE-READY. A successful cross-build/unit test is not evidence of
 
 Maintainer prerequisites: Go 1.26.0, Node 22/npm, Python 3.12+, and Inno Setup 6 on Windows. These tools are NOT end-user dependencies.
 
+Translation runtime builds additionally use **stable CPython 3.11.x** and the hash-pinned wheel/build dependencies under `scripts/translation/`. Build the worker natively on each target; a Linux frozen runtime is not a Windows executable. `python scripts/translation/build_runtime.py --output dist/translation-runtime --python /path/to/stable/python3.11` builds the local target and runs a no-model protocol smoke. End users do not execute this command or install Python.
+
 The Windows CI job compiles the installer definition on every run using `scripts/check-installer.py` and the freshly built application. Its temporary runtime is a compiler fixture, not Kiwix; the resulting setup is deleted and never uploaded. This checks Inno syntax without bypassing the real runtime/source/dependency gates. It does not establish clean-machine acceptance.
 
 ```
 python -m unittest discover -s scripts/tests -v
-python scripts/release.py --platform linux-amd64 --runtime-archive /path/to/pinned.tar.gz --download-pmtiles --compliance third_party/compliance/linux-amd64 --output /tmp/engelsiz-release
-python scripts/release.py --platform windows-amd64 --runtime-archive C:\path\to\pinned.zip --download-pmtiles --compliance third_party/compliance/windows-amd64 --output C:\temp\engelsiz-release
+python scripts/release.py --platform linux-amd64 --runtime-archive /path/to/pinned.tar.gz --download-pmtiles --translation-runtime dist/translation-runtime/translation-runtime-linux-amd64 --compliance third_party/compliance/linux-amd64 --output /tmp/engelsiz-release
+python scripts/release.py --platform windows-amd64 --runtime-archive C:\path\to\pinned.zip --download-pmtiles --translation-runtime dist/translation-runtime/translation-runtime-windows-amd64 --compliance third_party/compliance/windows-amd64 --output C:\temp\engelsiz-release
 ```
 
 Or run the GitHub Actions workflow manually with package=true after committing reviewed compliance manifests/payloads. Digest pins precede extraction; missing LICENSE/source/notices block packaging. Packaging rebuilds and embeds the frontend and makes a static Go build. Only an empty output directory is accepted. Generated packages have companion `.sha256` files. Source payloads/notices are included under LICENSES; see [runtime distribution gate](../third_party/README.md).
@@ -22,12 +24,17 @@ The source-built local Linux candidate can be reproduced from its supplied immut
 python scripts/release.py --platform linux-amd64 \
   --runtime-lock dist/linux-source-candidate/candidate-runtime-lock.json \
   --runtime-archive dist/linux-source-candidate/kiwix-tools_linux-x86_64-3.8.2-known-source.tar.gz \
-  --download-pmtiles --compliance dist/linux-source-candidate/compliance --output /tmp/engelsiz-candidate-repack
+  --download-pmtiles --translation-runtime dist/translation-runtime/translation-runtime-linux-amd64 \
+  --compliance dist/linux-source-candidate/compliance --output /tmp/engelsiz-candidate-repack
 ```
 
 That command uses the audited local source build rather than the default official download. Its original application notices predate `offline-maps`; do not reuse its manifest unchanged with newer dependency inputs. Revalidate the unchanged runtime/source material and include authenticated current application notices in a separately pinned candidate bundle. `completeCorrespondingSource` documents that review; it is not a separate mandatory human-approval step. Clean desktop/browser acceptance and native Windows CI remain pending. See [packaging review](packaging-review.md).
 
 Supported targets: Windows 10/11 x86_64 and Linux x86_64 kernel 4.4+ desktop with browser/xdg-open. Kernel4.4 is a conservative Engelsiz product baseline, not a claim about [Go's minimum kernel requirement](https://go.dev/wiki/MinimumRequirements). Linux app/runtime packaging requires static ELF without PT_INTERP/PT_DYNAMIC; no particular installed glibc version is required by those binaries. Browser/opener/desktop availability remains a host prerequisite. Windows CI version/dependency smoke cannot replace clean VM acceptance.
+
+**Translation exception:** the Go/Kiwix/PMTiles executables retain their static-ELF checks. The separately frozen Python/Argos worker is dynamic and has an explicitly audited library closure and glibc baseline recorded in `translation-runtime-manifest.json` and bounded by `third_party/translation-runtime-lock.json`. Therefore the older static-only empty-rootfs claim does **not** establish translation compatibility on every old Linux distro. Use a compatible glibc-based x86_64 distro for translation; the exact final tested baseline is recorded in the translation delivery report. Missing engine/unsupported host must degrade translation without taking down Wikipedia/maps. Do not label a musl/Alpine system or older glibc as tested without real evidence.
+
+For translation acceptance, additionally download/install each direction through Çeviri, test the other direction while one is absent, restart without downloads, verify multiline/swap/clear/copy, reject corrupt artifacts, and run the real app+worker with networking unavailable. Preserve models under the normal application data directory on uninstall. [Translation evidence](../openspec/changes/offline-tr-en-translation/verification.md) is separate from the pre-existing AC rows below; none of their pending clean-machine checks is silently completed.
 
 A separate [Windows source-built candidate and evidence record](windows-installer-validation.md) tracks the MSVC-free runtime work for #10. It does not close AC-01 or clean-machine acceptance.
 

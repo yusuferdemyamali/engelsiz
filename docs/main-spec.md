@@ -12,7 +12,7 @@
 
 Uygulamanın amacı internet bağlantısının yerini almak değildir. Amaç; önceden indirilen açık bilgi kaynaklarının internet olmadan da aranabilmesi, okunabilmesi ve ileride farklı offline bilgi sağlayıcılarının tek bir arayüz üzerinden yönetilebilmesidir.
 
-İlk sürüm yalnızca **Kiwix üzerinden Türkçe Wikipedia** desteği sunacaktır.
+İlk sürüm **Kiwix üzerinden Türkçe Wikipedia**, 81 il çevrimdışı haritası ve kullanıcı isteğiyle eklenen **Argos Türkçe ↔ İngilizce çevrimdışı çeviri** desteği sunar. Çeviri kapsamı `openspec/changes/offline-tr-en-translation/` altında tanımlıdır.
 
 Engelsiz'in uzun vadeli yönü yalnızca Wikipedia değildir. Mimari ileride farklı içerik sağlayıcılarının eklenmesini mümkün kılmalıdır; ancak v0.1 sırasında bu gelecek senaryoları için gereksiz implementasyon veya aşırı soyutlama yapılmamalıdır.
 
@@ -132,6 +132,7 @@ v0.1 aşağıdakileri içerecektir:
 - Kiwix araması
 - Wikipedia makale görüntüleme
 - 81 il çevrimdışı haritası (Haritalar: il ara, indir, çevrimdışı görüntüle; Z0–Z15 PMTiles, Türkçe etiketler, yerel glyph/sprite)
+- Argos Translate ile Türkçe ↔ İngilizce metin çevirisi; iki yön için ayrı, kullanıcı onayıyla indirilen ve SHA-256 doğrulanan modeller; uygulamayla paketlenen yerel motor
 - browser'ın otomatik açılması
 - temiz uygulama kapanışı
 - temel loglama
@@ -216,6 +217,8 @@ Wikipedia makaleleri SQLite'a import edilmeyecektir.
 - **Kiwix**
 - `kiwix-serve`
 - `.zim`
+
+Çeviri modülü Argos Translate'i uygulamayla paketlenen kalıcı bir yerel worker üzerinden çalıştırır. Python ve motor bağımlılıkları dağıtıma dahildir; dil modelleri temel pakete dahil edilmez. Model indirmeleri mevcut Download Manager üzerinden yürür. Kurulu her yön diğerinden bağımsız kullanılabilir. Çeviri metinleri loglanmaz, saklanmaz veya harici servislere gönderilmez. Genel amaçlı local LLM, otomatik dil algılama, ses/OCR, çeviri geçmişi ve bulut fallback kapsam dışıdır.
 
 Kullanıcıdan ayrıca Kiwix kurulumu istenmemelidir.
 

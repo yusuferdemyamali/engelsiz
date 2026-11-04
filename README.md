@@ -61,6 +61,16 @@ Terminalde yazdırılan yerel adresi gerektiğinde elle açabilirsin. Varsayıla
 
 Linux’ta içerik ve veritabanı varsayılan olarak `~/.local/share/engelsiz`, ayarlar `~/.config/engelsiz`, önbellek `~/.cache/engelsiz` altındadır. `XDG_DATA_HOME`, `XDG_CONFIG_HOME` ve `XDG_CACHE_HOME` değişkenleri desteklenir. Arşivden çıkardığın program klasörünü silmek bu kullanıcı verilerini silmez.
 
+## Çevrimdışı çeviri (bu geliştirme dalı)
+
+Bu dal **Çeviri** modülünü ekler; yukarıdaki mevcut alpha indirme bağlantıları bu değişikliğin yayımlandığı anlamına gelmez.
+
+1. **Çeviri** bölümünü aç; kullanacağın yönün modelinde **İndir** seç. Türkçe → İngilizce yaklaşık 115 MiB, İngilizce → Türkçe yaklaşık 119 MiB'dir. Her yön bağımsızdır; indirme yalnızca sen başlatırsan yapılır.
+2. İndirme bu sayfadayken tamamlanırsa kurulum başlar. Sayfadan ayrıldıysan geri dönüp **Kur** seç. İndirmeler bölümündeki duraklat/devam et/tekrar dene davranışları korunur.
+3. Metni yaz veya yapıştır; **Çevir** ya da `Ctrl+Enter` kullan. **Yönü değiştir**, **Temizle** ve **Sonucu kopyala** kontrolleri aynı sayfadadır. Bir istek en fazla 5.000 Unicode karakter içerir.
+
+Kurulumdan sonra bağlantı gerekmez. Metinler cihazdaki Argos motorunda işlenir; sunucuya gönderilmez, geçmişe veya loga yazılmaz. Python/pip kurulumu gerekmez: motor, yeni dağıtımın `runtime/translation` dizinine dahil edilir. Modeller normal kullanıcı veri dizinindeki `content/translation` altında saklanır. Doğrulanan Linux adayında çeviri için glibc 2.35+ gerekir; Windows native kabulü henüz yapılmadı. [Model kaynakları ve lisans sınırları](docs/translation-models.md) · [Teknik teslim ve test raporu](docs/offline-translation-delivery.md).
+
 ## Geliştirme ve katkı
 
 Hata raporları, kurulum testleri, dokümantasyon, çeviri ve kod katkıları için [katkı rehberine](CONTRIBUTING.md) bakabilirsin. Yerel geliştirme komutları ve testler de bu rehberde bulunur.

@@ -61,6 +61,16 @@ You can open the local address printed in the terminal manually. The preferred p
 
 On Linux, content and the database default to `~/.local/share/engelsiz`, configuration to `~/.config/engelsiz`, and cache to `~/.cache/engelsiz`. The `XDG_DATA_HOME`, `XDG_CONFIG_HOME`, and `XDG_CACHE_HOME` overrides are supported. Removing the extracted program directory preserves this user data.
 
+## Offline translation (this development branch)
+
+This branch adds **Çeviri** (Translation); the existing alpha download links above do not imply that this change has been released.
+
+1. Open **Çeviri** and select **İndir** for the direction you need: approximately 115 MiB for Turkish → English or 119 MiB for English → Turkish. Each direction is independent; downloads start only on your action.
+2. Installation follows completion while this page is open. If you leave it, return and select **Kur**. Existing download pause/resume/retry controls remain available.
+3. Type or paste up to 5,000 Unicode characters and select **Çevir** or press `Ctrl+Enter`. Use **Yönü değiştir** to swap direction and **Sonucu kopyala** to copy the result.
+
+Installed models work offline. Text stays in the local Argos process and is not logged or saved as history. The native distribution bundles Python and engine dependencies under `runtime/translation`; no user Python/pip setup is needed. Models live under `content/translation` in the normal application data directory. Translation in the verified Linux candidate requires glibc 2.35+; native Windows acceptance remains untested. See [model provenance and licensing limitations](docs/translation-models.md) and the [technical delivery/test report](docs/offline-translation-delivery.md).
+
 ## Contribute
 
 Bug reports, installation tests, documentation, translations, and code contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for local development and test commands. Reports can be written in Turkish or English.

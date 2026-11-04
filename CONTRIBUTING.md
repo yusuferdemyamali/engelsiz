@@ -24,6 +24,10 @@ go run ./cmd/engelsiz --no-browser
 
 Open the loopback address printed by the application. To serve installed ZIM content, provide a compatible local Kiwix executable using `--kiwix-binary /absolute/path/to/kiwix-serve` (`kiwix-serve.exe` on Windows). The development override and runtime lifecycle are separate from building a redistributable package; see [release validation](docs/release-validation.md).
 
+### Çeviri motorunu geliştirme / Translation runtime development
+
+Çeviri motoru için kararlı CPython 3.11.x ile `python scripts/translation/build_runtime.py --output dist/translation-runtime --python /path/to/python3.11` çalıştırılır. Script hash-pinned bağımlılıklardan yerel bir frozen worker üretir; varsayılan olarak smoke testi yapar. Go geliştirme sürecinde `ENGELSIZ_TRANSLATION_BINARY` değişkenini oluşan `engelsiz-translate` (`.exe`) dosyasına ayarlayabilirsiniz. Native release paketleri worker'ı uygulama yanındaki `runtime/translation` altına dahil eder; son kullanıcı Python/pip kurmaz. [Paketleme ve platform sınırları](docs/release-validation.md), [model provenance](docs/translation-models.md).
+
 ## Kontroller / Checks
 
 Choose checks appropriate to the change. The platform CI also runs the full frontend build and platform-specific checks.
@@ -32,7 +36,7 @@ Choose checks appropriate to the change. The platform CI also runs the full fron
 node --test frontend/tests/*.test.mjs
 go test ./...
 go vet ./...
-go test -race ./internal/app ./internal/packages ./internal/download ./internal/runtime/kiwix
+go test -race ./internal/app ./internal/packages ./internal/download ./internal/runtime/kiwix ./internal/translation
 python -m unittest discover -s scripts/tests -v
 python scripts/collect-app-notices.py --check
 ```
