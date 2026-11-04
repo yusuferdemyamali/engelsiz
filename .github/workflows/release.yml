@@ -6,13 +6,9 @@ on:
   workflow_dispatch:
     inputs:
       package:
-        description: Build packages (compliance materialized from alpha.3 assets; gates intact)
+        description: Build packages (audited source-built runtimes + alpha.3-materialized compliance; gates intact)
         type: boolean
         default: false
-      runtime_archive_url:
-        description: Optional explicit URL for the pinned Kiwix runtime archive (bytes stay hash-gated; empty keeps default download/fail-closed path)
-        type: string
-        default: ''
       qa_installer_url:
         description: Fallback installer URL for QA when the platform job produced none (empty fails closed with a clear error; never silently QA an old release)
         type: string
@@ -122,29 +118,22 @@ jobs:
         env:
           RELEASE_VERSION: ${{ inputs.version }}
           RELEASE_PLATFORM: ${{ matrix.platform }}
-          RELEASE_RUNTIME_ARCHIVE_URL: ${{ inputs.runtime_archive_url }}
         run: |
           if [ "$RUNNER_OS" = Windows ]; then
             export PATH="/c/Program Files (x86)/Inno Setup 6:$PATH"
           fi
           RUNTIME_DIR="translation-runtime-dist/translation-runtime-linux-amd64"
+          RUNTIME_LOCK="third_party/runtime-source-candidates/offline-maps/linux-amd64/candidate-runtime-lock.json"
+          RUNTIME_ARCHIVE="third_party/runtime-archives/kiwix-tools_linux-x86_64-3.8.2-known-source.tar.gz"
           if [ "$RUNNER_OS" = Windows ]; then
             RUNTIME_DIR="translation-runtime-dist/translation-runtime-windows-amd64"
+            RUNTIME_LOCK="third_party/runtime-source-candidates/offline-maps/windows-amd64/candidate-runtime-lock.json"
+            RUNTIME_ARCHIVE="third_party/runtime-archives/kiwix-tools_windows-x86_64-3.8.2-known-source.zip"
           fi
-          RUNTIME_ARGS="--download-runtime"
-          if [ "${{ matrix.platform }}" = windows-amd64 ]; then
-            # The Windows source-built runtime has no public URL; the exact
-            # reviewed archive is committed and always hash-checked by release.py.
-            RUNTIME_ARGS="--runtime-archive third_party/runtime-archives/kiwix-tools_windows-x86_64-3.8.2-known-source.zip"
-          elif [ -n "$RELEASE_RUNTIME_ARCHIVE_URL" ]; then
-            curl -sSL -o "$RUNNER_TEMP/pinned-runtime-archive" "$RELEASE_RUNTIME_ARCHIVE_URL"
-            RUNTIME_ARGS="--runtime-archive $RUNNER_TEMP/pinned-runtime-archive"
-          fi
-          # The pinned archive bytes are always hash-checked against the lock
-          # by release.py; an explicit URL never bypasses the gates. The
-          # Windows source-built archive (b42623c5…) has no public URL and
-          # stays fail-closed until explicitly supplied or pins are reviewed.
-          python scripts/release.py --platform "$RELEASE_PLATFORM" $RUNTIME_ARGS --download-pmtiles --translation-runtime "$RUNTIME_DIR" --compliance "third_party/compliance/$RELEASE_PLATFORM" --output "release-output" --version "$RELEASE_VERSION"
+          # Both platforms use audited source-built runtimes: committed exact
+          # archives + candidate locks, always hash-checked by release.py.
+          # No network drift, no silent upgrades.
+          python scripts/release.py --platform "$RELEASE_PLATFORM" --runtime-lock "$RUNTIME_LOCK" --runtime-archive "$RUNTIME_ARCHIVE" --download-pmtiles --translation-runtime "$RUNTIME_DIR" --compliance "third_party/compliance/$RELEASE_PLATFORM" --output "release-output" --version "$RELEASE_VERSION"
       - name: Write build provenance
         if: github.event_name == 'workflow_dispatch' && inputs.package
         shell: bash

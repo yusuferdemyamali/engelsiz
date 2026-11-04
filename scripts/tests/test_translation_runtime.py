@@ -751,6 +751,20 @@ class WindowsBuildMechanicsTests(unittest.TestCase):
         self.assertTrue(keeper.is_file())
         self.assertEqual(self.build.strip_gpu_libraries(frozen), [])
 
+    def test_api_set_forwarders_stripped_not_bundled(self):
+        frozen = self.root / 'frozen-apiset'
+        (frozen / '_internal').mkdir(parents=True)
+        (frozen / '_internal' / 'api-ms-win-core-console-l1-1-0.dll').write_bytes(b'forwarder')
+        (frozen / '_internal' / 'ext-ms-win-ntuser-draw-l1-1-0.dll').write_bytes(b'forwarder')
+        keeper = frozen / '_internal' / 'libiomp5md.dll'
+        keeper.write_bytes(b'cpu library that must stay')
+        removed = self.build.strip_api_set_libraries(frozen)
+        self.assertEqual(sorted(removed),
+                         ['_internal/api-ms-win-core-console-l1-1-0.dll',
+                          '_internal/ext-ms-win-ntuser-draw-l1-1-0.dll'])
+        self.assertTrue(keeper.is_file())
+        self.assertEqual(self.build.strip_api_set_libraries(frozen), [])
+
 
 def worker_command():
     """Return ([binary...]) for protocol tests, or None (skip).

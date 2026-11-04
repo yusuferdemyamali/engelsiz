@@ -406,6 +406,11 @@ WINDOWS_SYSTEM_DLLS = frozenset(
 # smoke test then proves the worker still starts without them.
 GPU_STRIP_PATTERNS = (r"cudnn.*\.dll",)
 
+# Windows API-set forwarders (api-ms-win-*, ext-ms-win-*) resolve from the
+# host OS at load time and must never be bundled: a frozen copy would pin
+# stale forwarders and mask the host contract. Stripped like GPU libraries.
+API_SET_STRIP_PATTERNS = (r"api-ms-win-.*", r"ext-ms-win-.*")
+
 
 def interpreter_dist_hashes(venv_python):
     """SHA-256 set of the build interpreter's Windows distribution binaries.
@@ -608,6 +613,25 @@ def strip_gpu_libraries(frozen):
         if (path.is_file() and not path.is_symlink()
                 and any(re.fullmatch(pattern, path.name.lower())
                         for pattern in GPU_STRIP_PATTERNS)):
+            removed.append(path.relative_to(Path(frozen)).as_posix())
+            path.unlink()
+    return removed
+
+
+def strip_api_set_libraries(frozen):
+    """Remove bundled Windows API-set forwarders; they resolve from the host.
+
+    Returns the removed relative paths for the manifest. The release gate
+    already forbids bundling them ("must stay host-provided"); stripping
+    here keeps a PyInstaller-collected forwarder from failing the build at
+    the notices stage. Import *references* to api-ms-win-* remain allowed —
+    only bundled copies are removed.
+    """
+    removed = []
+    for path in sorted(Path(frozen).rglob("*")):
+        if (path.is_file() and not path.is_symlink()
+                and any(re.fullmatch(pattern, path.name.lower())
+                        for pattern in API_SET_STRIP_PATTERNS)):
             removed.append(path.relative_to(Path(frozen)).as_posix())
             path.unlink()
     return removed
@@ -1151,6 +1175,7 @@ def main():
         # All before notices/inventory so the manifest pins the final set.
         injected_dlls = inject_native_dlls(frozen, args.native_dll)
         stripped_gpu = strip_gpu_libraries(frozen)
+        stripped_api_set = strip_api_set_libraries(frozen)
         desymlink_tree(frozen)
         host_prerequisites = audit_windows_dependencies(frozen)
 
@@ -1214,6 +1239,7 @@ def main():
             "binarySha256": sha256_of(binary),
             "injectedNativeDlls": dict(sorted(injected_dlls.items())),
             "strippedGpuLibraries": sorted(stripped_gpu),
+            "strippedApiSetLibraries": sorted(stripped_api_set),
             "hostPrerequisites": host_prerequisites,
             "files": file_inventory(frozen),
         }
