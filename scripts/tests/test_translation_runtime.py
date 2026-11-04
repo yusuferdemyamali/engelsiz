@@ -370,6 +370,309 @@ class WindowsRecursiveDependencyTests(unittest.TestCase):
         release.windows_dependencies_recursive(runtime)
 
 
+class NativeNoticesWindowsTests(unittest.TestCase):
+    """Synthetic Windows-layout fixtures for build_runtime.collect_native_notices.
+
+    Covers the native-Windows attribution branch (CPython-bundled DLLs,
+    --native-license overrides, wheel hash-mismatch fail-closed) without
+    duplicating the release.windows_dependencies_recursive fixtures above.
+    """
+
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temporary.cleanup)
+        self.root = Path(self.temporary.name)
+        spec = importlib.util.spec_from_file_location(
+            'translation_build_windows',
+            Path(__file__).parents[1] / 'translation' / 'build_runtime.py')
+        self.build = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(self.build)
+        # Stub the interpreter PSF lookup: every fixture runs offline with a
+        # synthetic license; the real discovery path is exercised separately.
+        self.build.find_interpreter_license = (
+            lambda venv_python, override=None:
+            'PYTHON SOFTWARE FOUNDATION LICENSE synthetic')
+        # Stub the interpreter DLL hash set for determinism on Linux; tests
+        # needing explicit hashes pass them, the real discovery test uses
+        # self.real_dist_hashes.
+        self.real_dist_hashes = self.build.interpreter_dist_hashes
+        self.build.interpreter_dist_hashes = lambda venv_python: set()
+        self.frozen = self.root / 'frozen'
+        self.frozen.mkdir()
+        (self.frozen / 'engelsiz-translate.exe').write_bytes(b'PE-stub')
+        self.env_site = self.root / 'site'
+        self.env_site.mkdir()
+        self.notices = self.root / 'notices'
+        self.notices.mkdir()
+        self.papers = self.root / 'papers.txt'
+        self.papers.write_text(
+            'Synthetic license papers for fixture native libraries.\n'
+            'Permission is hereby granted to use, copy, and distribute this\n'
+            'synthetic fixture text for offline test attribution purposes.\n',
+            encoding='utf-8')
+
+    def collect(self, dist_hashes=None, **kwargs):
+        kwargs.setdefault('venv_python', sys.executable)
+        kwargs.setdefault('interp_dist_hashes',
+                          set() if dist_hashes is None else dist_hashes)
+        return self.build.collect_native_notices(
+            self.frozen, 'engelsiz-translate.exe', self.env_site,
+            self.notices, **kwargs)
+
+    def test_cpython_bundled_dll_attributed_from_interpreter_papers(self):
+        (self.frozen / '_internal').mkdir()
+        (self.frozen / '_internal' / 'libcrypto-3.dll').write_bytes(b'fake-crypto-v1')
+        (self.frozen / '_internal' / 'libssl-3.dll').write_bytes(b'fake-ssl-v1')
+        (self.frozen / '_internal' / '_ssl.cp311-win_amd64.pyd').write_bytes(b'fake-ext')
+        self.build.find_windows_bundled_license = (
+            lambda venv_python, markers: self.papers)
+        entries = self.collect()
+        self.assertIn('_internal/libcrypto-3.dll', entries)
+        self.assertIn('OpenSSL', entries['_internal/libcrypto-3.dll']['origin'])
+        self.assertIn('_internal/libssl-3.dll', entries)
+        self.assertEqual(entries['_internal/_ssl.cp311-win_amd64.pyd']['origin'],
+                         'CPython 3.11 stdlib')
+        self.assertTrue((self.notices / 'interpreter-LICENSE.txt').is_file())
+        manifest = json.loads((self.notices / 'NATIVE-LIBS.json').read_text(encoding='utf-8'))
+        self.assertEqual(manifest['_internal/libcrypto-3.dll']['origin'],
+                         entries['_internal/libcrypto-3.dll']['origin'])
+
+    def test_cpython_bundled_dll_missing_papers_fails_closed(self):
+        (self.frozen / 'libcrypto-3.dll').write_bytes(b'fake-crypto-v1')
+        self.build.find_windows_bundled_license = lambda venv_python, markers: None
+        with self.assertRaisesRegex(SystemExit, r'lacks license papers.*--native-license libcrypto-3\.dll=PATH'):
+            self.collect()
+
+    def test_native_license_override_covers_unknown_dll_and_rejects_bare_url(self):
+        (self.frozen / 'customvp.dll').write_bytes(b'fake-custom-v1')
+        entries = self.collect(native_overrides=(f'customvp.dll={self.papers}',))
+        self.assertEqual(entries['customvp.dll']['origin'],
+                         'maintainer-supplied papers via --native-license')
+        bare = self.root / 'bare.txt'
+        bare.write_text('https://example.com/license\n', encoding='utf-8')
+        with self.assertRaisesRegex(SystemExit, 'not license text'):
+            self.collect(native_overrides=(f'customvp.dll={bare}',))
+        with self.assertRaisesRegex(SystemExit, 'missing file'):
+            self.collect(native_overrides=('customvp.dll=/nonexistent/papers.txt',))
+
+    def test_wheel_hash_mismatch_fails_closed_never_misattributed_as_stdlib(self):
+        import base64
+        import hashlib
+        payload = b'fake-extension-bytes'
+        target = self.frozen / '_socket.cp311-win_amd64.pyd'
+        target.write_bytes(payload)
+        real_hex = hashlib.sha256(payload).hexdigest()
+        wrong = hashlib.sha256(b'other-bytes').digest()
+        wrong_b64 = base64.urlsafe_b64encode(wrong).decode().rstrip('=')
+        dist = self.env_site / 'sockets-1.0.dist-info'
+        dist.mkdir()
+        (dist / 'METADATA').write_text('Name: sockets\nVersion: 1.0\n', encoding='utf-8')
+        (dist / 'RECORD').write_text(
+            f'_socket.cp311-win_amd64.pyd,sha256={wrong_b64},5\n', encoding='utf-8')
+        with self.assertRaisesRegex(SystemExit, 'unattributed native library'):
+            self.collect()
+        self.assertNotEqual(
+            self.build.record_index(self.env_site)['_socket.cp311-win_amd64.pyd'][0][2],
+            real_hex)
+
+    def test_space_unicode_paths_with_windows_layout(self):
+        spaced = self.root / 'çeviri runtime dir' / 'frozen'
+        spaced.mkdir(parents=True)
+        (spaced / 'engelsiz-translate.exe').write_bytes(b'PE-stub')
+        (spaced / 'sqlite3.dll').write_bytes(b'fake-sqlite-v1')
+        notices = self.root / 'notices-spaced'
+        notices.mkdir()
+        self.build.find_windows_bundled_license = (
+            lambda venv_python, markers: self.papers)
+        entries = self.build.collect_native_notices(
+            spaced, 'engelsiz-translate.exe', self.env_site, notices,
+            venv_python=sys.executable)
+        self.assertIn('sqlite3.dll', entries)
+        self.assertIn('SQLite', entries['sqlite3.dll']['origin'])
+
+    def test_find_windows_bundled_license_discovers_interpreter_file(self):
+        interp_root = self.root / 'interp root ünïcode'
+        interp_root.mkdir()
+        (interp_root / 'LICENSE.txt').write_text(
+            'Fake OpenSSL license bundle for discovery.\n'
+            'This file documents the OpenSSL project terms shipped beside the\n'
+            'interpreter for offline attribution testing purposes.\n',
+            encoding='utf-8')
+        stub = self.root / 'stub-python'
+        stub.write_text(
+            '#!/bin/sh\nprintf "%s\\n" "%s"\n' % (interp_root, interp_root),
+            encoding='utf-8')
+        stub.chmod(0o755)
+        found = self.build.find_windows_bundled_license(str(stub), ('openssl',))
+        self.assertIsNotNone(found)
+        self.assertEqual(found, interp_root / 'LICENSE.txt')
+        missing = self.build.find_windows_bundled_license(str(stub), ('no-such-marker-xyz',))
+        self.assertIsNone(missing)
+
+    def test_plain_name_stdlib_pyd_attributed_via_interpreter_hash(self):
+        import hashlib
+        payloads = {
+            '_ssl.pyd': b'fake-ssl-ext-plain-bytes',
+            '_socket.pyd': b'fake-socket-ext-plain-bytes',
+            '_hashlib.pyd': b'fake-hashlib-ext-plain-bytes',
+            'select.pyd': b'fake-select-ext-plain-bytes',
+        }
+        for name, payload in payloads.items():
+            (self.frozen / name).write_bytes(payload)
+        dist_hashes = {hashlib.sha256(payload).hexdigest()
+                       for payload in payloads.values()}
+        entries = self.collect(dist_hashes=dist_hashes)
+        for name in payloads:
+            self.assertEqual(entries[name]['origin'], 'CPython 3.11 stdlib')
+            self.assertEqual(entries[name]['license'], 'interpreter-LICENSE.txt')
+
+    def test_plain_name_stdlib_blocked_by_wheel_hash_mismatch(self):
+        import base64
+        import hashlib
+        payload = b'fake-socket-plain-ext-bytes'
+        (self.frozen / '_socket.pyd').write_bytes(payload)
+        real_hex = hashlib.sha256(payload).hexdigest()
+        wrong_b64 = base64.urlsafe_b64encode(
+            hashlib.sha256(b'other-bytes').digest()).decode().rstrip('=')
+        dist = self.env_site / 'sockets-1.0.dist-info'
+        dist.mkdir()
+        (dist / 'METADATA').write_text('Name: sockets\nVersion: 1.0\n', encoding='utf-8')
+        (dist / 'RECORD').write_text(
+            f'_socket.pyd,sha256={wrong_b64},5\n', encoding='utf-8')
+        # Even though the bytes match the interpreter distribution, the
+        # mismatched wheel RECORD claim must fail closed, never misattribute.
+        with self.assertRaisesRegex(SystemExit, 'unattributed native library'):
+            self.collect(dist_hashes={real_hex})
+
+    def test_interpreter_dist_hashes_from_base_prefix(self):
+        import hashlib
+        base = self.root / 'fakebase'
+        (base / 'DLLs').mkdir(parents=True)
+        ext = base / 'DLLs' / '_ssl.pyd'
+        ext.write_bytes(b'fake-dist-ext')
+        bundled = base / 'python311.dll'
+        bundled.write_bytes(b'fake-dist-dll')
+        (base / 'notes.txt').write_bytes(b'not a binary, must be ignored')
+        stub = self.root / 'stub-base-python'
+        stub.write_text('#!/bin/sh\nprintf "%s\\n"\n' % base, encoding='utf-8')
+        stub.chmod(0o755)
+        found = self.real_dist_hashes(str(stub))
+        self.assertEqual(found, {hashlib.sha256(b'fake-dist-ext').hexdigest(),
+                                 hashlib.sha256(b'fake-dist-dll').hexdigest()})
+
+    def test_hashless_record_unique_vs_ambiguous(self):
+        (self.frozen / 'libiomp5md.dll').write_bytes(b'fake-iomp-bytes')
+        numpy_dist = self.env_site / 'numpy-2.4.6.dist-info'
+        numpy_dist.mkdir()
+        (numpy_dist / 'METADATA').write_text(
+            'Name: numpy\nVersion: 2.4.6\n', encoding='utf-8')
+        (numpy_dist / 'RECORD').write_text('libiomp5md.dll,,\n', encoding='utf-8')
+        entries = self.collect()
+        self.assertIn('numpy', entries['libiomp5md.dll']['origin'])
+        other_dist = self.env_site / 'otherpkg-1.0.dist-info'
+        other_dist.mkdir()
+        (other_dist / 'METADATA').write_text(
+            'Name: otherpkg\nVersion: 1.0\n', encoding='utf-8')
+        (other_dist / 'RECORD').write_text('libiomp5md.dll,,\n', encoding='utf-8')
+        with self.assertRaisesRegex(SystemExit, 'unattributed native library'):
+            self.collect()
+
+
+class WindowsBuildMechanicsTests(unittest.TestCase):
+    """Fixtures for --native-dll injection, early PE audit, cuDNN strip."""
+
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temporary.cleanup)
+        self.root = Path(self.temporary.name)
+        spec = importlib.util.spec_from_file_location(
+            'translation_build_mechanics',
+            Path(__file__).parents[1] / 'translation' / 'build_runtime.py')
+        self.build = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(self.build)
+
+    def pe_fixture(self, path, dependency=None):
+        body = bytearray(1024)
+        body[:2] = b'MZ'
+        struct.pack_into('<I', body, 0x3c, 0x80)
+        body[0x80:0x84] = b'PE\0\0'
+        struct.pack_into('<HH', body, 0x84, 0x8664, 1)
+        struct.pack_into('<H', body, 0x94, 240)
+        struct.pack_into('<H', body, 0x98, 0x20b)
+        struct.pack_into('<I', body, 0x98 + 120, 0x1000 if dependency else 0)
+        struct.pack_into('<IIII', body, 0x98+240+8, 512, 0x1000, 512, 512)
+        struct.pack_into('<IIIII', body, 512, 0, 0, 0, 0x1040, 0)
+        if dependency:
+            name = dependency.encode() + b'\0'
+            body[576:576+len(name)] = name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(body)
+
+    def test_inject_copies_into_internal_and_rejects(self):
+        frozen = self.root / 'frozen'
+        frozen.mkdir()
+        supply = self.root / 'supply'
+        supply.mkdir()
+        crt = supply / 'vcruntime140.dll'
+        self.pe_fixture(crt)
+        injected = self.build.inject_native_dlls(
+            frozen, (f'vcruntime140.dll={crt}',))
+        self.assertIn('vcruntime140.dll', injected)
+        self.assertTrue((frozen / '_internal' / 'vcruntime140.dll').is_file())
+        # Idempotent for identical contents.
+        again = self.build.inject_native_dlls(
+            frozen, (f'vcruntime140.dll={crt}',))
+        self.assertEqual(again, injected)
+        with self.assertRaisesRegex(SystemExit, '--native-dll needs NAME=PATH'):
+            self.build.inject_native_dlls(frozen, ('bare-name',))
+        with self.assertRaisesRegex(SystemExit, 'unsafe --native-dll name'):
+            self.build.inject_native_dlls(frozen, ('../evil.dll=%s' % crt,))
+        with self.assertRaisesRegex(SystemExit, 'not a regular file'):
+            self.build.inject_native_dlls(
+                frozen, ('missing.dll=%s' % (supply / 'absent.dll'),))
+        fake_system32 = self.root / 'Windows' / 'System32'
+        fake_system32.mkdir(parents=True)
+        system_dll = fake_system32 / 'vcruntime140.dll'
+        system_dll.write_bytes(b'system32 bytes that must never be harvested')
+        with self.assertRaisesRegex(SystemExit, 'System32'):
+            self.build.inject_native_dlls(frozen, ('vcruntime140.dll=%s' % system_dll,))
+        other = supply / 'other-crt.dll'
+        other.write_bytes(b'different contents that must not shadow silently')
+        with self.assertRaisesRegex(SystemExit, 'different contents'):
+            self.build.inject_native_dlls(frozen, ('vcruntime140.dll=%s' % other,))
+
+    def test_audit_fails_early_and_passes_after_inject(self):
+        frozen = self.root / 'frozen-audit'
+        self.pe_fixture(frozen / 'engelsiz-translate.exe', 'helper.dll')
+        with self.assertRaisesRegex(SystemExit, 'missing app-local'):
+            self.build.audit_windows_dependencies(frozen)
+        supply = self.root / 'supply2'
+        supply.mkdir()
+        helper = supply / 'helper.dll'
+        self.pe_fixture(helper, 'kernel32.dll')
+        self.build.inject_native_dlls(frozen, ('helper.dll=%s' % helper,))
+        self.build.audit_windows_dependencies(frozen)
+        # OS-baseline imports alone always pass; duplicates with different
+        # contents fail closed.
+        self.pe_fixture(frozen / 'other' / 'helper.dll', 'user32.dll')
+        with self.assertRaisesRegex(SystemExit, '[Dd]uplicate'):
+            self.build.audit_windows_dependencies(frozen)
+
+    def test_cudnn_stripped_for_cpu_only(self):
+        frozen = self.root / 'frozen-gpu'
+        (frozen / '_internal').mkdir(parents=True)
+        (frozen / '_internal' / 'cudnn64_9.dll').write_bytes(b'gpu accident')
+        (frozen / '_internal' / 'CUDNN64_8.dll').write_bytes(b'gpu accident 8')
+        keeper = frozen / '_internal' / 'libiomp5md.dll'
+        keeper.write_bytes(b'cpu library that must stay')
+        removed = self.build.strip_gpu_libraries(frozen)
+        self.assertEqual(sorted(removed),
+                         ['_internal/CUDNN64_8.dll', '_internal/cudnn64_9.dll'])
+        self.assertFalse((frozen / '_internal' / 'cudnn64_9.dll').exists())
+        self.assertTrue(keeper.is_file())
+        self.assertEqual(self.build.strip_gpu_libraries(frozen), [])
+
+
 def worker_command():
     """Return ([binary...]) for protocol tests, or None (skip).
 

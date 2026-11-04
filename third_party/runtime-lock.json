@@ -5,14 +5,14 @@
     "sha256": "b0ae98dd344aa0469a15ab42feff6d5aafb79541a82fb4e2647c74b073123815",
     "root": "kiwix-tools_linux-x86_64-3.8.2",
     "executable": "kiwix-serve",
-    "complianceManifestSha256": null
+    "complianceManifestSha256": "2e8353cd2b8920178d11c1dc4b60b112b9c3aed8e70711b54269b66074dfe5f9"
   },
   "windows-amd64": {
-    "version": "3.8.1",
-    "url": "https://download.kiwix.org/release/kiwix-tools/kiwix-tools_win-x86_64-3.8.1.zip",
-    "sha256": "fcd01ed2b93e9a68632c7863c83b9f66bf64406a66357be1df7b8b75596f3e45",
+    "version": "3.8.2",
+    "url": null,
+    "sha256": "b42623c579ed865fb175bddd8d1ad78e40319644ffe167e1f5e6b331f424bd9d",
     "root": "",
     "executable": "kiwix-serve.exe",
-    "complianceManifestSha256": null
+    "complianceManifestSha256": "ed93ec51300f43bc1de57320ca10255b04e7679a46d46610abd228aa8bda9707"
   }
 }

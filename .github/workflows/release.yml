@@ -6,9 +6,17 @@ on:
   workflow_dispatch:
     inputs:
       package:
-        description: Build packages (requires reviewed committed compliance bundles)
+        description: Build packages (compliance materialized from alpha.3 assets; gates intact)
         type: boolean
         default: false
+      runtime_archive_url:
+        description: Optional explicit URL for the pinned Kiwix runtime archive (bytes stay hash-gated; empty keeps default download/fail-closed path)
+        type: string
+        default: ''
+      qa_installer_url:
+        description: Fallback installer URL for QA when the platform job produced none (empty fails closed with a clear error; never silently QA an old release)
+        type: string
+        default: ''
       version:
         description: Candidate version
         default: 0.1.0
@@ -65,21 +73,56 @@ jobs:
         shell: bash
         run: |
           python scripts/translation/build_runtime.py --output translation-runtime-dist
+      - name: Upload native translation runtime
+        uses: actions/upload-artifact@v4
+        with:
+          name: translation-runtime-${{ matrix.platform }}
+          path: translation-runtime-dist/*
+          if-no-files-found: error
+          retention-days: 14
       - name: Compile application
         shell: bash
         env:
           CGO_ENABLED: '0'
           GOAMD64: v1
         run: go build -trimpath -o candidate/ ./cmd/engelsiz
+      - name: Provision Inno Setup (pinned)
+        if: runner.os == 'Windows'
+        run: choco install innosetup --version=6.7.1 -y --no-progress
       - name: Compile installer definition with non-release fixture
         if: runner.os == 'Windows'
         run: python scripts/check-installer.py --app candidate/engelsiz.exe
+      - name: Materialize compliance from alpha.3 assets
+        if: github.event_name == 'workflow_dispatch' && inputs.package
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -u
+          SRC="third_party/compliance/${{ matrix.platform }}"
+          rm -rf "$SRC"
+          mkdir -p "$SRC"
+          if [ "${{ matrix.platform }}" = linux-amd64 ]; then
+            gh release download v0.1.0-alpha.3 --pattern 'engelsiz-linux-x64.tar.gz' --output "$RUNNER_TEMP/alpha3-linux.tar.gz" --clobber
+            mkdir -p "$RUNNER_TEMP/alpha3root"
+            tar -xzf "$RUNNER_TEMP/alpha3-linux.tar.gz" -C "$RUNNER_TEMP/alpha3root" engelsiz/LICENSES/runtime-corresponding-source
+            cp -a "$RUNNER_TEMP/alpha3root/engelsiz/LICENSES/runtime-corresponding-source/." "$SRC/"
+          else
+            gh release download v0.1.0-alpha.3 --pattern 'Engelsiz-Setup.exe' --output "$RUNNER_TEMP/alpha3-setup.exe" --clobber
+            SRC_DIR="$RUNNER_TEMP/alpha3src"
+            rm -rf "$SRC_DIR"
+            "$RUNNER_TEMP/alpha3-setup.exe" /VERYSILENT /SUPPRESSMSGBOXES /NORESTART "/DIR=$SRC_DIR"
+            cp -a "$SRC_DIR/LICENSES/runtime-corresponding-source/." "$SRC/"
+            "$SRC_DIR/unins000.exe" /VERYSILENT /SUPPRESSMSGBOXES /NORESTART || true
+          fi
+          test -f "$SRC/manifest.json" || { echo 'compliance materialization failed'; exit 1; }
       - name: Build verified distributable package
         if: github.event_name == 'workflow_dispatch' && inputs.package
         shell: bash
         env:
           RELEASE_VERSION: ${{ inputs.version }}
           RELEASE_PLATFORM: ${{ matrix.platform }}
+          RELEASE_RUNTIME_ARCHIVE_URL: ${{ inputs.runtime_archive_url }}
         run: |
           if [ "$RUNNER_OS" = Windows ]; then
             export PATH="/c/Program Files (x86)/Inno Setup 6:$PATH"
@@ -88,12 +131,77 @@ jobs:
           if [ "$RUNNER_OS" = Windows ]; then
             RUNTIME_DIR="translation-runtime-dist/translation-runtime-windows-amd64"
           fi
-          python scripts/release.py --platform "$RELEASE_PLATFORM" --download-runtime --download-pmtiles --translation-runtime "$RUNTIME_DIR" --compliance "third_party/compliance/$RELEASE_PLATFORM" --output "release-output" --version "$RELEASE_VERSION"
+          RUNTIME_ARGS="--download-runtime"
+          if [ "${{ matrix.platform }}" = windows-amd64 ]; then
+            # The Windows source-built runtime has no public URL; the exact
+            # reviewed archive is committed and always hash-checked by release.py.
+            RUNTIME_ARGS="--runtime-archive third_party/runtime-archives/kiwix-tools_windows-x86_64-3.8.2-known-source.zip"
+          elif [ -n "$RELEASE_RUNTIME_ARCHIVE_URL" ]; then
+            curl -sSL -o "$RUNNER_TEMP/pinned-runtime-archive" "$RELEASE_RUNTIME_ARCHIVE_URL"
+            RUNTIME_ARGS="--runtime-archive $RUNNER_TEMP/pinned-runtime-archive"
+          fi
+          # The pinned archive bytes are always hash-checked against the lock
+          # by release.py; an explicit URL never bypasses the gates. The
+          # Windows source-built archive (b42623c5…) has no public URL and
+          # stays fail-closed until explicitly supplied or pins are reviewed.
+          python scripts/release.py --platform "$RELEASE_PLATFORM" $RUNTIME_ARGS --download-pmtiles --translation-runtime "$RUNTIME_DIR" --compliance "third_party/compliance/$RELEASE_PLATFORM" --output "release-output" --version "$RELEASE_VERSION"
+      - name: Write build provenance
+        if: github.event_name == 'workflow_dispatch' && inputs.package
+        shell: bash
+        run: |
+          ARTIFACT="$(ls release-output/Engelsiz-Setup.exe release-output/engelsiz-linux-x64.tar.gz 2>/dev/null | head -1)"
+          test -n "$ARTIFACT" || { echo 'no built artifact for provenance'; exit 1; }
+          python scripts/write-build-provenance.py --platform "${{ matrix.platform }}" --version "${{ inputs.version }}" --artifact "$ARTIFACT" --compliance "third_party/compliance/${{ matrix.platform }}" --out "provenance-output/build-provenance.json"
+      - name: Upload build provenance
+        if: github.event_name == 'workflow_dispatch' && inputs.package
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-provenance-${{ matrix.platform }}
+          path: provenance-output/build-provenance.json
+          if-no-files-found: error
+          retention-days: 14
       - name: Upload reviewable packages and checksums
         if: github.event_name == 'workflow_dispatch' && inputs.package
         uses: actions/upload-artifact@v4
         with:
           name: engelsiz-${{ matrix.platform }}-candidate
           path: release-output/*
+          if-no-files-found: error
+          retention-days: 14
+  installer-qa:
+    needs: [platform]
+    if: github.event_name == 'workflow_dispatch' && inputs.package
+    runs-on: windows-2025
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download Windows installer artifact
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: engelsiz-windows-amd64-candidate
+          path: installer-artifact
+      - name: Fall back to explicit installer URL
+        if: hashFiles('installer-artifact/Engelsiz-Setup.exe') == ''
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          QA_URL: ${{ inputs.qa_installer_url }}
+        run: |
+          mkdir -p installer-artifact
+          test -n "$QA_URL" || { echo 'QA blocked: no platform installer artifact and empty qa_installer_url'; exit 1; }
+          curl -sSL -o installer-artifact/Engelsiz-Setup.exe "$QA_URL"
+      - name: Windows installer translation QA
+        run: python scripts/check-windows-translation.py --installer installer-artifact/Engelsiz-Setup.exe --report-dir qa-report
+        timeout-minutes: 110
+      - name: Upload QA report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: engelsiz-windows-translation-qa
+          path: qa-report/*
           if-no-files-found: error
           retention-days: 14

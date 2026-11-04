@@ -24,6 +24,7 @@ import json
 import os
 import re
 import shutil
+import struct
 import subprocess
 import sys
 import tempfile
@@ -276,6 +277,318 @@ REDIST_PATTERNS = (r"vcruntime.*\.dll", r"msvcp.*\.dll", r"vcomp.*\.dll")
 
 API_SET_PATTERNS = (r"api-ms-win-.*", r"ext-ms-win-.*")
 
+# CPython-bundled Windows DLLs collected natively by PyInstaller on
+# windows-2025 (never downloaded). Each entry maps a basename regex to the
+# origin label plus the content markers a license text discoverable from the
+# build interpreter installation must contain. Attribution copies that exact
+# file; when no such file exists the build fails closed and the operator
+# supplies papers via --native-license NAME=PATH. A bare URL is never
+# accepted, and no entitlement is invented.
+WINDOWS_CPYTHON_DLL_ORIGINS = (
+    (r"libcrypto-3\.dll", "OpenSSL 3.x (CPython-bundled, Windows)", ("openssl",)),
+    (r"libssl-3\.dll", "OpenSSL 3.x (CPython-bundled, Windows)", ("openssl",)),
+    (r"libffi.*\.dll", "libffi (CPython-bundled, Windows)",
+     ("libffi", "permission is hereby granted")),
+    (r"sqlite3\.dll", "SQLite (CPython-bundled, Windows)", ("sqlite",)),
+    (r"libexpat\.dll", "Expat (CPython-bundled, Windows)",
+     ("expat", "permission is hereby granted")),
+    (r"libmpdec.*\.dll", "mpdecimal (CPython-bundled, Windows)", ("mpdecimal",)),
+    (r"tcl\d*\.dll", "Tcl (CPython-bundled, Windows)", ("tcl",)),
+    (r"tk\d*\.dll", "Tk (CPython-bundled, Windows)", ("tk",)),
+)
+
+
+def _license_text_is_papers(text):
+    """True when text is real license text, never a bare URL or stub."""
+    stripped = text.strip()
+    if len(stripped) < 50:
+        return False
+    lines = [line.strip() for line in stripped.splitlines() if line.strip()]
+    if not lines:
+        return False
+    if all(re.fullmatch(r"https?://\S+", line) for line in lines):
+        return False
+    return True
+
+
+def find_windows_bundled_license(venv_python, markers):
+    """Locate a license text for a CPython-bundled Windows DLL.
+
+    Searches the build interpreter installation (base prefix, config data
+    path, executable parent, plus their DLLs subdirs) for a license file
+    whose text contains every marker and passes _license_text_is_papers.
+    Returns the source Path, or None when absent (caller fails closed).
+    """
+    roots = []
+    code = (
+        "import sys,sysconfig,pathlib;"
+        "roots={pathlib.Path(sys.base_prefix),pathlib.Path(sysconfig.get_path('data')),pathlib.Path(sys.executable).parent.parent};"
+        "print('\\n'.join(str(r) for r in roots))"
+    )
+    try:
+        result = subprocess.run(
+            [venv_python, "-c", code], check=False,
+            capture_output=True, text=True,
+        )
+        output = result.stdout if result.returncode == 0 else ""
+    except OSError:
+        output = ""
+    for line in output.splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        candidate = Path(line)
+        if candidate not in roots:
+            roots.append(candidate)
+        dlls = candidate / "DLLs"
+        if dlls not in roots:
+            roots.append(dlls)
+    candidates = []
+    for root in roots:
+        for name in ("LICENSE", "LICENSE.txt"):
+            candidates.append(root / name)
+        for pattern in ("*LICENSE*", "*LICENCE*", "*COPYING*", "*NOTICE*"):
+            try:
+                candidates.extend(sorted(root.glob(pattern)))
+            except OSError:
+                continue
+    wanted = [marker.lower() for marker in markers]
+    for candidate in dict.fromkeys(candidates):
+        try:
+            if not candidate.is_file() or candidate.is_symlink():
+                continue
+            text = candidate.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+        lowered = text.lower()
+        if all(marker in lowered for marker in wanted) and _license_text_is_papers(text):
+            return candidate
+    return None
+
+
+# OS-provided Windows baseline DLLs (declared Windows 10/11 baseline).
+# Compiler redistributables (vcruntime/msvcp/mspdb) are deliberately NOT
+# here: they need explicit operator-supplied files + papers, never silent
+# bundling and never harvesting from System32.
+WINDOWS_SYSTEM_DLLS = frozenset(
+    "kernel32.dll user32.dll advapi32.dll crypt32.dll bcrypt.dll iphlpapi.dll "
+    "winmm.dll rpcrt4.dll ws2_32.dll shell32.dll ole32.dll oleaut32.dll "
+    "ntdll.dll secur32.dll userenv.dll netapi32.dll psapi.dll dnsapi.dll "
+    "dbghelp.dll winhttp.dll normaliz.dll version.dll shlwapi.dll gdi32.dll "
+    "comdlg32.dll imm32.dll winspool.drv ucrtbase.dll msvcrt.dll".split()
+)
+
+# CUDA-only libraries that must never ship in the CPU-only runtime. Stripped
+# when collected by accident and recorded in the manifest; the post-build
+# smoke test then proves the worker still starts without them.
+GPU_STRIP_PATTERNS = (r"cudnn.*\.dll",)
+
+
+def interpreter_dist_hashes(venv_python):
+    """SHA-256 set of the build interpreter's Windows distribution binaries.
+
+    Hashes sys.base_prefix/DLLs/*.pyd + DLLs/*.dll + root *.dll: exactly the
+    files PyInstaller collects as plain-name stdlib extensions (_ssl.pyd,
+    _socket.pyd, _ctypes.pyd, select.pyd, pyexpat.pyd, unicodedata.pyd, ...)
+    with no ABI suffix. Platform-neutral: empty set when the layout is
+    absent (Linux), so fixtures inject explicit hash sets instead.
+    """
+    code = "import sys; print(sys.base_prefix)"
+    try:
+        result = subprocess.run(
+            [venv_python, "-c", code], check=False,
+            capture_output=True, text=True,
+        )
+        base = result.stdout.strip() if result.returncode == 0 else ""
+    except OSError:
+        return set()
+    if not base:
+        return set()
+    hashes = set()
+    root = Path(base)
+    for pattern in ("DLLs/*.pyd", "DLLs/*.dll", "*.dll"):
+        try:
+            members = sorted(root.glob(pattern))
+        except OSError:
+            continue
+        for member in members:
+            try:
+                if member.is_file() and not member.is_symlink():
+                    hashes.add(sha256_of(member))
+            except OSError:
+                continue
+    return hashes
+
+
+def pe_import_names(path):
+    """Direct DLL dependencies of one frozen PE file (.exe/.dll/.pyd)."""
+    body = Path(path).read_bytes()
+    try:
+        pe = struct.unpack_from("<I", body, 0x3C)[0]
+        if body[:2] != b"MZ" or body[pe:pe + 4] != b"PE\0\0":
+            raise ValueError("Expected Windows PE file")
+        machine, sections = struct.unpack_from("<HH", body, pe + 4)
+        optional_size = struct.unpack_from("<H", body, pe + 20)[0]
+        optional = pe + 24
+        if machine != 0x8664 or struct.unpack_from("<H", body, optional)[0] != 0x20B:
+            raise ValueError("Expected native x64 PE file")
+        if optional_size < 224:
+            raise ValueError("PE optional header too short for dependency inspection")
+        if struct.unpack_from("<I", body, optional + 216)[0] != 0:
+            raise ValueError("Delay-load PE imports need reviewed handling")
+        import_rva = struct.unpack_from("<I", body, optional + 120)[0]
+
+        def offset(rva):
+            section_start = optional + optional_size
+            for i in range(sections):
+                virtual_size, virtual_address, raw_size, raw_offset = struct.unpack_from(
+                    "<IIII", body, section_start + i * 40 + 8)
+                if virtual_address <= rva < virtual_address + min(virtual_size, raw_size):
+                    result = raw_offset + rva - virtual_address
+                    if result < len(body):
+                        return result
+            raise ValueError("PE import RVA outside file")
+
+        if import_rva == 0:
+            return []
+        imports = []
+        start = offset(import_rva)
+        for i in range(1024):
+            record = struct.unpack_from("<IIIII", body, start + i * 20)
+            if record == (0, 0, 0, 0, 0):
+                return imports
+            name_start = offset(record[3])
+            name_end = body.index(b"\0", name_start, min(len(body), name_start + 260))
+            name = body[name_start:name_end].decode("ascii").lower()
+            if not re.fullmatch(r"[a-z0-9_.-]+", name):
+                raise ValueError("Unsafe PE import name")
+            imports.append(name)
+        raise ValueError("Too many PE imports")
+    except (struct.error, IndexError, UnicodeDecodeError, ValueError) as error:
+        raise SystemExit(
+            f"Release blocked: cannot audit Windows dependencies of {Path(path).name}: {error}"
+        )
+
+
+def audit_windows_dependencies(frozen):
+    """Fail the build early on missing app-local DLLs in the frozen tree.
+
+    Same fail-closed rule as the release gate but run here, before notices
+    and the manifest, so a native Windows build breaks at its cause instead
+    of later in release.py. Duplicate basenames with different contents fail
+    closed (silent load-path shadowing is a supply-chain risk).
+
+    Returns the sorted host-prerequisite DLLs: imports matching
+    REDIST_PATTERNS (MSVC vcruntime/msvcp/vcomp) are NOT bundled — the
+    Microsoft VC++ 2015-2022 Redistributable (x64) is a declared host
+    prerequisite — so they are recorded, not failed. Everything else
+    missing still fails. Callers persist the return value as manifest
+    hostPrerequisites; the release gate re-checks it.
+    """
+    files = {}
+    for path in sorted(Path(frozen).rglob("*")):
+        if path.is_symlink():
+            raise SystemExit(
+                f"Release blocked: symlink in frozen runtime: {path.name}")
+        if path.is_file() and path.suffix.lower() in (".exe", ".dll", ".pyd"):
+            key = path.name.lower()
+            digest_here = sha256_of(path)
+            if key in files and files[key][1] != digest_here:
+                raise SystemExit(
+                    f"Release blocked: duplicate Windows dependency with "
+                    f"different contents: {path.name}")
+            files.setdefault(key, (path, digest_here))
+    missing = set()
+    prerequisites = set()
+    for path, _ in files.values():
+        for dependency in pe_import_names(path):
+            if dependency in files:
+                continue
+            if any(re.fullmatch(pattern, dependency) for pattern in REDIST_PATTERNS):
+                prerequisites.add(dependency)
+                continue
+            if (dependency not in WINDOWS_SYSTEM_DLLS
+                    and not dependency.startswith(("api-ms-win-", "ext-ms-win-"))):
+                missing.add(f"{path.name} -> {dependency}")
+    if missing:
+        raise SystemExit(
+            "Release blocked: missing app-local Windows dependencies: "
+            + ", ".join(sorted(missing))
+        )
+    return sorted(prerequisites)
+
+
+def inject_native_dlls(frozen, native_dlls):
+    """Copy operator-supplied DLLs into frozen/_internal/.
+
+    PyInstaller 6.16 deliberately excludes the MSVC redistributables
+    (msvcp140/vcruntime140/vcruntime140_1) that ctranslate2, numpy,
+    python311.dll and the bootloader need at load time. The operator
+    supplies those files explicitly as NAME=PATH; this script never sources
+    any DLL from System32/SysWOW64 (fail closed). Returns {name: sha256} for
+    the manifest; attribution/papers still flow through
+    collect_native_notices (redistributables without --native-license papers
+    keep failing closed there). MSVC redistribution entitlement itself is an
+    open user decision: mechanics + papers plumbing only, nothing bundled by
+    default.
+    """
+    injected = {}
+    if not native_dlls:
+        return injected
+    target_dir = Path(frozen) / "_internal"
+    target_dir.mkdir(parents=True, exist_ok=True)
+    for item in native_dlls:
+        name, _, source = item.partition("=")
+        if not name or not source:
+            raise SystemExit("Release blocked: --native-dll needs NAME=PATH")
+        if not re.fullmatch(r"[A-Za-z0-9_.\-]+\.dll", name, re.IGNORECASE):
+            raise SystemExit(f"Release blocked: unsafe --native-dll name: {name}")
+        src = Path(source)
+        try:
+            resolved = src.resolve()
+        except OSError:
+            raise SystemExit(
+                f"Release blocked: --native-dll {name}=PATH points at an "
+                f"unresolvable file: {source}")
+        lowered_parts = [part.lower() for part in resolved.parts]
+        if "system32" in lowered_parts or "syswow64" in lowered_parts:
+            raise SystemExit(
+                f"Release blocked: --native-dll {name} must not be sourced "
+                f"from System32/SysWOW64; supply an explicitly redistributable copy")
+        if not src.is_file() or src.is_symlink():
+            raise SystemExit(
+                f"Release blocked: --native-dll {name}=PATH is not a regular file: {source}")
+        digest_src = sha256_of(src)
+        dest = target_dir / name
+        if dest.exists():
+            if dest.is_file() and not dest.is_symlink() and sha256_of(dest) == digest_src:
+                injected[dest.name] = digest_src
+                continue
+            raise SystemExit(
+                f"Release blocked: --native-dll {name} collides with different "
+                f"contents already frozen")
+        shutil.copy2(src, dest)
+        injected[dest.name] = digest_src
+    return injected
+
+
+def strip_gpu_libraries(frozen):
+    """Remove CUDA-only DLLs (cuDNN) collected by accident for the CPU build.
+
+    Returns the removed relative paths for the manifest. The post-build
+    smoke test proves the worker still starts without them; anything
+    statically importing a stripped library then fails the PE audit above
+    instead of shipping a GPU dependency silently.
+    """
+    removed = []
+    for path in sorted(Path(frozen).rglob("*")):
+        if (path.is_file() and not path.is_symlink()
+                and any(re.fullmatch(pattern, path.name.lower())
+                        for pattern in GPU_STRIP_PATTERNS)):
+            removed.append(path.relative_to(Path(frozen)).as_posix())
+            path.unlink()
+    return removed
+
 
 def find_interpreter_license(venv_python, override=None):
     """Locate the CPython PSF license text for the build interpreter.
@@ -368,7 +681,8 @@ def record_index(env_site):
 
 
 def collect_native_notices(frozen, binary_name, env_site, notices, venv_python,
-                         python_license=None, native_overrides=()):
+                         python_license=None, native_overrides=(),
+                         interp_dist_hashes=None):
     """Attribute every shipped native library with origin/version/license.
 
     Writes THIRD-PARTY-NOTICES/NATIVE-LIBS.json plus copied license texts.
@@ -379,6 +693,10 @@ def collect_native_notices(frozen, binary_name, env_site, notices, venv_python,
     """
     entries = {}
     index = record_index(env_site)
+    if interp_dist_hashes is None:
+        interp_dist_hashes = interpreter_dist_hashes(venv_python)
+    else:
+        interp_dist_hashes = set(interp_dist_hashes)
     native_dir = notices / "native"
     native_dir.mkdir(parents=True, exist_ok=True)
     override_map = {}
@@ -429,24 +747,87 @@ def collect_native_notices(frozen, binary_name, env_site, notices, venv_python,
                 "license": f"{dist_name}-attribution",
             }
             continue
-        if matched and sys.platform == "win32":
-            # Hash-less RECORD rows (pip legacy): attribute by name only on
-            # Windows wheels where RECORD omits hashes.
-            dist_name, version, _ = matched[0]
-            entries[path.relative_to(frozen).as_posix()] = {
-                "origin": f"wheel {dist_name}=={version}",
-                "license": f"{dist_name}-attribution",
-            }
-            continue
-        # CPython stdlib extensions (lib-dynload) carry no wheel RECORD and
-        # are covered by the interpreter PSF license, same as libpython.
+        if (candidates and all(c[2] == "" for c in candidates)
+                and path.suffix.lower() in (".dll", ".pyd")):
+            # RECORD rows without hashes (some Windows wheels, e.g. numpy's
+            # OpenBLAS/libiomp5md DLLs): attribute by basename ONLY when it
+            # is unique to one wheel in the index, else fail closed below.
+            # Any real (non-empty) hash claim that mismatches also falls
+            # through to fail closed, never to name-based attribution.
+            wheels = {(c[0], c[1]) for c in candidates}
+            if len(wheels) == 1:
+                dist_name, version = next(iter(wheels))
+                entries[path.relative_to(frozen).as_posix()] = {
+                    "origin": f"wheel {dist_name}=={version} (hash-less RECORD, basename-unique)",
+                    "license": f"{dist_name}-attribution",
+                }
+                continue
+        # CPython stdlib extensions carry no wheel RECORD and are covered by
+        # the interpreter PSF license, same as libpython. Real PyInstaller
+        # output uses PLAIN names (_ssl.pyd, _socket.pyd, ...) with no ABI
+        # suffix, so besides the ABI-tag fallback the frozen file's SHA-256
+        # must match a binary from the build interpreter's DLLs layout.
         # Only when no wheel claims the basename: a hash-mismatched wheel
         # file must keep falling through to fail closed, never be
         # misattributed as stdlib.
-        if not candidates and ("cpython-311" in path.name or ".cp311-" in path.name):
+        if not candidates and ("cpython-311" in path.name or ".cp311-" in path.name
+                               or digest_here in interp_dist_hashes):
             entries[path.relative_to(frozen).as_posix()] = {
                 "origin": "CPython 3.11 stdlib",
                 "license": "interpreter-LICENSE.txt",
+            }
+            continue
+        # Windows CPython-bundled DLLs (libcrypto-3.dll, libssl-3.dll,
+        # libffi, sqlite3, libexpat, ...): attribute to license texts
+        # discoverable from the build interpreter installation. An explicit
+        # --native-license NAME=PATH override wins first; otherwise fail
+        # closed with the exact missing-paper message, never bare URLs and
+        # never invented entitlement. Platform-neutral on purpose so
+        # synthetic Windows-layout fixtures are testable on Linux; on real
+        # Windows (win32) the same branch fires natively.
+        windows_origin = None
+        windows_markers = ()
+        if path.suffix.lower() in (".dll", ".pyd"):
+            for pattern, origin, markers in WINDOWS_CPYTHON_DLL_ORIGINS:
+                if re.fullmatch(pattern, lowered):
+                    windows_origin, windows_markers = origin, markers
+                    break
+        # Wheel claims win first: a hash-mismatched wheel file must fail
+        # closed below, never be re-attributed to interpreter papers here.
+        if windows_origin is not None and not candidates:
+            override = override_map.get(lowered)
+            if override is not None:
+                if not override.is_file():
+                    raise SystemExit(
+                        f"Release blocked: --native-license {path.name}=PATH "
+                        f"points at a missing file: {override}"
+                    )
+                papers = override.read_text(encoding="utf-8", errors="replace")
+                if not _license_text_is_papers(papers):
+                    raise SystemExit(
+                        f"Release blocked: papers for {path.name} at {override} "
+                        f"are not license text (bare URL or stub); supply real "
+                        f"license text via --native-license {path.name}=PATH"
+                    )
+                target = native_dir / (path.name + ".license.txt")
+                shutil.copy2(override, target)
+                entries[path.relative_to(frozen).as_posix()] = {
+                    "origin": f"{windows_origin} (maintainer-supplied papers)",
+                    "license": str(target.relative_to(notices)),
+                }
+                continue
+            source = find_windows_bundled_license(venv_python, windows_markers)
+            if source is None:
+                raise SystemExit(
+                    f"Release blocked: CPython-bundled {path.name} lacks license "
+                    f"papers in the build interpreter installation; supply papers "
+                    f"via --native-license {path.name}=PATH"
+                )
+            target = native_dir / (path.name + ".license.txt")
+            shutil.copy2(source, target)
+            entries[path.relative_to(frozen).as_posix()] = {
+                "origin": windows_origin,
+                "license": str(target.relative_to(notices)),
             }
             continue
         system_package = None
@@ -456,6 +837,30 @@ def collect_native_notices(frozen, binary_name, env_site, notices, venv_python,
                     system_package = package
                     break
         if system_package is None:
+            # Explicit maintainer papers cover any otherwise-unattributed
+            # native library (Windows extras included). Validated as real
+            # license text: bare URLs and stubs fail closed.
+            override = override_map.get(lowered)
+            if override is not None:
+                if not override.is_file():
+                    raise SystemExit(
+                        f"Release blocked: --native-license {path.name}=PATH "
+                        f"points at a missing file: {override}"
+                    )
+                papers = override.read_text(encoding="utf-8", errors="replace")
+                if not _license_text_is_papers(papers):
+                    raise SystemExit(
+                        f"Release blocked: papers for {path.name} at {override} "
+                        f"are not license text (bare URL or stub); supply real "
+                        f"license text via --native-license {path.name}=PATH"
+                    )
+                target = native_dir / (path.name + ".license.txt")
+                shutil.copy2(override, target)
+                entries[path.relative_to(frozen).as_posix()] = {
+                    "origin": "maintainer-supplied papers via --native-license",
+                    "license": str(target.relative_to(notices)),
+                }
+                continue
             raise SystemExit(
                 f"Release blocked: unattributed native library {path.name}; "
                 f"supply papers via --native-license {path.name}=PATH"
@@ -519,9 +924,6 @@ def file_inventory(frozen):
                 {"path": relative, "size": path.stat().st_size, "sha256": sha256_of(path)}
             )
     return entries
-    if os.name == "nt":
-        return Path(venv) / "Lib" / "site-packages"
-    return Path(venv) / "lib" / "python3.11" / "site-packages"
 
 
 def glibc_version():
@@ -584,6 +986,10 @@ def main():
                         help="Explicit CPython LICENSE file if interpreter discovery fails")
     parser.add_argument("--native-license", action="append", default=[],
                         help="Explicit native-library papers as NAME=PATH (repeatable)")
+    parser.add_argument("--native-dll", action="append", default=[],
+                        help="Operator-supplied Windows DLL as NAME=PATH, copied into "
+                             "frozen/_internal/ before the dependency audit (repeatable; "
+                             "never sourced from System32; papers still via --native-license)")
     args = parser.parse_args()
 
     python = interpreter(args.python)
@@ -707,7 +1113,14 @@ def main():
         binary = frozen / binary_name
         if not binary.is_file():
             raise SystemExit("Release blocked: PyInstaller produced no worker binary")
+        # Operator-supplied DLLs first (MSVC redistributables PyInstaller
+        # 6.16 excludes), then strip CUDA-only accidents, then materialize
+        # symlinks, then fail early on missing app-local PE dependencies.
+        # All before notices/inventory so the manifest pins the final set.
+        injected_dlls = inject_native_dlls(frozen, args.native_dll)
+        stripped_gpu = strip_gpu_libraries(frozen)
         desymlink_tree(frozen)
+        host_prerequisites = audit_windows_dependencies(frozen)
 
         notices = frozen / "THIRD-PARTY-NOTICES"
         if notices.exists():
@@ -767,6 +1180,9 @@ def main():
             if sys.platform == "linux"
             else [],
             "binarySha256": sha256_of(binary),
+            "injectedNativeDlls": dict(sorted(injected_dlls.items())),
+            "strippedGpuLibraries": sorted(stripped_gpu),
+            "hostPrerequisites": host_prerequisites,
             "files": file_inventory(frozen),
         }
         (frozen / "translation-runtime-manifest.json").write_text(

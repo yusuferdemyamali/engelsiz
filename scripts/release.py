@@ -480,7 +480,7 @@ def translation_file_inventory(runtime_dir):
     return inventory
 
 
-def windows_dependencies_recursive(runtime):
+def windows_dependencies_recursive(runtime, host_prerequisites=()):
     # Frozen translation runtimes keep DLLs in subdirectories (_internal);
     # every app-local PE anywhere under the runtime must resolve, same
     # fail-closed rule as windows_dependencies but recursive so no frozen
@@ -489,6 +489,10 @@ def windows_dependencies_recursive(runtime):
     # pathlib throughout (no shell quoting involved). Duplicate basenames
     # with different contents are rejected: silently shadowing a load path
     # is a supply-chain risk, not a resolution.
+    # host_prerequisites names MSVC redistributables (vcruntime/msvcp) that
+    # are a declared host prerequisite — the Microsoft VC++ 2015-2022
+    # Redistributable (x64) — rather than bundled files. Anything else
+    # missing still fails.
     files = {}
     for path in sorted(Path(runtime).rglob('*')):
         if path.is_symlink():
@@ -502,7 +506,9 @@ def windows_dependencies_recursive(runtime):
     missing = set()
     for path, _ in files.values():
         for dependency in pe_imports(path):
-            if dependency not in files and dependency not in WINDOWS_SYSTEM_DLLS and not dependency.startswith(('api-ms-win-', 'ext-ms-win-')):
+            if dependency in files or dependency in host_prerequisites:
+                continue
+            if dependency not in WINDOWS_SYSTEM_DLLS and not dependency.startswith(('api-ms-win-', 'ext-ms-win-')):
                 missing.add(f'{path.name} -> {dependency}')
     if missing:
         raise ValueError('Missing reviewed app-local Windows dependencies: '+', '.join(sorted(missing)))
@@ -610,7 +616,19 @@ def stage_translation_runtime(runtime_dir, lock, platform, destination):
     elif target_os == 'windows':
         if binary.suffix.lower() != '.exe':
             raise ValueError('Expected Windows translation runtime executable')
-        windows_dependencies_recursive(runtime_dir)
+        # MSVC redistributables (vcruntime/msvcp) are a declared host
+        # prerequisite, never bundled: the manifest's hostPrerequisites must
+        # list exactly the redistributable DLLs the tree imports, and only
+        # redistributable-pattern names are accepted there.
+        declared = manifest.get('hostPrerequisites')
+        if not isinstance(declared, list) or not declared:
+            raise ValueError('Translation runtime manifest lacks hostPrerequisites '
+                             '(MSVC redistributables are a declared prerequisite, not bundled)')
+        for name in declared:
+            if not isinstance(name, str) or not re.fullmatch(
+                    r'(vcruntime.*|msvcp.*|vcomp.*)\.dll', name.lower()):
+                raise ValueError(f'Manifest hostPrerequisites must list only MSVC redistributables: {name!r}')
+        windows_dependencies_recursive(runtime_dir, host_prerequisites={n.lower() for n in declared})
     else:
         raise ValueError('Unsupported translation runtime platform')
     destination = Path(destination)

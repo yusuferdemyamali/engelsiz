@@ -19,3 +19,5 @@ Thumbs.db
 
 /scripts/**/__pycache__/
 .slim/deepwork/
+# CI-materialized from v0.1.0-alpha.3 assets (see release.yml); never commit.
+/third_party/compliance/
