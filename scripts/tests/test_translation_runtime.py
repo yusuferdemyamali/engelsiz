@@ -308,6 +308,45 @@ class StageTranslationRuntimeTests(unittest.TestCase):
         with self.assertRaises(SystemExit):
             build.desymlink_tree(tree)
 
+    def test_desymlink_tolerates_symlinked_root_prefix(self):
+        # Windows TEMP may carry 8.3 short names (RUNNER~1) while resolve()
+        # returns long names; resolving the root too keeps internal links
+        # contained. A symlinked parent reproduces the mismatch portably.
+        spec = importlib.util.spec_from_file_location(
+            'translation_build_alias', Path(__file__).parents[1] / 'translation' / 'build_runtime.py')
+        build = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(build)
+        real_root = self.root / 'realroot'
+        (real_root / 'sub').mkdir(parents=True)
+        real = real_root / 'sub' / 'libreal.so.1'
+        real.write_bytes(b'synthetic library bytes')
+        alias = self.root / 'aliasroot'
+        try:
+            alias.symlink_to(real_root, target_is_directory=True)
+        except OSError as error:
+            if getattr(error, 'winerror', None) == 1314:
+                self.skipTest('Creating symlinks requires Windows developer mode or privilege')
+            raise
+        try:
+            (alias / 'liblink.so.1').symlink_to(alias / 'sub' / 'libreal.so.1')
+        except OSError as error:
+            if getattr(error, 'winerror', None) == 1314:
+                self.skipTest('Creating symlinks requires Windows developer mode or privilege')
+            raise
+        build.desymlink_tree(alias)
+        resolved = alias / 'liblink.so.1'
+        self.assertFalse(resolved.is_symlink())
+        self.assertEqual(resolved.read_bytes(), b'synthetic library bytes')
+        try:
+            (alias / 'escape.so').symlink_to(self.root / 'outside.txt')
+        except OSError as error:
+            if getattr(error, 'winerror', None) == 1314:
+                self.skipTest('Creating symlinks requires Windows developer mode or privilege')
+            raise
+        (self.root / 'outside.txt').write_text('outside')
+        with self.assertRaises(SystemExit):
+            build.desymlink_tree(alias)
+
     def test_parse_glibc(self):
         self.assertEqual(release.parse_glibc('ldd (Ubuntu GLIBC 2.39-0ubuntu8.9) 2.39'), (2, 39))
         self.assertEqual(release.parse_glibc('ldd (GNU libc) 2.35'), (2, 35))
@@ -498,15 +537,15 @@ class NativeNoticesWindowsTests(unittest.TestCase):
             'This file documents the OpenSSL project terms shipped beside the\n'
             'interpreter for offline attribution testing purposes.\n',
             encoding='utf-8')
-        stub = self.root / 'stub-python'
-        stub.write_text(
-            '#!/bin/sh\nprintf "%s\\n" "%s"\n' % (interp_root, interp_root),
-            encoding='utf-8')
-        stub.chmod(0o755)
-        found = self.build.find_windows_bundled_license(str(stub), ('openssl',))
+        stub = self._stub_python(str(interp_root), str(interp_root))
+        text = '%s\n%s\n' % (interp_root, interp_root)
+        found = self._run_with_stub(
+            self.build.find_windows_bundled_license, stub, text, ('openssl',))
         self.assertIsNotNone(found)
         self.assertEqual(found, interp_root / 'LICENSE.txt')
-        missing = self.build.find_windows_bundled_license(str(stub), ('no-such-marker-xyz',))
+        missing = self._run_with_stub(
+            self.build.find_windows_bundled_license, stub, text,
+            ('no-such-marker-xyz',))
         self.assertIsNone(missing)
 
     def test_plain_name_stdlib_pyd_attributed_via_interpreter_hash(self):
@@ -553,12 +592,52 @@ class NativeNoticesWindowsTests(unittest.TestCase):
         bundled = base / 'python311.dll'
         bundled.write_bytes(b'fake-dist-dll')
         (base / 'notes.txt').write_bytes(b'not a binary, must be ignored')
-        stub = self.root / 'stub-base-python'
-        stub.write_text('#!/bin/sh\nprintf "%s\\n"\n' % base, encoding='utf-8')
-        stub.chmod(0o755)
-        found = self.real_dist_hashes(str(stub))
+        stub = self._stub_python(str(base))
+        found = self._run_with_stub(self.real_dist_hashes, stub, '%s\n' % base)
         self.assertEqual(found, {hashlib.sha256(b'fake-dist-ext').hexdigest(),
                                  hashlib.sha256(b'fake-dist-dll').hexdigest()})
+
+    def _stub_python(self, *lines):
+        """Platform-conditional stub executable printing lines on stdout.
+
+        sh script on posix, .cmd batch (@echo off + echo lines) on
+        Windows; plain sh stubs are not executable by subprocess on win32.
+        """
+        tag = getattr(self, '_stub_n', 0) + 1
+        self._stub_n = tag
+        if os.name == 'nt':
+            stub = self.root / ('stub-%d.cmd' % tag)
+            stub.write_text('@echo off\r\n' + ''.join('echo %s\r\n' % line for line in lines),
+                            encoding='utf-8')
+        else:
+            stub = self.root / ('stub-%d' % tag)
+            stub.write_text('#!/bin/sh\n' + ''.join('printf "%s\\n" "%s"\n' % (line, line) for line in lines),
+                            encoding='utf-8')
+            stub.chmod(0o755)
+        return str(stub)
+
+    def _run_with_stub(self, func, stub, text, *args):
+        """Run a build helper against a stub executable.
+
+        On Windows a .cmd cannot be executed directly by subprocess
+        (WinError 193 without shell) and console echo would risk locale
+        mangling of space/Unicode paths, so the stub's declared stdout is
+        supplied via mock there; on posix the stub really executes. Either
+        way func observes identical stdout text, so assertions match.
+        """
+        if os.name != 'nt':
+            return func(stub, *args)
+        import subprocess as _subprocess
+        from unittest import mock
+        real_run = _subprocess.run
+
+        def fake_run(argv, **kwargs):
+            if argv and argv[0] == stub:
+                return _subprocess.CompletedProcess(argv, 0, stdout=text, stderr='')
+            return real_run(argv, **kwargs)
+
+        with mock.patch.object(self.build.subprocess, 'run', side_effect=fake_run):
+            return func(stub, *args)
 
     def test_hashless_record_unique_vs_ambiguous(self):
         (self.frozen / 'libiomp5md.dll').write_bytes(b'fake-iomp-bytes')

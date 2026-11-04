@@ -251,26 +251,46 @@ def dpkg_version(package):
 
 
 # Bundled native libraries collected from the build host system (not wheels).
-# Maps a basename regex to the Debian source package whose copyright file
-# documents the license. Versions come from dpkg at build time.
+# Maps a basename regex to an ordered tuple of candidate Debian packages
+# whose copyright file documents the license. Ubuntu 24.04 renamed several
+# libraries with the t64 suffix (64-bit time_t transition, e.g. libssl3 is
+# libssl3t64 on noble); candidates are t64-first then legacy so both Ubuntu
+# 22.04 (no t64 names) and 24.04 resolve. Versions come from dpkg at build
+# time; the first candidate with both copyright text and version wins.
 SYSTEM_LIB_ORIGINS = (
-    (r"libz\.so.*", "zlib1g"),
-    (r"libstdc\+\+\.so.*", "libstdc++6"),
-    (r"libgcc_s\.so.*", "libgcc-s1"),
-    (r"libgfortran.*\.so.*", "libgfortran5"),
-    (r"libquadmath.*\.so.*", "libquadmath0"),
-    (r"libgomp.*\.so.*", "libgomp1"),
-    (r"libssl\.so\..*", "libssl3"),
-    (r"libcrypto\.so\..*", "libssl3"),
-    (r"libbz2\.so.*", "libbz2-1.0"),
-    (r"liblzma\.so.*", "liblzma5"),
-    (r"libexpat\.so.*", "libexpat1"),
-    (r"libffi\.so.*", "libffi8"),
-    (r"libmpdec\.so.*", "libmpdec3"),
-    (r"libtinfo\.so.*", "libtinfo6"),
-    (r"libreadline\.so.*", "libreadline8"),
-    (r"libsqlite3\.so.*", "libsqlite3-0"),
+    (r"libz\.so.*", ("zlib1g",)),
+    (r"libstdc\+\+\.so.*", ("libstdc++6",)),
+    (r"libgcc_s\.so.*", ("libgcc-s1",)),
+    (r"libgfortran.*\.so.*", ("libgfortran5",)),
+    (r"libquadmath.*\.so.*", ("libquadmath0",)),
+    (r"libgomp.*\.so.*", ("libgomp1",)),
+    (r"libssl\.so\..*", ("libssl3t64", "libssl3")),
+    (r"libcrypto\.so\..*", ("libssl3t64", "libssl3")),
+    (r"libbz2\.so.*", ("libbz2-1.0",)),
+    (r"liblzma\.so.*", ("liblzma5",)),
+    (r"libexpat\.so.*", ("libexpat1t64", "libexpat1")),
+    (r"libffi\.so.*", ("libffi8t64", "libffi8")),
+    (r"libmpdec\.so.*", ("libmpdec3",)),
+    (r"libtinfo\.so.*", ("libtinfo6t64", "libtinfo6")),
+    (r"libreadline\.so.*", ("libreadline8t64", "libreadline8")),
+    (r"libsqlite3\.so.*", ("libsqlite3-0",)),
 )
+
+
+def dpkg_copyright_version(packages):
+    """First (package, copyright, version) with both papers present.
+
+    Accepts one name or an ordered tuple of candidates (t64-first).
+    Returns (None, None, None) when no candidate has both.
+    """
+    if isinstance(packages, str):
+        packages = (packages,)
+    for package in packages:
+        copyright_text = dpkg_copyright(package)
+        version = dpkg_version(package)
+        if copyright_text and version:
+            return package, copyright_text, version
+    return None, None, None
 
 # Redistributables are never silently bundled without papers.
 REDIST_PATTERNS = (r"vcruntime.*\.dll", r"msvcp.*\.dll", r"vcomp.*\.dll")
@@ -831,12 +851,13 @@ def collect_native_notices(frozen, binary_name, env_site, notices, venv_python,
             }
             continue
         system_package = None
+        system_packages = ()
         if sys.platform == "linux":
-            for pattern, package in SYSTEM_LIB_ORIGINS:
+            for pattern, packages in SYSTEM_LIB_ORIGINS:
                 if re.fullmatch(pattern, path.name):
-                    system_package = package
+                    system_packages = packages
                     break
-        if system_package is None:
+        if not system_packages:
             # Explicit maintainer papers cover any otherwise-unattributed
             # native library (Windows extras included). Validated as real
             # license text: bare URLs and stubs fail closed.
@@ -865,12 +886,11 @@ def collect_native_notices(frozen, binary_name, env_site, notices, venv_python,
                 f"Release blocked: unattributed native library {path.name}; "
                 f"supply papers via --native-license {path.name}=PATH"
             )
-        copyright_text = dpkg_copyright(system_package)
-        version = dpkg_version(system_package)
-        if not copyright_text or not version:
+        system_package, copyright_text, version = dpkg_copyright_version(system_packages)
+        if not system_package or not copyright_text or not version:
             raise SystemExit(
                 f"Release blocked: no Debian copyright/version for {path.name} "
-                f"({system_package}); supply papers via --native-license"
+                f"({','.join(system_packages)}); supply papers via --native-license"
             )
         target = native_dir / (path.name + ".copyright")
         target.write_text(copyright_text, encoding="utf-8")
@@ -897,7 +917,13 @@ def desymlink_tree(root):
     into an independent copy with identical bytes (same hash, deterministic
     inventory). Dangling links or links escaping the tree fail closed.
     """
-    root = Path(root)
+    # Resolve the root itself: on Windows the temp path may contain 8.3
+    # short names (e.g. RUNNER~1) while Path.resolve() returns long names,
+    # which would make a genuinely-internal link look like an escape.
+    # normcase keeps the comparison case-insensitive on Windows.
+    root = Path(root).resolve()
+    norm = os.path.normcase if os.name == "nt" else (lambda value: value)
+    root_key = norm(str(root))
     for path in sorted(root.rglob("*")):
         if not path.is_symlink():
             continue
@@ -905,7 +931,10 @@ def desymlink_tree(root):
             target = path.resolve(strict=True)
         except OSError:
             raise SystemExit(f"Release blocked: dangling link in frozen runtime: {path.name}")
-        if root not in target.parents or not target.is_file():
+        target_key = norm(str(target))
+        if target_key != root_key and not target_key.startswith(root_key + os.sep):
+            raise SystemExit(f"Release blocked: link escapes frozen runtime: {path.name}")
+        if not target.is_file():
             raise SystemExit(f"Release blocked: link escapes frozen runtime: {path.name}")
         path.unlink()
         shutil.copyfile(target, path)
