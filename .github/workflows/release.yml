@@ -105,17 +105,16 @@ jobs:
             tar -xzf "$RUNNER_TEMP/alpha3-linux.tar.gz" -C "$RUNNER_TEMP/alpha3root" engelsiz/LICENSES/runtime-corresponding-source
             cp -a "$RUNNER_TEMP/alpha3root/engelsiz/LICENSES/runtime-corresponding-source/." "$SRC/"
           else
-            # innoextract 1.9 cannot open Inno 6.5 setups and 7-Zip cannot
-            # open Inno archives at all, so fall back to a silent install.
-            # Unblock-File first: an unsigned download with Mark-of-the-Web
-            # can otherwise hang on SmartScreen with no console output.
-            gh release download v0.1.0-alpha.3 --pattern 'Engelsiz-Setup.exe' --output "$RUNNER_TEMP/alpha3-setup.exe" --clobber
-            powershell -NoProfile -Command "Unblock-File -Path \"$RUNNER_TEMP/alpha3-setup.exe\""
-            SRC_DIR="$RUNNER_TEMP/alpha3src"
-            rm -rf "$SRC_DIR"
-            "$RUNNER_TEMP/alpha3-setup.exe" /VERYSILENT /SUPPRESSMSGBOXES /NORESTART "/DIR=$SRC_DIR"
-            cp -a "$SRC_DIR/LICENSES/runtime-corresponding-source/." "$SRC/"
-            "$SRC_DIR/unins000.exe" /VERYSILENT /SUPPRESSMSGBOXES /NORESTART || true
+            # The 228 MB Windows corresponding-source bundle cannot live in
+            # git, and neither 7-Zip nor innoextract 1.9 can open an Inno 6.5
+            # setup (silent install hangs: orphan setup processes observed).
+            # Fetch the reviewed bundle published as a draft-release asset.
+            # release.py still hash-checks every file against the pinned
+            # manifest; a wrong bundle fails closed here and there.
+            gh release download v0.1.0-alpha.4 --pattern 'windows-compliance-bundle.tar.gz' --output "$RUNNER_TEMP/win-compliance.tar.gz" --clobber
+            mkdir -p "$RUNNER_TEMP/wincomp"
+            tar -xzf "$RUNNER_TEMP/win-compliance.tar.gz" -C "$RUNNER_TEMP/wincomp"
+            cp -a "$RUNNER_TEMP/wincomp/compliance/." "$SRC/"
           fi
           test -f "$SRC/manifest.json" || { echo 'compliance materialization failed'; exit 1; }
       - name: Build verified distributable package
