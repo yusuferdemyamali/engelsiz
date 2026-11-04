@@ -779,6 +779,17 @@ class WindowsBuildMechanicsTests(unittest.TestCase):
         self.assertTrue(keeper.is_file())
         self.assertEqual(self.build.strip_msvc_redistributables(frozen), [])
 
+    def test_os_baseline_dll_copy_stripped_not_attributed(self):
+        frozen = self.root / 'frozen-osbaseline'
+        (frozen / '_internal').mkdir(parents=True)
+        (frozen / '_internal' / 'ucrtbase.dll').write_bytes(b'os copy')
+        keeper = frozen / '_internal' / 'libiomp5md.dll'
+        keeper.write_bytes(b'cpu library that must stay')
+        removed = self.build.strip_os_baseline_libraries(frozen)
+        self.assertEqual(removed, ['_internal/ucrtbase.dll'])
+        self.assertTrue(keeper.is_file())
+        self.assertEqual(self.build.strip_os_baseline_libraries(frozen), [])
+
 
 def worker_command():
     """Return ([binary...]) for protocol tests, or None (skip).

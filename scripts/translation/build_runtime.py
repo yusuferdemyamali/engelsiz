@@ -639,7 +639,6 @@ def strip_api_set_libraries(frozen):
 
 def strip_msvc_redistributables(frozen):
     """Remove collected MSVC redistributables; they are a host prerequisite.
-
     PyInstaller excludes vcruntime/msvcp, but wheels (ctranslate2, numpy)
     can drag exact-name copies (MSVCP140.dll, vcruntime140.dll) into the
     tree. Per the declared prerequisite route the Microsoft VC++ 2015-2022
@@ -654,6 +653,26 @@ def strip_msvc_redistributables(frozen):
                 and path.suffix.lower() == ".dll"
                 and any(re.fullmatch(pattern, path.name.lower())
                         for pattern in REDIST_PATTERNS)):
+            removed.append(path.relative_to(Path(frozen)).as_posix())
+            path.unlink()
+    return removed
+
+
+def strip_os_baseline_libraries(frozen):
+    """Remove collected copies of Windows OS-baseline DLLs; they come from the OS.
+
+    PyInstaller can drag in ucrtbase.dll (Universal CRT, a Windows 10+
+    system component). A frozen copy would shadow the serviced OS file, so
+    it is stripped and recorded; importers keep resolving it through the
+    OS-baseline allowlist in the PE audit. Only basenames already in
+    WINDOWS_SYSTEM_DLLS are touched — redistributables keep their own
+    prerequisite path and never match here. Returns removed relpaths.
+    """
+    removed = []
+    for path in sorted(Path(frozen).rglob("*")):
+        if (path.is_file() and not path.is_symlink()
+                and path.suffix.lower() == ".dll"
+                and path.name.lower() in WINDOWS_SYSTEM_DLLS):
             removed.append(path.relative_to(Path(frozen)).as_posix())
             path.unlink()
     return removed
@@ -1199,6 +1218,7 @@ def main():
         stripped_gpu = strip_gpu_libraries(frozen)
         stripped_api_set = strip_api_set_libraries(frozen)
         stripped_msvc = strip_msvc_redistributables(frozen)
+        stripped_os_baseline = strip_os_baseline_libraries(frozen)
         desymlink_tree(frozen)
         host_prerequisites = audit_windows_dependencies(frozen)
 
@@ -1264,6 +1284,7 @@ def main():
             "strippedGpuLibraries": sorted(stripped_gpu),
             "strippedApiSetLibraries": sorted(stripped_api_set),
             "strippedMsvcDlls": sorted(stripped_msvc),
+            "strippedOsBaselineDlls": sorted(stripped_os_baseline),
             "hostPrerequisites": host_prerequisites,
             "files": file_inventory(frozen),
         }
