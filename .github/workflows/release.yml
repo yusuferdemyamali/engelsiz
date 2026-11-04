@@ -107,13 +107,15 @@ jobs:
           else
             # Never EXECUTE the downloaded installer here: an unsigned setup
             # with Mark-of-the-Web can hang on SmartScreen with no console
-            # output. Extract with 7-Zip (preinstalled on windows-2025) and
-            # fail closed when the compliance tree is absent.
+            # output, and 7-Zip cannot open Inno Setup archives. Extract with
+            # innoextract (pinned) and fail closed when the compliance tree
+            # is absent.
             gh release download v0.1.0-alpha.3 --pattern 'Engelsiz-Setup.exe' --output "$RUNNER_TEMP/alpha3-setup.exe" --clobber
+            choco install innoextract --version=1.9 -y --no-progress
             SRC_DIR="$RUNNER_TEMP/alpha3src"
             rm -rf "$SRC_DIR"
             mkdir -p "$SRC_DIR"
-            7z x "$RUNNER_TEMP/alpha3-setup.exe" -o"$SRC_DIR" -y
+            innoextract -d "$SRC_DIR" "$RUNNER_TEMP/alpha3-setup.exe"
             FOUND="$(find "$SRC_DIR" -name manifest.json -path '*runtime-corresponding-source*' -print -quit)"
             test -n "$FOUND" || { echo 'compliance tree not found in extracted installer'; exit 1; }
             cp -a "$(dirname "$FOUND")/." "$SRC/"
