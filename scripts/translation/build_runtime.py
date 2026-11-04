@@ -395,7 +395,10 @@ WINDOWS_SYSTEM_DLLS = frozenset(
     "winmm.dll rpcrt4.dll ws2_32.dll shell32.dll ole32.dll oleaut32.dll "
     "ntdll.dll secur32.dll userenv.dll netapi32.dll psapi.dll dnsapi.dll "
     "dbghelp.dll winhttp.dll normaliz.dll version.dll shlwapi.dll gdi32.dll "
-    "comdlg32.dll imm32.dll winspool.drv ucrtbase.dll msvcrt.dll".split()
+    "comdlg32.dll imm32.dll winspool.drv ucrtbase.dll msvcrt.dll "
+    # Genuine Windows OS DLLs imported by Intel OpenMP (libiomp5md.dll):
+    # imagehlp.dll and wintrust.dll are system libraries, not redistributables.
+    "imagehlp.dll wintrust.dll".split()
 )
 
 # CUDA-only libraries that must never ship in the CPU-only runtime. Stripped

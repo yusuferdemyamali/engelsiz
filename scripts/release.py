@@ -211,7 +211,7 @@ def static_elf(path):
 # Unversioned msvcrt.dll is the Windows system CRT used by MinGW, distinct from
 # redistributable msvcr100.dll/msvcp140.dll. See Microsoft's explanation:
 # https://devblogs.microsoft.com/oldnewthing/20140411-00/?p=1273
-WINDOWS_SYSTEM_DLLS = set("kernel32.dll user32.dll advapi32.dll crypt32.dll bcrypt.dll iphlpapi.dll winmm.dll rpcrt4.dll ws2_32.dll shell32.dll ole32.dll oleaut32.dll ntdll.dll secur32.dll userenv.dll netapi32.dll psapi.dll dnsapi.dll dbghelp.dll winhttp.dll normaliz.dll version.dll shlwapi.dll gdi32.dll comdlg32.dll imm32.dll winspool.drv ucrtbase.dll".split())
+WINDOWS_SYSTEM_DLLS = set("kernel32.dll user32.dll advapi32.dll crypt32.dll bcrypt.dll iphlpapi.dll winmm.dll rpcrt4.dll ws2_32.dll shell32.dll ole32.dll oleaut32.dll ntdll.dll secur32.dll userenv.dll netapi32.dll psapi.dll dnsapi.dll dbghelp.dll winhttp.dll normaliz.dll version.dll shlwapi.dll gdi32.dll comdlg32.dll imm32.dll winspool.drv ucrtbase.dll imagehlp.dll wintrust.dll".split())
 WINDOWS_SYSTEM_DLLS.add('msvcrt.dll')
 
 

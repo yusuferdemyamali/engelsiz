@@ -72,7 +72,7 @@ jobs:
       - name: Build frozen translation runtime
         shell: bash
         run: |
-          python scripts/translation/build_runtime.py --output translation-runtime-dist
+          python scripts/translation/build_runtime.py --output translation-runtime-dist --python-license scripts/translation/CPYTHON-3.11-LICENSE.txt
       - name: Upload native translation runtime
         uses: actions/upload-artifact@v4
         with:
