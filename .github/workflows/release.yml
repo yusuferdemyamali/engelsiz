@@ -108,10 +108,11 @@ jobs:
             # The 228 MB Windows corresponding-source bundle cannot live in
             # git, and neither 7-Zip nor innoextract 1.9 can open an Inno 6.5
             # setup (silent install hangs: orphan setup processes observed).
-            # Fetch the reviewed bundle published as a draft-release asset.
+            # Fetch the reviewed bundle published as a prerelease asset
+            # (anonymous download; draft assets are invisible to CI tokens).
             # release.py still hash-checks every file against the pinned
             # manifest; a wrong bundle fails closed here and there.
-            gh release download v0.1.0-alpha.4 --pattern 'windows-compliance-bundle.tar.gz' --output "$RUNNER_TEMP/win-compliance.tar.gz" --clobber
+            curl -sSL -o "$RUNNER_TEMP/win-compliance.tar.gz" "https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.4/windows-compliance-bundle.tar.gz"
             mkdir -p "$RUNNER_TEMP/wincomp"
             tar -xzf "$RUNNER_TEMP/win-compliance.tar.gz" -C "$RUNNER_TEMP/wincomp"
             cp -a "$RUNNER_TEMP/wincomp/compliance/." "$SRC/"
