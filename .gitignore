@@ -18,3 +18,4 @@ logs/
 Thumbs.db
 
 /scripts/**/__pycache__/
+.slim/deepwork/

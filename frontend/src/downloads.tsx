@@ -76,7 +76,7 @@ function eligibleActions(status: Download["status"]): Action[] {
   return []
 }
 
-export function DownloadsView({ refreshKey }: { refreshKey: number }) {
+export function DownloadsView({ refreshKey, onOpenTranslation }: { refreshKey: number; onOpenTranslation?: () => void }) {
   const packages = usePackages(refreshKey)
   const [downloads, setDownloads] = useState<Download[]>([])
   const [loading, setLoading] = useState(true)
@@ -213,7 +213,19 @@ export function DownloadsView({ refreshKey }: { refreshKey: number }) {
                 </div>
                 {item.error && <p role="alert" className="max-w-prose rounded border border-blood/60 bg-blood/10 px-3 py-2 text-sm leading-6 text-parchment">{item.error.message}</p>}
                 {actionError?.id === item.id && <p role="alert" className="max-w-prose rounded border border-blood/60 bg-blood/10 px-3 py-2 text-sm leading-6 text-parchment">{actionError.message}</p>}
-                {item.status === "completed" && !mapDownload && (
+                {item.provider === "argos" && item.status === "completed" && (
+                  <div className="space-y-3 rounded border border-sand/15 bg-coal/50 px-3 py-3">
+                    <p role="status" className="max-w-prose text-sm leading-6 text-sand/90">
+                      Bu dosya bir çeviri modelidir. Kurulum için Çeviri bölümünü kullanın.
+                    </p>
+                    {onOpenTranslation && (
+                      <button type="button" className={buttonClass} onClick={onOpenTranslation}>
+                        Çeviriye git
+                      </button>
+                    )}
+                  </div>
+                )}
+                {item.status === "completed" && !mapDownload && item.provider !== "argos" && (
                   <PackageState
                     item={localPackage}
                     downloadId={item.id}

@@ -24,6 +24,7 @@ import (
 	"engelsiz/internal/providers"
 	"engelsiz/internal/providers/kiwix"
 	"engelsiz/internal/providers/maps"
+	"engelsiz/internal/translation"
 	"engelsiz/internal/web"
 )
 
@@ -141,6 +142,21 @@ func Run(ctx context.Context, opts Options) (runErr error) {
 	}
 	defer mapService.Close()
 	manager.RegisterExternalProvider(mapService)
+	// Translation must never stop the whole app: a missing engine binary only
+	// disables translation, and only a storage failure degrades its API.
+	// Verified model pins come from the translation catalog source.
+	translationService, err := translation.New(db, dirs.DataRoot, translation.Options{Logger: logger})
+	if err != nil {
+		logger.Printf("translation initialization failed: code=storage_error cause=%T", err)
+		translationService = nil
+	}
+	if translationService != nil {
+		defer func() {
+			if err := translationService.Close(); err != nil {
+				logger.Printf("translation close failed: code=storage_error cause=%T", err)
+			}
+		}()
+	}
 	if ctx.Err() != nil {
 		return nil
 	}
@@ -174,6 +190,9 @@ func Run(ctx context.Context, opts Options) (runErr error) {
 	mux := api.NewMux()
 	mux.HandleFunc("/api/maps", api.MapsHandler(mapService))
 	mux.HandleFunc("/api/maps/", api.MapsHandler(mapService))
+	translationHandler := api.TranslationHandler(translationService, manager)
+	mux.HandleFunc("/api/translation", translationHandler)
+	mux.HandleFunc("/api/translation/", translationHandler)
 	mux.HandleFunc("/api/catalog", api.CatalogHandler(provider, logger))
 	mux.HandleFunc("/api/packages", api.PackagesHandler(packageService))
 	mux.HandleFunc("/api/packages/", api.UpdatePackageHandler(packageService, manager, provider))

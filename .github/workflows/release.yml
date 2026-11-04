@@ -58,6 +58,13 @@ jobs:
           go test -race ./internal/app ./internal/packages ./internal/download ./internal/runtime/kiwix
       - name: Packaging safety tests
         run: python -m unittest discover -s scripts/tests -v
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Build frozen translation runtime
+        shell: bash
+        run: |
+          python scripts/translation/build_runtime.py --output translation-runtime-dist
       - name: Compile application
         shell: bash
         env:
@@ -77,7 +84,11 @@ jobs:
           if [ "$RUNNER_OS" = Windows ]; then
             export PATH="/c/Program Files (x86)/Inno Setup 6:$PATH"
           fi
-          python scripts/release.py --platform "$RELEASE_PLATFORM" --download-runtime --download-pmtiles --compliance "third_party/compliance/$RELEASE_PLATFORM" --output "release-output" --version "$RELEASE_VERSION"
+          RUNTIME_DIR="translation-runtime-dist/translation-runtime-linux-amd64"
+          if [ "$RUNNER_OS" = Windows ]; then
+            RUNTIME_DIR="translation-runtime-dist/translation-runtime-windows-amd64"
+          fi
+          python scripts/release.py --platform "$RELEASE_PLATFORM" --download-runtime --download-pmtiles --translation-runtime "$RUNTIME_DIR" --compliance "third_party/compliance/$RELEASE_PLATFORM" --output "release-output" --version "$RELEASE_VERSION"
       - name: Upload reviewable packages and checksums
         if: github.event_name == 'workflow_dispatch' && inputs.package
         uses: actions/upload-artifact@v4

@@ -30,6 +30,8 @@ def main():
         # This validates packaging syntax and file inclusion only. The copied
         # executable is deliberately not represented as a Kiwix distribution.
         shutil.copyfile(app, stage / 'runtime/kiwix-serve.exe')
+        (stage / 'runtime/translation').mkdir(parents=True)
+        shutil.copyfile(app, stage / 'runtime/translation/engelsiz-translate.exe')
         shutil.copyfile(ROOT / 'LICENSE', stage / 'LICENSES/Engelsiz-LICENSE')
         (stage / 'README.txt').write_text('Compiler fixture only; not a distributable Engelsiz package.\n')
         output = Path(temporary) / 'output'

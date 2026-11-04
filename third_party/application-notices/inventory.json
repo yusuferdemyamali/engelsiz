@@ -7072,6 +7072,18 @@
         {
           "origins": [
             {
+              "source": "go1.26.0/src/archive/zip/reader.go",
+              "sourceSha256": "512482f33931f71f225fa76700847f31f9fc82cdc281338b82016818db2806e2"
+            },
+            {
+              "source": "go1.26.0/src/archive/zip/register.go",
+              "sourceSha256": "79c2b8c310f04ee33c86e8c7399fd73c3d2b6d81a7c6a711a6a740654ac3ff98"
+            },
+            {
+              "source": "go1.26.0/src/archive/zip/struct.go",
+              "sourceSha256": "0245d82aa77e2b9dde3ae1c75edab06f9153f801e0742dac0617f24c33d5609b"
+            },
+            {
               "source": "go1.26.0/src/compress/gzip/gzip.go",
               "sourceSha256": "9f5cef3dff42000c6df57de93429c10121c20afdda99b0c883fa60f94617a497"
             },
@@ -8486,6 +8498,10 @@
         {
           "origins": [
             {
+              "source": "go1.26.0/src/archive/zip/writer.go",
+              "sourceSha256": "ea7d65bc45ab1eb96c72fbbddd31c09c510eed9b9d2ac33b535b7915efed08ca"
+            },
+            {
               "source": "go1.26.0/src/crypto/cipher/ofb.go",
               "sourceSha256": "3c91daaffeb017c010183d6a08ec7069f68394c6a28d328c08eaf4c097cfcea4"
             },
@@ -9706,6 +9722,7 @@
   "goModuleCacheVerification": "go mod verify passed before collection",
   "goPackages": {
     "linux-amd64": [
+      "archive/zip",
       "bufio",
       "bytes",
       "cmp",
@@ -9802,6 +9819,7 @@
       "engelsiz/internal/providers/kiwix",
       "engelsiz/internal/providers/maps",
       "engelsiz/internal/runtime/kiwix",
+      "engelsiz/internal/translation",
       "engelsiz/internal/web",
       "errors",
       "flag",
@@ -9929,6 +9947,7 @@
       "weak"
     ],
     "windows-amd64": [
+      "archive/zip",
       "bufio",
       "bytes",
       "cmp",
@@ -10025,6 +10044,7 @@
       "engelsiz/internal/providers/kiwix",
       "engelsiz/internal/providers/maps",
       "engelsiz/internal/runtime/kiwix",
+      "engelsiz/internal/translation",
       "engelsiz/internal/web",
       "errors",
       "flag",

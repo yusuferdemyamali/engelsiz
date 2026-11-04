@@ -1,0 +1,30 @@
+{
+  "linux-amd64": {
+    "binary": "engelsiz-translate",
+    "workerProtocol": 1,
+    "buildPython": "3.11",
+    "maxGlibc": "2.39",
+    "supportedFloor": "2.35",
+    "packages": {
+      "argostranslate": "1.11.0",
+      "ctranslate2": "4.8.5",
+      "sentencepiece": "0.2.2",
+      "numpy": "2.4.6",
+      "pyyaml": "6.0.3",
+      "packaging": "25.0"
+    }
+  },
+  "windows-amd64": {
+    "binary": "engelsiz-translate.exe",
+    "workerProtocol": 1,
+    "buildPython": "3.11",
+    "packages": {
+      "argostranslate": "1.11.0",
+      "ctranslate2": "4.8.5",
+      "sentencepiece": "0.2.2",
+      "numpy": "2.4.6",
+      "pyyaml": "6.0.3",
+      "packaging": "25.0"
+    }
+  }
+}

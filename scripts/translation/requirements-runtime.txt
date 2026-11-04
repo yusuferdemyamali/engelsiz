@@ -1,0 +1,46 @@
+# Engelsiz offline translation runtime: frozen worker dependencies.
+#
+# Installed with `pip install --require-hashes --no-deps -r requirements-runtime.txt`
+# (or `uv pip install --require-hashes --no-deps`) into the PyInstaller build
+# venv. Every wheel is pinned by hash for both supported build platforms.
+#
+# Deliberately excluded from argostranslate 1.11.0's upstream dependency set:
+#   stanza==1.10.1, spacy, minisbd, sacremoses (+ their torch/CUDA/nvidia
+#   closure, ~1GB). The worker (scripts/translation/worker/engelsiz_translate.py)
+#   drives the real argostranslate Package/tokenizer/CTranslate2 path with an
+#   explicit offline sentence splitter, so those sentence-boundary/model
+#   backends are never imported (stubbed) and must not be frozen. sacremoses
+#   is only needed for legacy BPE (.bpe.model) packages; the shipped tr/en
+#   models use sentencepiece, and a BPE-only model fails closed with
+#   model_invalid instead of pulling the extra stack.
+#   minisbd is additionally a hard licensing exclusion: minisbd 0.9.5 on PyPI
+#   is GNU AGPL-3.0 (verified 2026-11-04), which must not enter the frozen
+#   distributable. The worker therefore keeps its dependency-free regex
+#   OfflineSentencizer; no onnxruntime/minisbd/ONNX vendoring.
+#
+# ctranslate2 wheels on PyPI are CPU-only builds (oneDNN/mKL bundled, no CUDA
+# runtime wheels). No nvidia/cuda packages may be added here.
+#
+# Interpreter: CPython 3.11.x on linux/amd64 and windows/amd64.
+
+argostranslate==1.11.0 \
+    --hash=sha256:a89b42d82f40843900338f9ac60d4c82fda590b6898247f5d0c15d46731ca7df
+
+ctranslate2==4.8.5 \
+    --hash=sha256:79a30a2c974530dbb5083f4922d28ffad87e08542f423aa91c53fbf4543cc35f \
+    --hash=sha256:cb918ee10fd228c2aa2a5fde3e62999a4617cb11dae51644d5286a1b6d6783dd
+
+sentencepiece==0.2.2 \
+    --hash=sha256:1416b92f2f010333786fe6306ed2631121d5ea492219b0841e967b6765e64107 \
+    --hash=sha256:70d4ca6f4d06df7f0ccab6fe4f49c8a712c8c8b6847b4f0af9a0e1dbb0e0337e
+
+numpy==2.4.6 \
+    --hash=sha256:89cd468399cfd2504718f0ba50e410dca55a170b61a02ad92bb18c8a65186e93 \
+    --hash=sha256:1e254a00cdf42b1e4d5b3d68d33af63268d41340d8885df2ab6470f2e1500147
+
+pyyaml==6.0.3 \
+    --hash=sha256:b8bb0864c5a28024fac8a632c443c87c5aa6f215c0b126c449ae1a150412f31d \
+    --hash=sha256:9f3bfb4965eb874431221a3ff3fdcddc7e74e3b07799e0e84ca4a0f867d449bf
+
+packaging==25.0 \
+    --hash=sha256:29572ef2b1f17581046b3a2227d5c611fb25ec70ca1ba8554b24b0e69331a484
