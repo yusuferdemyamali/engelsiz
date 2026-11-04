@@ -199,6 +199,7 @@ def main():
                 "signing": "No signing certificate provisioned; native SmartScreen behavior not observed",
             },
         }
+    args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(document, indent=2, ensure_ascii=False) + "\n",
                         encoding="utf-8")
     print(f"wrote {args.out} for {artifact.name}")
