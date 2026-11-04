@@ -138,7 +138,10 @@ jobs:
         if: github.event_name == 'workflow_dispatch' && inputs.package
         shell: bash
         run: |
-          ARTIFACT="$(ls release-output/Engelsiz-Setup.exe release-output/engelsiz-linux-x64.tar.gz 2>/dev/null | head -1)"
+          ARTIFACT=""
+          for f in release-output/Engelsiz-Setup.exe release-output/engelsiz-linux-x64.tar.gz; do
+            if [ -f "$f" ]; then ARTIFACT="$f"; break; fi
+          done
           test -n "$ARTIFACT" || { echo 'no built artifact for provenance'; exit 1; }
           python scripts/write-build-provenance.py --platform "${{ matrix.platform }}" --version "${{ inputs.version }}" --artifact "$ARTIFACT" --compliance "third_party/compliance/${{ matrix.platform }}" --out "provenance-output/build-provenance.json"
       - name: Upload build provenance

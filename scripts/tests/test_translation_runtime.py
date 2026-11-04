@@ -765,6 +765,20 @@ class WindowsBuildMechanicsTests(unittest.TestCase):
         self.assertTrue(keeper.is_file())
         self.assertEqual(self.build.strip_api_set_libraries(frozen), [])
 
+    def test_msvc_redistributables_stripped_as_host_prerequisite(self):
+        frozen = self.root / 'frozen-msvc'
+        (frozen / '_internal').mkdir(parents=True)
+        (frozen / '_internal' / 'MSVCP140.dll').write_bytes(b'redist copy')
+        (frozen / '_internal' / 'vcruntime140_1.dll').write_bytes(b'redist copy')
+        keeper = frozen / '_internal' / 'libiomp5md.dll'
+        keeper.write_bytes(b'cpu library that must stay')
+        removed = self.build.strip_msvc_redistributables(frozen)
+        self.assertEqual(sorted(removed),
+                         ['_internal/MSVCP140.dll',
+                          '_internal/vcruntime140_1.dll'])
+        self.assertTrue(keeper.is_file())
+        self.assertEqual(self.build.strip_msvc_redistributables(frozen), [])
+
 
 def worker_command():
     """Return ([binary...]) for protocol tests, or None (skip).

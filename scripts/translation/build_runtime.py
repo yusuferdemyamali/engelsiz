@@ -637,6 +637,28 @@ def strip_api_set_libraries(frozen):
     return removed
 
 
+def strip_msvc_redistributables(frozen):
+    """Remove collected MSVC redistributables; they are a host prerequisite.
+
+    PyInstaller excludes vcruntime/msvcp, but wheels (ctranslate2, numpy)
+    can drag exact-name copies (MSVCP140.dll, vcruntime140.dll) into the
+    tree. Per the declared prerequisite route the Microsoft VC++ 2015-2022
+    Redistributable (x64) must be installed on the host instead of bundled,
+    so collected copies are stripped and recorded. Importers keep listing
+    them, and the PE audit records them as manifest hostPrerequisites.
+    Returns the removed relative paths for the manifest.
+    """
+    removed = []
+    for path in sorted(Path(frozen).rglob("*")):
+        if (path.is_file() and not path.is_symlink()
+                and path.suffix.lower() == ".dll"
+                and any(re.fullmatch(pattern, path.name.lower())
+                        for pattern in REDIST_PATTERNS)):
+            removed.append(path.relative_to(Path(frozen)).as_posix())
+            path.unlink()
+    return removed
+
+
 def find_interpreter_license(venv_python, override=None):
     """Locate the CPython PSF license text for the build interpreter.
 
@@ -1176,6 +1198,7 @@ def main():
         injected_dlls = inject_native_dlls(frozen, args.native_dll)
         stripped_gpu = strip_gpu_libraries(frozen)
         stripped_api_set = strip_api_set_libraries(frozen)
+        stripped_msvc = strip_msvc_redistributables(frozen)
         desymlink_tree(frozen)
         host_prerequisites = audit_windows_dependencies(frozen)
 
@@ -1240,6 +1263,7 @@ def main():
             "injectedNativeDlls": dict(sorted(injected_dlls.items())),
             "strippedGpuLibraries": sorted(stripped_gpu),
             "strippedApiSetLibraries": sorted(stripped_api_set),
+            "strippedMsvcDlls": sorted(stripped_msvc),
             "hostPrerequisites": host_prerequisites,
             "files": file_inventory(frozen),
         }
