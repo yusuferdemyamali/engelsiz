@@ -112,10 +112,13 @@ jobs:
             # (anonymous download; draft assets are invisible to CI tokens).
             # release.py still hash-checks every file against the pinned
             # manifest; a wrong bundle fails closed here and there.
-            curl -sSL -o "$RUNNER_TEMP/win-compliance.tar.gz" "https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.4/windows-compliance-bundle.tar.gz"
+            curl -fsSL -o "$RUNNER_TEMP/win-compliance.tar.gz" "https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.4/windows-compliance-bundle.tar.gz"
             mkdir -p "$RUNNER_TEMP/wincomp"
-            tar -xzf "$RUNNER_TEMP/win-compliance.tar.gz" -C "$RUNNER_TEMP/wincomp"
-            cp -a "$RUNNER_TEMP/wincomp/compliance/." "$SRC/"
+            # Windows RUNNER_TEMP is D:\... — GNU tar reads "D:" as remote host.
+            # cygpath strips the drive-colon so tar treats it as local file.
+            TMP_UNIX="$(cygpath -u "$RUNNER_TEMP")"
+            tar -xzf "$TMP_UNIX/win-compliance.tar.gz" -C "$TMP_UNIX/wincomp"
+            cp -a "$TMP_UNIX/wincomp/compliance/." "$SRC/"
           fi
           test -f "$SRC/manifest.json" || { echo 'compliance materialization failed'; exit 1; }
       - name: Build verified distributable package
