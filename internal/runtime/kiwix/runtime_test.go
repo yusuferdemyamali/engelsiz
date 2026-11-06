@@ -48,6 +48,9 @@ func setup(t *testing.T, cfg fixture.Config) (*Runtime, string) {
 func eventually(t *testing.T, pred func() bool) {
 	t.Helper()
 	deadline := time.Now().Add(4 * time.Second)
+	if runtime.GOOS == "windows" {
+		deadline = time.Now().Add(10 * time.Second)
+	}
 	for time.Now().Before(deadline) {
 		if pred() {
 			return
@@ -285,8 +288,10 @@ func TestConcurrentEnsureSuccessAndFailure(t *testing.T) {
 			// concurrent outcome agreement and single fixture start. The
 			// success case gets a generous deadline because spawning the
 			// fixture helper on a loaded Windows runner under -race can
-			// exceed hundreds of milliseconds; the failure case keeps a
-			// short deadline since any error satisfies it (503 fails fast).
+			// exceed a second; the failure case keeps a short deadline
+			// since any error satisfies it. Either way the single spawn
+			// itself may lag behind the callers, so the start count below
+			// is awaited instead of assumed.
 			r.opts.StartupTimeout = 400 * time.Millisecond
 			if !fail {
 				r.opts.StartupTimeout = 30 * time.Second
@@ -304,9 +309,10 @@ func TestConcurrentEnsureSuccessAndFailure(t *testing.T) {
 					t.Fatalf("outcome=%v", err)
 				}
 			}
-			if n := starts(t, marker); n != 1 {
-				t.Fatalf("starts=%d", n)
-			}
+			// The spawn itself may lag behind the callers' deadlines on
+			// slow runners: wait for the single start instead of assuming
+			// it already happened.
+			eventually(t, func() bool { return starts(t, marker) == 1 })
 			if err := r.EnsureStarted(context.Background()); (err != nil) != fail {
 				t.Fatal(err)
 			}
