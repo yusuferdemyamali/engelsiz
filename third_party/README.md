@@ -42,7 +42,7 @@ Repeat components for every incorporated dependency, including statically linked
 4. Include notices/licenses for Engelsiz's Go/frontend dependencies as well in the reviewed distribution material; bundling this README alone is not sufficient.
 5. Run the clean-machine matrix in docs/release-validation.md. Do not publish while its release gates are pending.
 
-No binary/source payload is checked into this directory. Missing default pins/bundles deliberately stop official-runtime packaging before an artifact is produced.
+Reviewed Kiwix executable archives are committed under `runtime-archives/`; the release workflow selects their matching `runtime-source-candidates/offline-maps/` locks explicitly. Full corresponding-source/compliance payloads are materialized from pinned historical release assets rather than duplicated in git. Missing pins, bundles, licenses or matching notices stop packaging before an artifact is produced. The historical asset tags are supply-chain inputs, not the current product release channel.
 
 A separately source-built Linux candidate is now available locally under `dist/linux-source-candidate/`, with its full source/notice bundle, its own immutable runtime/manifest hashes and extracted-package verification. Select it explicitly with `--runtime-lock dist/linux-source-candidate/candidate-runtime-lock.json` and its matching `--runtime-archive`; the default official-runtime pins remain unchanged. See [source-build audit](runtime-source-candidates/README.md). This candidate does not establish Windows redistribution rights or clean desktop release acceptance.
 

@@ -1,4 +1,4 @@
-Engelsiz - Linux x86_64
+Engelsiz 1.0.0 - Linux x86_64
 
 Desteklenen temel ortam: Linux kernel 4.4 veya üstü, x86_64 masaüstü, varsayılan
 web tarayıcısı ve xdg-open. Uygulama ve Kiwix statik ELF dosyalarıdır; belirli bir
@@ -21,3 +21,10 @@ Program klasörünü silmek indirilen kullanıcı içeriğini silmez.
 
 İlk katalog/indirme ve harita çıkarma internet gerektirir. Kurulu içerik ve haritalar çevrimdışı kullanılabilir.
 LICENSES/ altında lisanslar ve runtime corresponding-source materyali vardır.
+
+AI Asistanı isteğe bağlıdır: Asistan sekmesinde motoru ve yalnızca istediğiniz
+Lite/Balanced/Quality modelini açıkça indirin. İndirmeler doğrulanır; kurulumdan
+sonra sorular ve kaynaklar cihazda işlenir. AI olmadan diğer modüller çalışır.
+Hazır CPU AI motoru glibc 2.35+, paketli çeviri motoru glibc 2.38+ gerektirir.
+Model RAM hedefleri 4/8/12-16 GB'dır; donanım garantisi değildir. AI-README.md
+kurulum ve sınırları açıklar. Kaynak metnini AI yanıtından ayrı değerlendirin.

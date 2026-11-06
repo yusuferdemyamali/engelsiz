@@ -1,4 +1,4 @@
-Engelsiz - Windows 10/11 x86_64
+Engelsiz 1.0.0 - Windows 10/11 x86_64
 
 Engelsiz-Setup.exe dosyasını çalıştırın. Yönetici izni gerekmez. Başlat menüsündeki
 Engelsiz kısayolunu açın; varsayılan tarayıcı yerel arayüze bağlanır.
@@ -29,3 +29,9 @@ LICENSES klasöründe bileşen lisansları ve runtime kaynak materyali bulunur.
 gizlilik için uygulamaya gömülü gelmez; Çeviri sekmesindeki "İndir" düğmesiyle
 açıkça indirilir. Kurulumdan sonra çeviri tamamen çevrimdışı çalışır.
 Kaldırıp yeniden kursanız bile indirdiğiniz modeller ve veritabanı korunur.
+
+AI Asistanı isteğe bağlıdır. Asistan sekmesinde CPU motorunu ve yalnızca seçtiğiniz
+Lite/Balanced/Quality modelini indirin. Microsoft VC++ x64 runtime gerekebilir.
+Model RAM hedefleri 4/8/12-16 GB'dır; donanım garantisi değildir. Sorular ve
+kaynaklar kurulum sonrasında cihazda işlenir; bulut inference kullanılmaz.
+AI-README.md kurulum ve sınırları açıklar. AI kurulmadan diğer modüller çalışır.

@@ -1,4 +1,4 @@
-name: Test and prepare release candidates
+name: Build and validate Engelsiz
 on:
   push:
     branches: [main]
@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       package:
-        description: Build packages (audited source-built runtimes + alpha.3-materialized compliance; gates intact)
+        description: Build release packages using pinned runtimes and compliance inputs, then run native installer QA
         type: boolean
         default: false
       qa_installer_url:
@@ -14,14 +14,14 @@ on:
         type: string
         default: ''
       version:
-        description: Candidate version
+        description: Release version (without v prefix)
         default: 1.0.0
         type: string
 permissions:
   contents: read
 concurrency:
-  group: candidate-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: engelsiz-${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: ${{ github.event_name != 'workflow_dispatch' }}
 jobs:
   platform:
     strategy:
@@ -88,7 +88,7 @@ jobs:
       - name: Compile installer definition with non-release fixture
         if: runner.os == 'Windows'
         run: python scripts/check-installer.py --app candidate/engelsiz.exe
-      - name: Materialize compliance from alpha.3 assets
+      - name: Materialize pinned runtime compliance inputs
         if: github.event_name == 'workflow_dispatch' && inputs.package
         timeout-minutes: 25
         shell: bash

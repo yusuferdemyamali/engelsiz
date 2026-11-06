@@ -45,9 +45,9 @@ Kaynak cihazınızdaysa ona ulaşmak için uzaktaki bir sunucunun, DNS servisini
 ---
 
 
-## Gelecek
+## Bugünkü kapsam ve gelecek
 
-Temel sistem oturduktan sonra Engelsiz farklı offline bilgi kaynaklarını destekleyebilir.
+Engelsiz 1.0.0 Wikipedia, harita, çeviri, eğitim ve isteğe bağlı yerel AI asistanını bir araya getirir. Aşağıdaki başlıklar teslim edilen kapsamı ve genişletilmesi planlanan alanları ayırır.
 
 ### 🗺️ Haritalar
 
@@ -67,7 +67,7 @@ Wikipedia dışında farklı açık bilgi kaynakları.
 
 ### 🤖 Yerel Yapay Zekâ
 
-İnternet bağlantısı gerektirmeden cihazdaki kaynaklar üzerinde çalışan yapay zekâ destekli soru-cevap sistemi.
+**1.0.0 ile uygulandı:** isteğe bağlı Qwen3 Lite/Balanced/Quality GGUF modelleri, cihazda llama.cpp inference, kurulu ZIM/HTML kaynaklarında retrieval, gerçek kaynak bağlantıları, Türkçe streaming yanıt ve durdurma. Bulut inference ve agent otomasyonu yoktur. [Kurulum, mimari ve sınırlar](offline-ai.md).
 
 ### 📦 Bilgi Paketleri
 

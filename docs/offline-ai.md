@@ -79,7 +79,7 @@ Varsayılan indirme CPU paketidir. GPU katmanları yalnızca açık geliştirici
 | Inference | `internal/assistant/engine/{engine,process_*}.go` | İstek başına llama.cpp süreci, korumalı `/props` üzerinden kimlik kontrolü, tek yanıt, streaming, iptal/kapanış, CPU ve açık GPU seçeneği |
 | Retrieval | `internal/assistant/rag/*.go`, `internal/providers/article.go`, `internal/providers/kiwix/article.go` | Kurulu ZIM araması/owned transport ile makale okuma, kurulu HTML metinleri, alaka filtresi, yerel kaynaklar ve sınırlandırılmış bağlam |
 | API/yaşam döngüsü | `internal/api/assistant.go`, `internal/app/assistant*.go`, `internal/app/app.go` | İsteğe bağlı başlangıç, loopback/Origin koruması, bounded JSON ve POST SSE; bağımlılık hatası yalnız asistanı etkiler |
-| Arayüz/dağıtım | `frontend/src/assistant.tsx`, `frontend/src/App.tsx`, sürüm/paketleme dosyaları ve `third_party/assistant-notices.md` | Mevcut terminal temasında model yönetimi, bellek içi sohbet, gerçek yerel alıntılar, durdurma; 1.0.0 sürüm hedefi |
+| Arayüz/dağıtım | `frontend/src/assistant.tsx`, `frontend/src/App.tsx`, sürüm/paketleme dosyaları ve `third_party/assistant-notices.md` | Mevcut terminal temasında model yönetimi, bellek içi sohbet, gerçek yerel alıntılar, durdurma; 1.0.0 kararlı sürümü |
 
 Model dosyaları uygulamanın veri kökündeki `content/assistant/models/<profil>/model.gguf`, motor ve eşlik eden kütüphaneler `content/assistant/runtime` altında saklanır. Registry SQLite içindedir; indirmeler mevcut `downloads` mekanizmasını kullanır. Linux XDG ve Windows kullanıcı veri dizini kuralları değişmez. Kurulum sırasında doğrulama yapılır; uygulama açılışı ve status polling çok GB ağırlıkları yeniden hash'lemez, küçük receipt/kimlik/boyut kontrolleri yapar.
 
@@ -87,6 +87,6 @@ Retrieval sorgu başına en fazla beş ZIM paketinde, sınırlı iki arama turuy
 
 Kaynaklar model bağlamına JSON veri olarak girer; yalnızca bağlama sığan kaynaklar yanıta eşlik eder. Context, sistem talimatı, soru ve çıktı rezervi birlikte UTF-8 bayt üst sınırıyla konservatif sınırlandırılır. Çok uzun soru seçilen profilin bağlamına sığmazsa kullanıcıdan kısaltması istenir. Modelin yazdığı URL veya numara, tıklanabilir referansa dönüştürülmez.
 
-## 1.0.0 yayın sınırı
+## 1.0.0 doğrulama kapsamı
 
-Kaynak kodu ve sürüm varsayılanları 1.0.0 hedefindedir; bu çalışma release tag'i, GitHub yayını veya installer yayımlamaz. Gerçek model/motor kurulumu, Türkçe yanıt kalitesi, fiziksel 4-8 GB bellek, native Windows ve GPU kabulü tamamlanmadan tüm acceptance kriterleri geçmiş veya üretim yayını onaylanmış sayılmaz. [Komut sonuçları ve açık doğrulamalar](offline-ai-verification.md).
+Asistan Engelsiz 1.0.0 kararlı sürümüne dahildir. Gerçek Linux CPU motorunun kurulumu doğrulandı; kullanıcı gerçek Lite modeliyle sohbetin çalıştığını doğruladı. Bu geri bildirim kontrollü kalite veya performans benchmark'ı değildir. Fiziksel 4-8 GB bellek, Windows AI inference ve gerçek GPU senaryoları ayrıca doğrulanmalıdır; sürüm etiketi bu testlerin yapılmış olduğu anlamına gelmez. [Komut sonuçları ve açık doğrulamalar](offline-ai-verification.md) · [1.0.0 sürüm notları](releases/1.0.0.md).

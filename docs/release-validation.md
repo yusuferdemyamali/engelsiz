@@ -1,8 +1,8 @@
-# v0.1 release validation
+# Engelsiz 1.0.0 release validation
 
-Status: NOT RELEASE-READY. A successful cross-build/unit test is not evidence of a clean-machine installation. Keep each unexecuted check pending; record OS image/version, app commit, package SHA-256, date, tester and artifact/log links when completed. No external GitHub Release is published by the workflow.
+Release channel: **stable, v1.0.0**. A successful cross-build/unit test is not evidence of every clean-machine configuration. Keep unexecuted checks pending; record OS image/version, app commit, package SHA-256, date, tester and artifact/log links when completed. The workflow builds and validates exact artifacts; the maintainer publishes the stable GitHub Release only after its required jobs succeed. Publication evidence is recorded in the [1.0.0 release notes](releases/1.0.0.md).
 
-The workflow prepares artifacts; public alpha releases are published separately. The [Offline Education Center report](offline-education-center.md) records its 2026-11-06 real PDF/ZIM/PhET network-isolated restart, targeted deletion and regression evidence. This closes those module-specific development checks, not the unexecuted clean Windows/Linux installation rows below. The catalog bundles metadata only; educational payloads and models remain optional downloads with independent license conditions.
+The workflow prepares artifacts; stable publication is a separate, explicit operation after both platform jobs and Windows installer QA pass. Historical release assets remain immutable compliance inputs, not the current release channel. The [Offline Education Center report](offline-education-center.md) records its 2026-11-06 real PDF/ZIM/PhET network-isolated restart, targeted deletion and regression evidence. The [AI report](offline-ai-verification.md) distinguishes fixture tests, real Linux runtime installation and user-confirmed Lite use from untested hardware. The catalog bundles metadata only; educational payloads and models remain optional downloads with independent license conditions.
 
 ## Build and packaging
 
@@ -71,7 +71,7 @@ Every row requires evidence against the exact release candidate. Automated refer
 | AC-15 Port collision | `TestListenFallbackWhenPreferredOccupied`; occupy17321 then start package/browser on fallback | PENDING platform smoke |
 | AC-16 Provider boundary | API/search/provider tests and frontend review; browser network uses same app origin only | PENDING package inspection |
 | AC-17 Generic manager | download manager/provider acquisition tests; transfer layer contains no Wikipedia-specific decisions | PENDING final review |
-| AC-18 Scope | inspect package/routes and planned changes; no AI/maps/mobile/plugin placeholders | PENDING final review |
+| AC-18 Scope | Wikipedia/maps/translation/education/optional local AI only; no cloud inference, accounts, agent automation, mobile/plugin placeholders | Declared 1.0.0 scope; see module reports |
 
 ## Definition of Done traceability
 
@@ -94,13 +94,13 @@ Every row requires evidence against the exact release candidate. Automated refer
 | 15 Child process cleanup | AC-14 | PENDING |
 | 16 Tests/manual evidence | All AC rows and retained evidence | PENDING |
 
-## Release gates
+## Required publication gates
 
 - [ ] Hash-pinned reviewed complete runtime source/build/license inventory for each platform, including incorporated dependencies and app Go/frontend notices.
 - [ ] Windows archive SHA-256 pin and actual runtime/DLL smoke verified.
-- [ ] Inno Setup compile and setup/uninstall/reinstall executed on clean Windows 10/11.
-- [ ] Linux tarball smoke executed on clean supported environment.
+- [ ] Inno Setup compile and native Windows CI installer/translation/uninstall QA against the just-built installer.
+- [ ] Linux package build, static binary checks and native runtime smoke completed by the platform job.
 - [ ] Both matrix CI jobs produce reviewed packages and matching checksums.
-- [ ] All manual/automated rows filled with actual candidate evidence and independently reviewed.
+- [ ] Source commit/version/provenance and asset SHA-256 match the exact successful run; release is neither draft nor prerelease.
 
-Until all gates pass, artifacts are engineering candidates and v0.1 acceptance remains incomplete.
+Do not publish if a required automated gate fails or the artifact cannot be bound to the tested commit. The wider clean Windows 10/11, desktop/browser, physical low-memory and GPU matrix above remains a coverage plan: pending rows are not silently marked passed by a stable version label. Preserve these limitations in the release notes rather than advertising untested configurations as verified.

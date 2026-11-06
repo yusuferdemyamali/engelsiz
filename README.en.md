@@ -1,21 +1,20 @@
 <img src="frontend/public/logo.svg" alt="Engelsiz emblem" width="72" height="72">
 
-# Engelsiz
+# Engelsiz 1.0.0
 
 **Download Wikipedia, maps and learning resources; use them offline on your device.**
 
-An open-source, offline-first knowledge hub with local translation and education, powered by Go, React and Kiwix.
+An offline-first knowledge hub with Turkish Wikipedia, Türkiye maps, translation, education and a fully local AI assistant. Go + React; Windows and Linux.
 
 [Türkçe](README.md) · **English**
 
 [![CI](https://github.com/yusuferdemyamali/engelsiz/actions/workflows/release.yml/badge.svg?branch=main)](https://github.com/yusuferdemyamali/engelsiz/actions/workflows/release.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/yusuferdemyamali/engelsiz)](https://github.com/yusuferdemyamali/engelsiz/releases/latest)
 
-[Download for Windows](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.5/Engelsiz-Setup.exe) · [Download for Linux](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.5/engelsiz-linux-x64.tar.gz) · [All releases](https://github.com/yusuferdemyamali/engelsiz/releases) · [Report a bug / suggest a feature](https://github.com/yusuferdemyamali/engelsiz/issues/new/choose)
+[Download for Windows](https://github.com/yusuferdemyamali/engelsiz/releases/download/v1.0.0/Engelsiz-Setup.exe) · [Download for Linux](https://github.com/yusuferdemyamali/engelsiz/releases/download/v1.0.0/engelsiz-linux-x64.tar.gz) · [All releases](https://github.com/yusuferdemyamali/engelsiz/releases) · [Report a bug / suggest a feature](https://github.com/yusuferdemyamali/engelsiz/issues/new/choose)
 
-**Release status:** `v0.1.0-alpha.5` packages are available and include Education and Translation.
-
-**Development target:** `1.0.0` adds an optional, fully local AI assistant. The published packages above do not contain it; a 1.0.0 package has not been published. See [setup and limitations](docs/offline-ai.md) (Turkish).
+**Stable release: `1.0.0`.** All modules, including the local AI assistant, are available in one application. AI models and the inference engine are optional; Engelsiz works without them. [Release notes](docs/releases/1.0.0.md) · [Assistant setup](docs/offline-ai.md) (Turkish).
 
 Engelsiz keeps the resources you choose on your own computer. Installed content opens without a connection. A Go application opens its locally bundled React interface in your default browser; the bundled Kiwix runtime serves ZIM archives. PDFs and verified HTML5 learning resources also open inside the application. The interface is in Turkish.
 
@@ -34,20 +33,20 @@ The interface and font files are bundled locally. The application listens only o
 
 | Platform | Status |
 | --- | --- |
-| Linux x86_64 | [v0.1.0-alpha.5 prerelease available](https://github.com/yusuferdemyamali/engelsiz/releases/tag/v0.1.0-alpha.5) |
-| Windows x86_64 | [v0.1.0-alpha.5 installer available](https://github.com/yusuferdemyamali/engelsiz/releases/tag/v0.1.0-alpha.5) |
+| Linux x86_64 | [1.0.0 archive and SHA-256](https://github.com/yusuferdemyamali/engelsiz/releases/tag/v1.0.0) |
+| Windows x86_64 | [1.0.0 installer and SHA-256](https://github.com/yusuferdemyamali/engelsiz/releases/tag/v1.0.0) |
 
-The Windows installer passed silent install/translation/uninstall checks in CI; Windows 10 has not yet been tested. Linux requires kernel 4.4+ and a desktop browser/opener. You do not need to install Go, Node, SQLite, or Kiwix separately. This is an alpha release; [full platform acceptance](docs/release-validation.md) is still in progress.
+You do not need to install Go, Node, SQLite, or Kiwix separately. The Linux core requires kernel 4.4+ and a desktop browser/opener. The optional AI engine requires glibc 2.35+ and translation requires glibc 2.38+. Windows engines may require the Microsoft VC++ x64 runtime. Windows 10, GPU and low-memory coverage are documented in [validation and known limitations](docs/release-validation.md); a stable version label does not mean every hardware configuration has been tested.
 
 ### Windows
 
-1. Download [Engelsiz-Setup.exe](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.5/Engelsiz-Setup.exe) and its [SHA-256 file](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.5/Engelsiz-Setup.exe.sha256). In PowerShell, compare `Get-FileHash .\Engelsiz-Setup.exe -Algorithm SHA256` with the checksum file.
+1. Download [Engelsiz-Setup.exe](https://github.com/yusuferdemyamali/engelsiz/releases/download/v1.0.0/Engelsiz-Setup.exe) and its [SHA-256 file](https://github.com/yusuferdemyamali/engelsiz/releases/download/v1.0.0/Engelsiz-Setup.exe.sha256). In PowerShell, compare `Get-FileHash .\Engelsiz-Setup.exe -Algorithm SHA256` with the checksum file.
 2. Run setup and launch Engelsiz from the Start menu. Administrator privileges and separate Go, Node, SQLite, or Kiwix installs are not required.
 3. Download and install an archive in Bilgi Paketleri, then use Ara to search. Pick a province in Haritalar to download a map and open it offline with Haritayı aç. Uninstalling preserves downloaded content and settings.
 
 ### Linux
 
-1. Download the [Linux archive](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.5/engelsiz-linux-x64.tar.gz) and its [SHA-256 file](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.5/engelsiz-linux-x64.tar.gz.sha256) into the same directory.
+1. Download the [Linux archive](https://github.com/yusuferdemyamali/engelsiz/releases/download/v1.0.0/engelsiz-linux-x64.tar.gz) and its [SHA-256 file](https://github.com/yusuferdemyamali/engelsiz/releases/download/v1.0.0/engelsiz-linux-x64.tar.gz.sha256) into the same directory.
 2. Verify, extract, and launch:
 
    ```sh
@@ -58,13 +57,21 @@ The Windows installer passed silent install/translation/uninstall checks in CI; 
 
 3. In **Bilgi Paketleri** (knowledge packages), choose a Wikipedia archive, download it, and install it. Use **Ara** (search) to search installed content. In **Haritalar**, search a province to download its map (roughly 7–80 MB per province) and view it with no connection.
 
-Wikipedia content is not included in the application download. The initial content download needs an internet connection and enough free disk space for the selected archive. The packages include the runtime’s corresponding sources and licenses; the Linux archive is approximately 426 MiB and the Windows installer approximately 277 MiB.
+Wikipedia content and AI models are not included in the application download. Initial content/model downloads need an internet connection and enough free disk space. Packages include Kiwix's corresponding sources and licenses; current file sizes are shown on the release page.
 
 You can open the local address printed in the terminal manually. The preferred port is `17321`; if occupied, the app chooses another available loopback port. Press `Ctrl+C` in the terminal to stop the application.
 
 ## Local data
 
 On Linux, content and the database default to `~/.local/share/engelsiz`, configuration to `~/.config/engelsiz`, and cache to `~/.cache/engelsiz`. The `XDG_DATA_HOME`, `XDG_CONFIG_HOME`, and `XDG_CACHE_HOME` overrides are supported. Removing the extracted program directory preserves this user data.
+
+## Fully local AI assistant
+
+1. Open **Asistan → Motoru indir** to install the CPU engine. Internet is needed only for the download.
+2. Download and activate one model: **Lite**, about 397 MB / 4 GB RAM target; **Balanced**, 1.1 GB / 8 GB; **Quality**, 2.5 GB / 12-16 GB. These are targets, not hardware guarantees.
+3. Ask a Turkish question about an installed source such as Wikipedia or Wikibooks. Select **Durdur** to stop streaming and use the local source links to read the original text.
+
+Questions and sources stay on your device; no cloud API is used. Other modules work without AI. Each question is independent and visible chat history is memory-only. Lite can give incomplete or incorrect answers; check the original source. [Model provenance, licensing and limitations](docs/offline-ai.md) (Turkish).
 
 ## Offline Education Center
 
