@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -36,6 +37,11 @@ type eduFixture struct {
 	mgr     *download.Manager
 	pkgs    *packages.Service
 	hrefs   map[string]string
+	// holdPdf1, when true, stalls the fixture server's pdf-1 response so a
+	// transfer is guaranteed in-flight. This makes duplicate-download
+	// assertions deterministic: without it a 65-byte instant download may
+	// complete in the gap between the first POST and the duplicate POST.
+	holdPdf1 *atomic.Bool
 }
 
 func setupEducation(t *testing.T) *eduFixture {
@@ -51,11 +57,15 @@ func setupEducation(t *testing.T) *eduFixture {
 		t.Fatal(err)
 	}
 	data := map[string][]byte{"pdf-1": eduPDF, "html-1": eduHTML, "zim-1": eduZIM}
+	holdPdf1 := &atomic.Bool{}
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		body, ok := data[strings.TrimPrefix(r.URL.Path, "/")]
 		if !ok {
 			http.NotFound(w, r)
 			return
+		}
+		for holdPdf1.Load() && strings.TrimPrefix(r.URL.Path, "/") == "pdf-1" {
+			time.Sleep(5 * time.Millisecond)
 		}
 		w.Header().Set("Content-Length", strconv.Itoa(len(body)))
 		_, _ = w.Write(body)
@@ -95,7 +105,7 @@ func setupEducation(t *testing.T) *eduFixture {
 		db.Close()
 		t.Fatal(err)
 	}
-	fx := &eduFixture{svc: svc, mgr: mgr, pkgs: pkgs, hrefs: map[string]string{}}
+	fx := &eduFixture{svc: svc, mgr: mgr, pkgs: pkgs, hrefs: map[string]string{}, holdPdf1: holdPdf1}
 	fx.handler = EducationHandler(svc, mgr, pkgs, func(id string) (string, bool) {
 		href, ok := fx.hrefs[id]
 		return href, ok
@@ -288,12 +298,16 @@ func TestEducationDownloadValidation(t *testing.T) {
 	if rec.Code != 422 {
 		t.Fatalf("reference download %d %s", rec.Code, rec.Body)
 	}
-	// Duplicate unfinished download conflicts.
+	// Duplicate unfinished download conflicts. The fixture holds pdf-1 so the
+	// first transfer cannot complete before the duplicate POST lands.
+	fx.holdPdf1.Store(true)
+	defer fx.holdPdf1.Store(false)
 	rec = callEdu(t, fx.handler, "POST", "/api/education/pdf-1/download", "{}")
 	if rec.Code != 201 {
 		t.Fatalf("first download %d", rec.Code)
 	}
 	rec = callEdu(t, fx.handler, "POST", "/api/education/pdf-1/download", "{}")
+	fx.holdPdf1.Store(false)
 	if rec.Code != 409 || !strings.Contains(rec.Body.String(), "download_exists") {
 		t.Fatalf("duplicate %d %s", rec.Code, rec.Body)
 	}
