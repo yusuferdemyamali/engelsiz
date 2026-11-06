@@ -2,9 +2,9 @@
 
 # Engelsiz
 
-**Türkçe Wikipedia’yı ve Türkiye haritalarını indir, cihazında internet olmadan kullan.**
+**Wikipedia, harita ve eğitim kaynaklarını indir; cihazında çevrimdışı kullan.**
 
-An offline-first Wikipedia reader for Turkish Wikipedia, powered by Kiwix and ZIM archives.
+An offline-first knowledge hub with Turkish Wikipedia, Türkiye maps, local translation and offline education.
 
 **Türkçe** · [English](README.en.md)
 
@@ -13,15 +13,17 @@ An offline-first Wikipedia reader for Turkish Wikipedia, powered by Kiwix and ZI
 
 [Windows için indir](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.3/Engelsiz-Setup.exe) · [Linux paketini indir](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.3/engelsiz-linux-x64.tar.gz) · [Tüm sürümler](https://github.com/yusuferdemyamali/engelsiz/releases) · [Hata bildir / öneri paylaş](https://github.com/yusuferdemyamali/engelsiz/issues/new/choose)
 
-Engelsiz, Wikipedia arşivlerini kendi bilgisayarında saklayan açık kaynaklı bir uygulamadır. İlk içerik indirmesinden sonra arama ve makale okuma yerel olarak çalışır. Go ile yazılmış uygulama, React arayüzünü varsayılan tarayıcında açar; içerikleri pakete dahil edilen Kiwix runtime’ı sunar.
+**Yayın durumu:** Eğitim Merkezi ve Çeviri `main` dalında hazırdır; yeni `v0.1.0-alpha.5` paketleri hazırlanıyor. Yukarıdaki `alpha.3` indirmeleri bu iki modülü içermez.
+
+Engelsiz, seçtiğin bilgi kaynaklarını kendi bilgisayarında saklayan açık kaynaklı bir uygulamadır. İndirip kurduğun içerikler bağlantı olmadan açılır. Go uygulaması, yerel React arayüzünü varsayılan tarayıcında açar; ZIM arşivlerini paketlenen Kiwix runtime’ı sunar. PDF ve doğrulanmış HTML5 eğitim içerikleri de uygulama içinden okunur/çalıştırılır.
 
 ## Neler yapabilirsin?
 
-- Türkçe Wikipedia’nın Mini, Nopic ve Maxi seçeneklerini katalogda inceleyebilirsin; seçeneklerin bulunabilirliği upstream kataloğa bağlıdır.
-- İndirmeleri duraklatıp sürdürebilir, boyut ve SHA-256 doğrulamasından geçen ZIM dosyalarını kurabilirsin.
-- Kurulu arşivde internet bağlantısı olmadan arama yapıp makale okuyabilirsin.
-- 81 ilin haritasını ayrı ayrı indirip çevrimdışı görüntüleyebilirsin: Haritalar bölümünde il ara, indir, sonra bağlantısız aç. Yakınlaştırma, Türkçe etiketler ve kaynak gösterimi tamamen yereldir.
-- Yeni sürümü görüp güncellemeyi kendin başlatabilirsin. Yeni içerik doğrulanıp etkinleşene kadar önceki çalışan sürüm korunur.
+- **Wikipedia:** Mini, Nopic ve Maxi arşivlerini seç; duraklatılabilir indirme, boyut/SHA-256 doğrulaması ve güvenli kurulum kullan. Seçeneklerin bulunabilirliği upstream kataloğa bağlıdır.
+- **Ara ve oku:** Kurulu ZIM arşivinde çevrimdışı ara/oku; güncellemeleri kendin başlat. Yeni sürüm doğrulanana kadar önceki çalışan sürüm korunur.
+- **Haritalar:** 81 ili ayrı ayrı indir ve bağlantısız aç. Yakınlaştırma, Türkçe etiketler ve kaynak gösterimi yereldir.
+- **Çeviri:** İsteğe bağlı modellerle Türkçe ↔ İngilizce metin çevir; metinler cihazdaki Argos motorunda kalır.
+- **Eğitim:** Afet ve İlk Yardım, Hayatta Kalma ve Pratik Bilgiler, Matematik ve Fen, İnteraktif Bilim Laboratuvarı kategorilerinden içerik keşfet, indir, aç ve kaldır. PDF, Türkçe Vikikitap ZIM'i ve üç Türkçe PhET simülasyonu desteklenir.
 
 Arayüz ve font dosyaları uygulamaya dahildir. Uygulama yalnızca `127.0.0.1` üzerinde dinler; arayüzü açmak için bir hesap gerekmez.
 
@@ -61,9 +63,21 @@ Terminalde yazdırılan yerel adresi gerektiğinde elle açabilirsin. Varsayıla
 
 Linux’ta içerik ve veritabanı varsayılan olarak `~/.local/share/engelsiz`, ayarlar `~/.config/engelsiz`, önbellek `~/.cache/engelsiz` altındadır. `XDG_DATA_HOME`, `XDG_CONFIG_HOME` ve `XDG_CACHE_HOME` değişkenleri desteklenir. Arşivden çıkardığın program klasörünü silmek bu kullanıcı verilerini silmez.
 
-## Çevrimdışı çeviri (bu geliştirme dalı)
+## Offline Eğitim Merkezi
 
-Bu dal **Çeviri** modülünü ekler; yukarıdaki mevcut alpha indirme bağlantıları bu değişikliğin yayımlandığı anlamına gelmez.
+**Eğitim** sekmesinde 14 kayıt bulunur: 8 indirilebilir içerik ve 6 yalnızca kaynak bağlantısı. Başlangıç kaynakları üç WHO PDF'si, OpenStax Anatomy & Physiology, Türkçe Vikikitap ve üç Türkçe PhET simülasyonudur. Kaynak, dil, boyut, sürüm, lisans ve indirme durumu kartlarda gösterilir; büyük içeriklerin tamamını indirmen gerekmez.
+
+1. İstediğin kategoriyi veya aramayı kullan; kaynağın dilini ve kullanım koşullarını incele.
+2. **İndir** seç. Sayfadayken tamamlanan indirme doğrulanıp kurulur; gerekirse **Kur** ile devam et. İndirmeyi duraklatabilir veya yeniden deneyebilirsin.
+3. **İçeriği aç** ile yerel PDF/ZIM/HTML5 okuyucusuna gir. Uygulamayı kapatıp interneti kestikten sonra aynı içerik yeniden açılır. **Sil**, yalnızca seçilen kaynağı kaldırır.
+
+**Lisans ve kapsam:** WHO ve PhET materyalleri ticari olmayan kullanım koşullarına tabidir; Engelsiz'in MIT lisansı bunları değiştirmez. İzin veya uygulama içi görüntüleme uygunluğu doğrulanmayan AFAD, Sağlık Bakanlığı, MEB, iFixit ve CDC kayıtları yalnızca harici bağlantıdır; offline içerik değildir. Türkçe resmî afet/ilk yardım kapsamı henüz tam değildir. WHO KY+ bir stres yönetimi kursudur, ilk yardım kitabı değildir. Kolibri ayrı servis gerektirdiğinden entegre edilmemiştir.
+
+[Gerçek kaynaklar, lisans kanıtları ve ağsız test raporu](docs/offline-education-center.md)
+
+## Çevrimdışı çeviri
+
+**Çeviri** modülü `main` dalında bulunur; paketlerin yayın durumu yukarıda belirtilir.
 
 1. **Çeviri** bölümünü aç; kullanacağın yönün modelinde **İndir** seç. Türkçe → İngilizce yaklaşık 115 MiB, İngilizce → Türkçe yaklaşık 119 MiB'dir. Her yön bağımsızdır; indirme yalnızca sen başlatırsan yapılır.
 2. İndirme bu sayfadayken tamamlanırsa kurulum başlar. Sayfadan ayrıldıysan geri dönüp **Kur** seç. İndirmeler bölümündeki duraklat/devam et/tekrar dene davranışları korunur.
@@ -77,9 +91,10 @@ Hata raporları, kurulum testleri, dokümantasyon, çeviri ve kod katkıları i�
 
 - [Ürün kapsamı ve teknik gereksinimler](docs/main-spec.md)
 - [Release doğrulaması ve platform kabul testleri](docs/release-validation.md)
+- [Offline Eğitim Merkezi: kaynaklar, lisanslar ve testler](docs/offline-education-center.md)
 - [Güvenli paketleme ve üçüncü taraf kaynakları](third_party/README.md)
 - [Açık işler ve yol haritası](https://github.com/yusuferdemyamali/engelsiz/issues)
-- [Uzun vadeli vizyon](docs/vision.md): farklı açık bilgi kaynakları, eğitim ve yerel yapay zekâ; bunlar mevcut alpha sürümünün özellikleri değildir.
+- [Uzun vadeli vizyon](docs/vision.md): daha fazla açık eğitim kaynağı ve yerel yapay zekâ; yapay zekâ soru-cevap özelliği henüz uygulanmamıştır.
 
 ## Lisans ve teşekkür
 

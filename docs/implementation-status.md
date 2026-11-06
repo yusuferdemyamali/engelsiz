@@ -1,24 +1,22 @@
 # Implementation checkpoint
 
-Updated: 2026-10-31. Working branch: `feat/8-zim-update`.
+Updated: 2026-11-06. Current branch: `main`. Feature implementation and publication are tracked separately; a compiled binary is not clean-machine acceptance evidence.
 
-| Source change | OpenSpec change | State |
+| Area | Implemented state | Publication / remaining validation |
 | --- | --- | --- |
-| 01–07 | application-foundation through offline-wikipedia | Previously implemented and committed |
-| 08 | zim-update | 8/8 tasks complete; independent review and real runtime success/rollback/offline scenarios passed |
-| 09 | resilience-hardening | 4/4 tasks complete; diagnostics/privacy/log rotation review and aggregate checks passed |
-| 10 | windows-installer | Installer definition and staging implemented; Wine compiler check passed; native CI, complete runtime/dependencies/source and clean Windows acceptance pending |
-| 11 | linux-packaging | 3/4 tasks complete; source-audited Linux package produced and extracted-package/empty-rootfs tests passed; clean desktop/browser acceptance pending |
-| 12 | release-pipeline | 2/4 tasks complete; workflow, safety tests and AC/DoD matrix verified; actual platform package jobs and release acceptance pending |
+| Wikipedia / ZIM | Discovery, resumable download, SHA-256 install, local Kiwix search/reader and safe updates | Included in existing alpha releases; full clean-platform matrix remains open |
+| Offline maps | 81 province packages, local labels/glyphs/sprites and viewer | Published in `v0.1.0-alpha.3` |
+| Offline translation | Independent Turkish ↔ English models; bundled Argos worker; no cloud fallback | Implemented on `main`; new application packages are being prepared. `alpha.4` currently hosts a CI compliance input, not installers |
+| Offline Education Center | Four categories, pinned local manifest, download/install/open/delete, PDF, Turkish Wikibooks through existing Kiwix, three Turkish PhET HTML5 simulations | Commit `25e74f7`; 7 real downloads/installations and network-isolated cold restart verified. New `alpha.5` packages are being prepared |
+| Source/license gates | Existing reviewed Kiwix/PMTiles inputs, current Go/frontend notices; third-party learning payloads never bundled | Eight downloadable education entries and six reference-only entries; WHO/PhET noncommercial conditions remain in force |
+| Automated verification | 486 Go tests, 324 race tests and 39 frontend tests passed; vet/build passed; Python 52 passed / 3 Argos-runtime-dependent tests skipped | Linux development evidence; Windows cross-compilation is not native installer acceptance |
+| Future / incomplete | Broader official Turkish first-aid resources; Kolibri runtime/channels; local AI Q&A | Not implemented or not lawfully verified; do not list as working features |
 
-The user selected MIT; the project license is in `LICENSE`. Runtime and dependency licensing remains separate.
+## Evidence and boundaries
 
-See [packaging review](packaging-review.md), [release validation](release-validation.md), [failure-mode matrix](failure-mode-matrix.md), and the verification/review files inside `openspec/changes/zim-update` and `openspec/changes/resilience-hardening`.
+- [Education implementation, sources, licensing and real offline evidence](offline-education-center.md).
+- [Translation delivery](offline-translation-delivery.md) and [model provenance](translation-models.md).
+- [Release/platform acceptance matrix](release-validation.md), [packaging review](packaging-review.md) and [Windows evidence](windows-installer-validation.md).
+- [Current public releases](https://github.com/yusuferdemyamali/engelsiz/releases); each release's own asset list/provenance determines what was actually published.
 
-Current work is in the shared working tree. No new external release was published and completed changes have not been archived. Preserve unrelated existing files and changes.
-
-Application Go/frontend attribution material and its collector are complete. Eleven packaging/attribution tests and actionlint pass; runtime bundles cannot reuse notices for stale app lockfiles.
-
-The pinned Ubuntu Linux source build completed. Its byte-identical final-link audit, full source/notice payload, separate candidate runtime lock and package verification are recorded under `third_party/runtime-source-candidates/`. The candidate archive is `dist/linux-source-candidate/release-final/engelsiz-linux-x64.tar.gz` (SHA-256 `77b1678e50f56901b084765dccbd2ad618aeb8e0a8d2b5eca09efe7bcc7f9a7e`). The default official-runtime pins remain unchanged.
-
-Next work: resolve Windows compiler-runtime deployment rights/materials or choose an alternative build; run native platform CI package jobs and record clean desktop installation/browser evidence. Keep acceptance tasks unchecked until their specified checks actually run.
+Engelsiz's own code is MIT licensed. Runtime dependencies and downloaded content keep their own licenses. Earlier source-candidate results remain evidence for their original candidate, not automatic validation of every subsequent package.

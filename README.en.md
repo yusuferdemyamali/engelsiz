@@ -2,9 +2,9 @@
 
 # Engelsiz
 
-**Download Turkish Wikipedia and Türkiye maps, and use them offline on your device.**
+**Download Wikipedia, maps and learning resources; use them offline on your device.**
 
-An open-source, offline-first Wikipedia reader powered by Kiwix and ZIM archives.
+An open-source, offline-first knowledge hub with local translation and education, powered by Go, React and Kiwix.
 
 [Türkçe](README.md) · **English**
 
@@ -13,15 +13,17 @@ An open-source, offline-first Wikipedia reader powered by Kiwix and ZIM archives
 
 [Download for Windows](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.3/Engelsiz-Setup.exe) · [Download for Linux](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.3/engelsiz-linux-x64.tar.gz) · [All releases](https://github.com/yusuferdemyamali/engelsiz/releases) · [Report a bug / suggest a feature](https://github.com/yusuferdemyamali/engelsiz/issues/new/choose)
 
-Engelsiz keeps Wikipedia archives on your own computer. After downloading content, you can search and read articles offline. A Go application opens its embedded React interface in your default browser and serves installed content through the bundled Kiwix runtime. The current interface and supported catalog are focused on Turkish Wikipedia.
+**Release status:** Education and Translation are implemented on `main`; new `v0.1.0-alpha.5` packages are being prepared. The `alpha.3` downloads above do not contain either module.
+
+Engelsiz keeps the resources you choose on your own computer. Installed content opens without a connection. A Go application opens its locally bundled React interface in your default browser; the bundled Kiwix runtime serves ZIM archives. PDFs and verified HTML5 learning resources also open inside the application. The interface is in Turkish.
 
 ## Features
 
-- Discover Mini, Nopic, and Maxi variants of Turkish Wikipedia, depending on upstream catalog availability.
-- Pause and resume downloads; install ZIM files after size and SHA-256 verification.
-- Search installed archives and read articles without an internet connection.
-- Download maps for each of the 81 provinces and view them offline: search a province in Haritalar, download it, then open it with no connection. Zoom, Turkish labels and attribution are fully local.
-- Check for newer archives and explicitly start updates. The previous working version is preserved until the replacement is verified and activated.
+- **Wikipedia:** choose Mini, Nopic and Maxi archives, subject to upstream availability; pause/resume transfers and verify size/SHA-256 before installation.
+- **Search and read:** browse installed ZIMs offline and explicitly start updates. The previous working version is preserved until its replacement is verified.
+- **Maps:** download any of the 81 provinces independently; zoom, Turkish labels and attribution work locally.
+- **Translation:** optional models provide Turkish ↔ English translation through the local Argos engine; text stays on your device.
+- **Education:** discover, download, open and remove resources in Disaster & First Aid, Survival & Practical Skills, Mathematics & Science, and Interactive Science Lab. Supports PDFs, the Turkish Wikibooks ZIM and three Turkish PhET simulations.
 
 The interface and font files are bundled locally. The application listens only on `127.0.0.1`; no account is needed to open the interface.
 
@@ -61,9 +63,21 @@ You can open the local address printed in the terminal manually. The preferred p
 
 On Linux, content and the database default to `~/.local/share/engelsiz`, configuration to `~/.config/engelsiz`, and cache to `~/.cache/engelsiz`. The `XDG_DATA_HOME`, `XDG_CONFIG_HOME`, and `XDG_CACHE_HOME` overrides are supported. Removing the extracted program directory preserves this user data.
 
-## Offline translation (this development branch)
+## Offline Education Center
 
-This branch adds **Çeviri** (Translation); the existing alpha download links above do not imply that this change has been released.
+The **Eğitim** tab contains 14 entries: 8 downloadable resources and 6 reference-only links. Starter content includes three WHO PDFs, OpenStax Anatomy & Physiology, Turkish Wikibooks and three Turkish PhET simulations. Cards show source, language, size, version, license and download state; downloading the entire collection is never required.
+
+1. Choose a category or search; check the language and terms of use.
+2. Select **İndir** (download). Completion while the page is open starts verified installation; otherwise select **Kur** (install). Transfers can be paused or retried.
+3. Select **İçeriği aç** (open) to use the local PDF/ZIM/HTML5 reader. Content remains available after restarting without internet. **Sil** (delete) removes only the selected resource.
+
+**Licensing and scope:** WHO and PhET materials have noncommercial-use restrictions; Engelsiz's MIT license does not override them. AFAD, the health ministry, MEB, iFixit and CDC entries without verified redistribution/display suitability remain external references, not offline content. Official Turkish disaster/first-aid coverage is incomplete. WHO SH+ is a stress-management course, not a first-aid manual. Kolibri requires a separate service and is not integrated.
+
+[Verified sources, licensing evidence and network-isolated acceptance report](docs/offline-education-center.md) (Turkish)
+
+## Offline translation
+
+**Çeviri** (Translation) is implemented on `main`; package availability is stated above.
 
 1. Open **Çeviri** and select **İndir** for the direction you need: approximately 115 MiB for Turkish → English or 119 MiB for English → Turkish. Each direction is independent; downloads start only on your action.
 2. Installation follows completion while this page is open. If you leave it, return and select **Kur**. Existing download pause/resume/retry controls remain available.
@@ -77,9 +91,10 @@ Bug reports, installation tests, documentation, translations, and code contribut
 
 - [Product scope and technical requirements, in Turkish](docs/main-spec.md)
 - [Release validation and platform acceptance](docs/release-validation.md)
+- [Offline Education Center: sources, licensing and tests](docs/offline-education-center.md)
 - [Packaging and third-party sources](third_party/README.md)
 - [Open work and roadmap](https://github.com/yusuferdemyamali/engelsiz/issues)
-- [Long-term vision, in Turkish](docs/vision.md): other open knowledge sources, education, and local AI are future directions, beyond the current alpha’s feature set.
+- [Long-term vision, in Turkish](docs/vision.md): more open learning resources and local AI; AI question-answering is not implemented.
 
 ## License and acknowledgements
 

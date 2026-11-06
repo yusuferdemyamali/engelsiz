@@ -2,6 +2,8 @@
 
 Status: NOT RELEASE-READY. A successful cross-build/unit test is not evidence of a clean-machine installation. Keep each unexecuted check pending; record OS image/version, app commit, package SHA-256, date, tester and artifact/log links when completed. No external GitHub Release is published by the workflow.
 
+The workflow prepares artifacts; public alpha releases are published separately. The [Offline Education Center report](offline-education-center.md) records its 2026-11-06 real PDF/ZIM/PhET network-isolated restart, targeted deletion and regression evidence. This closes those module-specific development checks, not the unexecuted clean Windows/Linux installation rows below. The catalog bundles metadata only; educational payloads and models remain optional downloads with independent license conditions.
+
 ## Build and packaging
 
 Maintainer prerequisites: Go 1.26.0, Node 22/npm, Python 3.12+, and Inno Setup 6 on Windows. These tools are NOT end-user dependencies.

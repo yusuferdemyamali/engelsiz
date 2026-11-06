@@ -36,7 +36,7 @@ Choose checks appropriate to the change. The platform CI also runs the full fron
 node --test frontend/tests/*.test.mjs
 go test ./...
 go vet ./...
-go test -race ./internal/app ./internal/packages ./internal/download ./internal/runtime/kiwix ./internal/translation
+go test -race ./internal/app ./internal/packages ./internal/download ./internal/runtime/kiwix ./internal/translation ./internal/education ./internal/api
 python -m unittest discover -s scripts/tests -v
 python scripts/collect-app-notices.py --check
 ```

@@ -59,7 +59,7 @@ jobs:
         run: |
           go test ./...
           go vet ./...
-          go test -race ./internal/app ./internal/packages ./internal/download ./internal/runtime/kiwix
+          go test -race ./internal/app ./internal/packages ./internal/download ./internal/runtime/kiwix ./internal/translation ./internal/education ./internal/api
       - name: Packaging safety tests
         run: python -m unittest discover -s scripts/tests -v
       - uses: actions/setup-python@v5

@@ -55,11 +55,11 @@ Türkiye için offline harita ve OpenStreetMap verileri. **v0.1.0-alpha.3 ile te
 
 ### 🚑 Acil Durum
 
-Afet hazırlığı, ilk yardım ve güvenilir acil durum kaynakları.
+Afet hazırlığı, ilk yardım ve güvenilir acil durum kaynakları. Eğitim Merkezi'nde başlangıç başvuruları vardır; Türkçe resmî ilk yardım içeriğinin çevrimdışı kapsamı, güncellik ve kullanım izni doğrulaması nedeniyle henüz tamamlanmamıştır.
 
 ### 🎓 Eğitim
 
-Offline eğitim materyalleri, kitaplar ve açık eğitim kaynakları.
+**Uygulandı:** Offline Eğitim Merkezi; dört kategori, kullanıcı seçimiyle indirilen PDF/ZIM/HTML5 kaynakları, Türkçe Vikikitap ve üç Türkçe PhET simülasyonu. Kaynak/lisans bilgileri, güvenli kurulum, kaldırma ve gerçek ağsız yeniden başlatma testi [modül raporunda](offline-education-center.md) kayıtlıdır. Daha geniş Türkçe içerik ve Kolibri, doğrulanmış entegrasyon olmadan varmış gibi sunulmaz.
 
 ### 📚 Bilgi Arşivleri
 
