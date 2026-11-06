@@ -712,7 +712,21 @@ func TestUnavailableListenerProofCannotBecomeReady(t *testing.T) {
 		t.Run(fmt.Sprint(unreadable), func(t *testing.T) {
 			r, marker := setup(t, fixture.Config{})
 			r.opts.StartupTimeout = 300 * time.Millisecond
+			// Gate the injected fail-closed ownership verdict until the
+			// helper is HTTP-live. Without this, the 300ms startup
+			// deadline can reap the helper before the proof poll below
+			// observes HTTP 200 (Windows + race detector flake). The
+			// gate blocks on live only: the real 300ms deadline may
+			// expire while blocked, and releasing with false/unreadable
+			// then yields the expected joined DeadlineExceeded+ownership
+			// error. t.Cleanup releases the gate so a proof timeout
+			// cannot deadlock startup cleanup.
+			live := make(chan struct{})
+			var liveOnce sync.Once
+			release := func() { liveOnce.Do(func() { close(live) }) }
+			t.Cleanup(release)
 			r.listenerOwner = func(pid, port int) (bool, error) {
+				<-live
 				if unreadable {
 					return false, errors.New("ownership evidence unavailable")
 				}
@@ -720,17 +734,23 @@ func TestUnavailableListenerProofCannotBecomeReady(t *testing.T) {
 			}
 			result := make(chan error, 1)
 			go func() { result <- r.EnsureStarted(t.Context()) }()
+			probe := &http.Client{Timeout: 500 * time.Millisecond, Transport: &http.Transport{Proxy: nil}}
+			defer probe.CloseIdleConnections()
 			eventually(t, func() bool {
 				events := fixture.ReadEvents(t, marker)
 				if len(events) == 0 {
 					return false
 				}
-				resp, err := http.Get("http://" + events[0].Address + "/content/")
+				resp, err := probe.Get("http://" + events[0].Address + "/content/")
 				if err != nil {
 					return false
 				}
 				resp.Body.Close()
-				return resp.StatusCode == http.StatusOK
+				if resp.StatusCode != http.StatusOK {
+					return false
+				}
+				release()
+				return true
 			})
 			if err := <-result; !errors.Is(err, context.DeadlineExceeded) || !strings.Contains(err.Error(), "ownership") && !strings.Contains(err.Error(), "does not own") {
 				t.Fatalf("fail-closed outcome=%v", err)

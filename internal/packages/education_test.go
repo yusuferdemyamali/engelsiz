@@ -270,6 +270,14 @@ func TestRemoveEducationReentrantCallback(t *testing.T) {
 	case <-time.After(10 * time.Second):
 		t.Fatal("install notification missing")
 	}
+	// installed state and its notification precede the install worker's
+	// settlement. RemoveEducation correctly refuses a still-active worker;
+	// wait for the real completion signal rather than racing its cleanup.
+	s.mu.Lock()
+	for s.active[id] {
+		s.settled.Wait()
+	}
+	s.mu.Unlock()
 	errCh := make(chan error, 1)
 	go func() { errCh <- s.RemoveEducation(id) }()
 	select {
