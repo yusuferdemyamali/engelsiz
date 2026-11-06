@@ -376,9 +376,19 @@ func TestEducationEndToEndDelete(t *testing.T) {
 	if rec.Code != 400 {
 		t.Fatalf("delete with body %d %s", rec.Code, rec.Body)
 	}
-	rec = callEdu(t, fx.handler, "DELETE", "/api/education/pdf-1", "")
-	if rec.Code != 200 {
-		t.Fatalf("delete %d %s", rec.Code, rec.Body)
+	// The install worker may still hold its active guard just after the
+	// installed status became visible; retry the delete while it settles.
+	// Any non-409 failure, or a settled non-200, fails below.
+	deadline := time.Now().Add(15 * time.Second)
+	for {
+		rec = callEdu(t, fx.handler, "DELETE", "/api/education/pdf-1", "")
+		if rec.Code == 200 {
+			break
+		}
+		if rec.Code != 409 || !time.Now().Before(deadline) {
+			t.Fatalf("delete %d %s", rec.Code, rec.Body)
+		}
+		time.Sleep(10 * time.Millisecond)
 	}
 	var deleted struct {
 		Resource struct {

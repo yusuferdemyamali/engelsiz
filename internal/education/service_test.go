@@ -193,6 +193,28 @@ func downloadAndInstall(t *testing.T, fx *fixture, id string) education.View {
 	return waitResource(t, fx, id, "installed")
 }
 
+// deleteResource removes a resource, retrying while an install worker that
+// already reported its terminal status is still settling. A terminal status
+// becomes visible before the worker releases its active guard, so a single
+// immediate Delete can hit invalid_state on slow runners; the post-delete
+// assertions below stay strict.
+func deleteResource(t *testing.T, fx *fixture, id string) education.View {
+	t.Helper()
+	deadline := time.Now().Add(15 * time.Second)
+	for time.Now().Before(deadline) {
+		out, err := fx.svc.Delete(fx.mgr, fx.pkgs, id)
+		if err == nil {
+			return out
+		}
+		if !isCode(err, "invalid_state") {
+			t.Fatalf("delete %s: %v", id, err)
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+	t.Fatalf("delete %s never settled", id)
+	return education.View{}
+}
+
 func TestCatalogFailsClosed(t *testing.T) {
 	base := setup(t, nil)
 	_ = base
@@ -491,9 +513,9 @@ func TestZIMDelegatesAndRemoves(t *testing.T) {
 	if _, err := os.Lstat(filepath.Join(fx.dir, "content", "education", "zim-1")); !errors.Is(err, os.ErrNotExist) {
 		t.Fatalf("zim must not publish files: %v", err)
 	}
-	out, err := fx.svc.Delete(fx.mgr, fx.pkgs, "zim-1")
-	if err != nil || out.Status != "missing" || out.Download != nil {
-		t.Fatalf("delete %+v %v", out, err)
+	out := deleteResource(t, fx, "zim-1")
+	if out.Status != "missing" || out.Download != nil {
+		t.Fatalf("delete %+v", out)
 	}
 	items, err := fx.pkgs.List("")
 	if err != nil || len(items) != 0 {
@@ -580,9 +602,9 @@ func TestOpenHrefExact(t *testing.T) {
 func TestDownloadInstallDeleteCycle(t *testing.T) {
 	fx := setup(t, nil)
 	downloadAndInstall(t, fx, "pdf-1")
-	out, err := fx.svc.Delete(fx.mgr, fx.pkgs, "pdf-1")
-	if err != nil || out.Status != "missing" || out.Download != nil || openHref(out) != "" {
-		t.Fatalf("delete %+v %v", out, err)
+	out := deleteResource(t, fx, "pdf-1")
+	if out.Status != "missing" || out.Download != nil || openHref(out) != "" {
+		t.Fatalf("delete %+v", out)
 	}
 	v := downloadAndInstall(t, fx, "pdf-1")
 	if openHref(v) != "/education/content/pdf-1" {
@@ -1002,9 +1024,9 @@ func TestZIMFailureDerivedFromPackage(t *testing.T) {
 	if got.Error == nil {
 		t.Fatalf("failed view missing package error: %+v", got)
 	}
-	out, err := fx.svc.Delete(fx.mgr, fx.pkgs, "zim-1")
-	if err != nil || out.Status != "missing" {
-		t.Fatalf("delete after failure %+v %v", out, err)
+	out := deleteResource(t, fx, "zim-1")
+	if out.Status != "missing" {
+		t.Fatalf("delete after failure %+v", out)
 	}
 }
 

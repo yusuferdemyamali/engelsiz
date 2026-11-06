@@ -281,7 +281,16 @@ func TestConcurrentEnsureSuccessAndFailure(t *testing.T) {
 				cfg.StatusCode = 503
 			}
 			r, marker := setup(t, cfg)
+			// The timeout below is not under test: assertions cover
+			// concurrent outcome agreement and single fixture start. The
+			// success case gets a generous deadline because spawning the
+			// fixture helper on a loaded Windows runner under -race can
+			// exceed hundreds of milliseconds; the failure case keeps a
+			// short deadline since any error satisfies it (503 fails fast).
 			r.opts.StartupTimeout = 400 * time.Millisecond
+			if !fail {
+				r.opts.StartupTimeout = 30 * time.Second
+			}
 			var wg sync.WaitGroup
 			results := make(chan error, 40)
 			for i := 0; i < 40; i++ {
