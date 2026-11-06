@@ -72,10 +72,10 @@ class SelectedLockTests(unittest.TestCase):
             encoding="utf-8",
         )
 
-    def _run(self, platform, artifact, extra_args=()):
+    def _run(self, platform, artifact, extra_args=(), version="0.1.0-alpha.5"):
         out = self.root / f"provenance-{platform}.json"
         argv = ["write-build-provenance.py", "--platform", platform,
-                "--version", "0.1.0-alpha.5", "--artifact", str(artifact),
+                "--version", version, "--artifact", str(artifact),
                 "--runtime-lock", str(self.lock_path),
                 "--runtime-lock-name", "selected/candidate-runtime-lock.json",
                 "--compliance", str(self.compliance), "--out", str(out),
@@ -147,6 +147,39 @@ class SelectedLockTests(unittest.TestCase):
         self.assertIn(WINDOWS_LOCK, section)
         # Per-platform selection must survive (matrix lookup, not a fixed lock).
         self.assertIn("matrix.platform", section)
+
+    def test_release_channel_stable_both_platforms(self):
+        tarball, _ = self._linux_tarball()
+        linux_doc = self._run("linux-amd64", tarball, version="1.0.0")
+        exe = self.root / "Engelsiz-Setup.exe"
+        exe.write_bytes(b"synthetic-windows-setup")
+        windows_doc = self._run("windows-amd64", exe, version="1.0.0")
+        for doc in (linux_doc, windows_doc):
+            self.assertEqual(doc["releaseChannel"], "stable")
+            self.assertEqual(doc["version"], "1.0.0")
+        self.assertEqual(linux_doc["tag"], "v1.0.0")
+        # Honest pending caveats stay; only the product-channel wording is gone.
+        self.assertNotIn("Engineering candidate", json.dumps(windows_doc))
+        self.assertIn("pending", windows_doc["status"])
+        self.assertFalse(windows_doc["validation"]["cleanNativeWindows"])
+        self.assertEqual(windows_doc["validation"]["testedNativeWindowsVersions"], [])
+        self.assertIn("No signing certificate provisioned",
+                      windows_doc["validation"]["signing"])
+        self.assertEqual(windows_doc["application"]["sha256"],
+                         "not-extracted-on-CI-see-QA-report")
+
+    def test_release_channel_prerelease_both_platforms(self):
+        tarball, _ = self._linux_tarball()
+        linux_doc = self._run("linux-amd64", tarball, version="1.0.0-rc.1")
+        exe = self.root / "Engelsiz-Setup.exe"
+        exe.write_bytes(b"synthetic-windows-setup")
+        windows_doc = self._run("windows-amd64", exe, version="1.0.0-rc.1")
+        for doc in (linux_doc, windows_doc):
+            self.assertEqual(doc["releaseChannel"], "prerelease")
+            self.assertEqual(doc["version"], "1.0.0-rc.1")
+        self.assertEqual(linux_doc["tag"], "v1.0.0-rc.1")
+        self.assertNotIn("Engineering candidate", json.dumps(windows_doc))
+        self.assertFalse(windows_doc["validation"]["cleanNativeWindows"])
 
 
 if __name__ == "__main__":

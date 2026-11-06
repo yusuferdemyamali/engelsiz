@@ -56,6 +56,6 @@ Test ortamı Linux amd64, Go 1.26.0, Node 26.12.1, yaklaşık 15,3 GiB toplam RA
 
 ## 1.0.0 yayın öncesi yeniden doğrulama
 
-Symlink düzeltmesini içeren kaynakla tam Go testleri, `go vet ./...`, CI kapsamındaki race testleri ve Linux/Windows amd64 derlemeleri yeniden geçti. Frontend 58/58; Python paketleme testleri 55 başarılı, mevcut Argos runtime gerektiren 3 test atlandı. Go 1.26.0 ile attribution `--check` başarılı; mevcut compliance girdileriyle aynı notice hash'leri korundu.
+Symlink düzeltmesini içeren kaynakla tam Go testleri, `go vet ./...`, CI kapsamındaki race testleri ve Linux/Windows amd64 derlemeleri yeniden geçti. Frontend 58/58; kararlı/prerelease provenance regresyonları eklendikten sonra Python paketleme testleri 57 başarılı, mevcut Argos runtime gerektiren 3 test atlandı. Go 1.26.0 ile attribution `--check` başarılı; mevcut compliance girdileriyle aynı notice hash'leri korundu.
 
 Kullanıcı gerçek Lite sohbetinin çalıştığını doğruladı. Ayrıca yerel API'de kurulu Lite ve gerçek Kiwix içeriğiyle “Python nedir?” isteği çalıştırıldı: `status`, `sources`, `delta`, `done` olayları geldi, üç yerel kaynak ve `grounded:true` elde edildi. Bu smoke testi gerçek süreç/RAG/streaming yolunun çalıştığını gösterir; örnek yanıt açıklayıcı bir Python tanımı değildi ve semantik kalite kabulü sayılmadı. Özellikle Lite ile hatalı, eksik veya kullanışsız yanıtlar mümkündür; asıl kaynak metnine erişim korunur. Kontrollü kalite/performans benchmark'ı ve fiziksel düşük RAM/GPU/Windows AI matrisi hâlâ ayrı doğrulama gerektirir.

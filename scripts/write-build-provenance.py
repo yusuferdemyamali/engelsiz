@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 """Write build-provenance.json for a built Engelsiz package (alpha.1/2 schema precedent).
 
+Schema stays backward-compatible with the alpha.1/2 precedent: this change
+only adds an explicit releaseChannel (stable vs prerelease, derived from the
+exact version) and rewords the Windows status to a channel-neutral
+build-provenance description. No fields are removed or renamed.
+
 Binds the finished artifact to its exact source commit/tree, toolchain, and
 reviewed runtime/compliance pins. Records only what it can verify itself;
 native acceptance stays explicitly pending (parent lane fills release notes).
@@ -26,6 +31,16 @@ REPO = "https://github.com/yusuferdemyamali/engelsiz"
 def digest(path):
     with Path(path).open("rb") as stream:
         return hashlib.file_digest(stream, "sha256").hexdigest()
+
+
+def release_channel(version):
+    """Explicit release channel derived from the exact version.
+
+    Plain X.Y.Z (e.g. 1.0.0) is stable; any semver hyphen suffix
+    (e.g. 1.0.0-rc.1) is prerelease. Matches the already-validated
+    --version shape, so a '-' check is sufficient and exact.
+    """
+    return "prerelease" if "-" in version else "stable"
 
 
 def git(args, **kwargs):
@@ -117,6 +132,7 @@ def main():
         "sourceRepository": REPO,
         "sourceCommit": commit,
         "sourceTree": tree,
+        "releaseChannel": release_channel(args.version),
         "runtimeLockFile": args.runtime_lock_name,
         "complianceManifestSha256": lock.get("complianceManifestSha256"),
         "translationRuntime": {
@@ -159,7 +175,7 @@ def main():
     else:
         document = {
             **base,
-            "status": "Engineering candidate; clean native Windows acceptance remains pending",
+            "status": "Build provenance record; clean native Windows acceptance remains pending",
             "version": args.version,
             "target": "windows-amd64",
             "artifact": {
