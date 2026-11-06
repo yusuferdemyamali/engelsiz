@@ -185,9 +185,9 @@ def main():
                 "version": lock["version"],
                 "archiveSha256": lock["sha256"],
                 "complianceManifestSha256": lock.get("complianceManifestSha256"),
-                "sourcePayloadNote": ("17MB source-built archive (b42623c5…) is local-dist-only; "
-                                      "CI consumes only the hash-pinned compliance dir until "
-                                      "pins/archives are explicitly reviewed."),
+                "sourcePayloadNote": ("Runtime fields record the selected candidate lock "
+                                      "passed via --runtime-lock; release.py hash-checked "
+                                      "that lock's archive and payload before packaging."),
             },
             "applicationNotices": notices,
             "validation": {

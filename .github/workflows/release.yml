@@ -152,7 +152,11 @@ jobs:
             if [ -f "$f" ]; then ARTIFACT="$f"; break; fi
           done
           test -n "$ARTIFACT" || { echo 'no built artifact for provenance'; exit 1; }
-          python scripts/write-build-provenance.py --platform "${{ matrix.platform }}" --version "${{ inputs.version }}" --artifact "$ARTIFACT" --compliance "third_party/compliance/${{ matrix.platform }}" --out "provenance-output/build-provenance.json"
+          RUNTIME_LOCK="third_party/runtime-source-candidates/offline-maps/linux-amd64/candidate-runtime-lock.json"
+          if [ "${{ matrix.platform }}" = windows-amd64 ]; then
+            RUNTIME_LOCK="third_party/runtime-source-candidates/offline-maps/windows-amd64/candidate-runtime-lock.json"
+          fi
+          python scripts/write-build-provenance.py --platform "${{ matrix.platform }}" --version "${{ inputs.version }}" --artifact "$ARTIFACT" --runtime-lock "$RUNTIME_LOCK" --runtime-lock-name "$RUNTIME_LOCK" --compliance "third_party/compliance/${{ matrix.platform }}" --out "provenance-output/build-provenance.json"
       - name: Upload build provenance
         if: github.event_name == 'workflow_dispatch' && inputs.package
         uses: actions/upload-artifact@v4
