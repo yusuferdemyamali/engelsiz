@@ -22,6 +22,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strconv"
 	"strings"
 	"sync"
@@ -110,6 +111,20 @@ func assistantITBinary(t *testing.T, dir string) string {
 	return p
 }
 
+func assistantITServerBinary() string {
+	if runtime.GOOS == "windows" {
+		return "llama-server.exe"
+	}
+	return "llama-server"
+}
+
+func assistantITLib() string {
+	if runtime.GOOS == "windows" {
+		return "libggml.dll"
+	}
+	return "libggml.so"
+}
+
 func assistantITTar(t *testing.T) []byte {
 	t.Helper()
 	var buf bytes.Buffer
@@ -136,10 +151,12 @@ func assistantITTar(t *testing.T) []byte {
 		}
 	}
 	write("pkg/", nil, 0o755, "")
-	write("pkg/llama-server", []byte("#!/bin/sh\necho hi\n"), 0o755, "")
+	write("pkg/"+assistantITServerBinary(), []byte("MZ-fake-server"), 0o755, "")
 	write("pkg/lib/", nil, 0o755, "")
-	write("pkg/lib/libggml.so", []byte("fake-so"), 0o644, "")
-	write("pkg/lib/link", nil, 0o777, "libggml.so")
+	write("pkg/lib/"+assistantITLib(), []byte("fake-lib"), 0o644, "")
+	if runtime.GOOS != "windows" {
+		write("pkg/lib/link", nil, 0o777, "libggml.so")
+	}
 	if err := tw.Close(); err != nil {
 		t.Fatal(err)
 	}
@@ -512,7 +529,7 @@ func TestAssistantIntegration(t *testing.T) {
 	fx.runner.mu.Lock()
 	req := fx.runner.req
 	fx.runner.mu.Unlock()
-	if req.Binary != fx.binary || !strings.HasSuffix(req.ModelPath, "lite/model.gguf") || req.ContextSize != 2048 || req.MaxTokens != 512 {
+	if req.Binary != fx.binary || !strings.HasSuffix(req.ModelPath, filepath.Join("lite", "model.gguf")) || req.ContextSize != 2048 || req.MaxTokens != 512 {
 		t.Fatalf("runner req = %+v", req)
 	}
 	if len(req.Messages) != 2 || !strings.Contains(req.Messages[1].Content, `"id":"K1"`) {
