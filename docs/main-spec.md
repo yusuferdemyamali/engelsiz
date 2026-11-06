@@ -14,6 +14,8 @@ Uygulamanın amacı internet bağlantısının yerini almak değildir. Amaç; ö
 
 İlk sürüm **Kiwix üzerinden Türkçe Wikipedia**, 81 il çevrimdışı haritası ve kullanıcı isteğiyle eklenen **Argos Türkçe ↔ İngilizce çevrimdışı çeviri** desteği sunar. Çeviri kapsamı `openspec/changes/offline-tr-en-translation/` altında tanımlıdır.
 
+**Sonraki kapsam genişletmesi:** [Offline Eğitim Merkezi](offline-education-center.md), mevcut indirme ve Kiwix altyapısı üzerinde isteğe bağlı eğitim ZIM'leri, PDF belgeleri ve lisansı/çevrimdışı uygunluğu doğrulanmış tek dosyalı HTML5 içerikleri ekler. Aşağıdaki ilk v0.1 kapsam dışı PDF maddesi bu modül için geçerli değildir; Kolibri servisi hâlâ kapsam dışıdır. Uygulama ve doğrulama sınırları modül belgesinde ayrıca belirtilir.
+
 Engelsiz'in uzun vadeli yönü yalnızca Wikipedia değildir. Mimari ileride farklı içerik sağlayıcılarının eklenmesini mümkün kılmalıdır; ancak v0.1 sırasında bu gelecek senaryoları için gereksiz implementasyon veya aşırı soyutlama yapılmamalıdır.
 
 ---

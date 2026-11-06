@@ -107,6 +107,9 @@ func TestRangeContinuationAndSafeFallbacks(t *testing.T) {
 				if r.Header.Get("Accept-Encoding") != "identity" {
 					t.Error("missing identity encoding")
 				}
+				if r.Header.Get("Accept") != "*/*" {
+					t.Error("missing artifact representation accept header")
+				}
 				if mode == "no-validator" && isRange {
 					t.Error("Range without validator")
 				}

@@ -20,6 +20,7 @@ import (
 	"engelsiz/internal/config"
 	"engelsiz/internal/database"
 	"engelsiz/internal/download"
+	"engelsiz/internal/education"
 	"engelsiz/internal/packages"
 	"engelsiz/internal/providers"
 	"engelsiz/internal/providers/kiwix"
@@ -157,6 +158,23 @@ func Run(ctx context.Context, opts Options) (runErr error) {
 			}
 		}()
 	}
+	// Education degrades like translation: an education-specific failure
+	// disables only the education surface, never wiki/maps. Catalog or
+	// storage failures return an error here and the caller keeps a nil
+	// service with a failing-closed API.
+	educationService, err := education.New(db, dirs.DataRoot, education.Options{Packages: packageService, Logger: logger})
+	if err != nil {
+		logger.Printf("education initialization failed: code=storage_error cause=%T", err)
+		educationService = nil
+	}
+	// Education workers join before roots and the download manager close.
+	if educationService != nil {
+		defer func() {
+			if err := educationService.Close(); err != nil {
+				logger.Printf("education close failed: code=storage_error cause=%T", err)
+			}
+		}()
+	}
 	if ctx.Err() != nil {
 		return nil
 	}
@@ -193,6 +211,18 @@ func Run(ctx context.Context, opts Options) (runErr error) {
 	translationHandler := api.TranslationHandler(translationService, manager)
 	mux.HandleFunc("/api/translation", translationHandler)
 	mux.HandleFunc("/api/translation/", translationHandler)
+	educationHref := func(downloadID string) (string, bool) {
+		for _, link := range activation.Snapshot().Contents {
+			if link.PackageID == downloadID {
+				return link.Href, true
+			}
+		}
+		return "", false
+	}
+	educationHandler := api.EducationHandler(educationService, manager, packageService, educationHref)
+	mux.HandleFunc("/api/education", educationHandler)
+	mux.HandleFunc("/api/education/", educationHandler)
+	mux.HandleFunc("/education/content/", api.EducationContentHandler(educationService))
 	mux.HandleFunc("/api/catalog", api.CatalogHandler(provider, logger))
 	mux.HandleFunc("/api/packages", api.PackagesHandler(packageService))
 	mux.HandleFunc("/api/packages/", api.UpdatePackageHandler(packageService, manager, provider))

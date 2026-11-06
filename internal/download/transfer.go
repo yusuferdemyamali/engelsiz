@@ -48,6 +48,9 @@ func (m *Manager) transfer(ctx context.Context, r *record) error {
 			return ErrSource
 		}
 		req.Header.Set("Accept-Encoding", "identity")
+		// Request artifact bytes rather than an HTML-specific representation
+		// (some upstream CDNs otherwise inject scripts and invalidate pins).
+		req.Header.Set("Accept", "*/*")
 		if offset > 0 {
 			req.Header.Set("Range", fmt.Sprintf("bytes=%d-", offset))
 			req.Header.Set("If-Range", v)
