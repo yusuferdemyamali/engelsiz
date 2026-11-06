@@ -11,9 +11,9 @@ An open-source, offline-first knowledge hub with local translation and education
 [![CI](https://github.com/yusuferdemyamali/engelsiz/actions/workflows/release.yml/badge.svg?branch=main)](https://github.com/yusuferdemyamali/engelsiz/actions/workflows/release.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-[Download for Windows](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.3/Engelsiz-Setup.exe) · [Download for Linux](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.3/engelsiz-linux-x64.tar.gz) · [All releases](https://github.com/yusuferdemyamali/engelsiz/releases) · [Report a bug / suggest a feature](https://github.com/yusuferdemyamali/engelsiz/issues/new/choose)
+[Download for Windows](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.5/Engelsiz-Setup.exe) · [Download for Linux](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.5/engelsiz-linux-x64.tar.gz) · [All releases](https://github.com/yusuferdemyamali/engelsiz/releases) · [Report a bug / suggest a feature](https://github.com/yusuferdemyamali/engelsiz/issues/new/choose)
 
-**Release status:** Education and Translation are implemented on `main`; new `v0.1.0-alpha.5` packages are being prepared. The `alpha.3` downloads above do not contain either module.
+**Release status:** `v0.1.0-alpha.5` packages are available and include Education and Translation.
 
 Engelsiz keeps the resources you choose on your own computer. Installed content opens without a connection. A Go application opens its locally bundled React interface in your default browser; the bundled Kiwix runtime serves ZIM archives. PDFs and verified HTML5 learning resources also open inside the application. The interface is in Turkish.
 
@@ -31,20 +31,20 @@ The interface and font files are bundled locally. The application listens only o
 
 | Platform | Status |
 | --- | --- |
-| Linux x86_64 | [v0.1.0-alpha.3 prerelease available](https://github.com/yusuferdemyamali/engelsiz/releases/tag/v0.1.0-alpha.3) |
-| Windows x86_64 | [v0.1.0-alpha.3 installer available](https://github.com/yusuferdemyamali/engelsiz/releases/tag/v0.1.0-alpha.3) |
+| Linux x86_64 | [v0.1.0-alpha.5 prerelease available](https://github.com/yusuferdemyamali/engelsiz/releases/tag/v0.1.0-alpha.5) |
+| Windows x86_64 | [v0.1.0-alpha.5 installer available](https://github.com/yusuferdemyamali/engelsiz/releases/tag/v0.1.0-alpha.5) |
 
-The project owner tested the Windows package on Windows 11 x86_64; Windows 10 has not yet been tested. Linux requires kernel 4.4+ and a desktop browser/opener. You do not need to install Go, Node, SQLite, or Kiwix separately. This is an alpha release; [full platform acceptance](docs/release-validation.md) is still in progress.
+The Windows installer passed silent install/translation/uninstall checks in CI; Windows 10 has not yet been tested. Linux requires kernel 4.4+ and a desktop browser/opener. You do not need to install Go, Node, SQLite, or Kiwix separately. This is an alpha release; [full platform acceptance](docs/release-validation.md) is still in progress.
 
 ### Windows
 
-1. Download [Engelsiz-Setup.exe](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.3/Engelsiz-Setup.exe) and its [SHA-256 file](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.3/Engelsiz-Setup.exe.sha256). In PowerShell, compare `Get-FileHash .\Engelsiz-Setup.exe -Algorithm SHA256` with the checksum file.
+1. Download [Engelsiz-Setup.exe](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.5/Engelsiz-Setup.exe) and its [SHA-256 file](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.5/Engelsiz-Setup.exe.sha256). In PowerShell, compare `Get-FileHash .\Engelsiz-Setup.exe -Algorithm SHA256` with the checksum file.
 2. Run setup and launch Engelsiz from the Start menu. Administrator privileges and separate Go, Node, SQLite, or Kiwix installs are not required.
 3. Download and install an archive in Bilgi Paketleri, then use Ara to search. Pick a province in Haritalar to download a map and open it offline with Haritayı aç. Uninstalling preserves downloaded content and settings.
 
 ### Linux
 
-1. Download the [Linux archive](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.3/engelsiz-linux-x64.tar.gz) and its [SHA-256 file](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.3/engelsiz-linux-x64.tar.gz.sha256) into the same directory.
+1. Download the [Linux archive](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.5/engelsiz-linux-x64.tar.gz) and its [SHA-256 file](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.5/engelsiz-linux-x64.tar.gz.sha256) into the same directory.
 2. Verify, extract, and launch:
 
    ```sh
@@ -55,7 +55,7 @@ The project owner tested the Windows package on Windows 11 x86_64; Windows 10 ha
 
 3. In **Bilgi Paketleri** (knowledge packages), choose a Wikipedia archive, download it, and install it. Use **Ara** (search) to search installed content. In **Haritalar**, search a province to download its map (roughly 7–80 MB per province) and view it with no connection.
 
-Wikipedia content is not included in the application download. The initial content download needs an internet connection and enough free disk space for the selected archive. The packages include the runtime’s corresponding sources and licenses; the Linux archive is approximately 318 MiB and the Windows installer approximately 253 MiB.
+Wikipedia content is not included in the application download. The initial content download needs an internet connection and enough free disk space for the selected archive. The packages include the runtime’s corresponding sources and licenses; the Linux archive is approximately 426 MiB and the Windows installer approximately 277 MiB.
 
 You can open the local address printed in the terminal manually. The preferred port is `17321`; if occupied, the app chooses another available loopback port. Press `Ctrl+C` in the terminal to stop the application.
 
@@ -83,7 +83,7 @@ The **Eğitim** tab contains 14 entries: 8 downloadable resources and 6 referenc
 2. Installation follows completion while this page is open. If you leave it, return and select **Kur**. Existing download pause/resume/retry controls remain available.
 3. Type or paste up to 5,000 Unicode characters and select **Çevir** or press `Ctrl+Enter`. Use **Yönü değiştir** to swap direction and **Sonucu kopyala** to copy the result.
 
-Installed models work offline. Text stays in the local Argos process and is not logged or saved as history. The native distribution bundles Python and engine dependencies under `runtime/translation`; no user Python/pip setup is needed. Models live under `content/translation` in the normal application data directory. Translation in the verified Linux candidate requires glibc 2.35+; native Windows acceptance remains untested. See [model provenance and licensing limitations](docs/translation-models.md) and the [technical delivery/test report](docs/offline-translation-delivery.md).
+Installed models work offline. Text stays in the local Argos process and is not logged or saved as history. The native distribution bundles Python and engine dependencies under `runtime/translation`; no user Python/pip setup is needed. Models live under `content/translation` in the normal application data directory. The main app, Kiwix and PMTiles are fully static and need no glibc; the offline translation worker requires glibc 2.38+ (Ubuntu 23.04+/Debian 13+/Fedora 38+ era distros). See [model provenance and licensing limitations](docs/translation-models.md) and the [technical delivery/test report](docs/offline-translation-delivery.md).
 
 ## Contribute
 

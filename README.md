@@ -11,9 +11,9 @@ An offline-first knowledge hub with Turkish Wikipedia, Türkiye maps, local tran
 [![CI](https://github.com/yusuferdemyamali/engelsiz/actions/workflows/release.yml/badge.svg?branch=main)](https://github.com/yusuferdemyamali/engelsiz/actions/workflows/release.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-[Windows için indir](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.3/Engelsiz-Setup.exe) · [Linux paketini indir](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.3/engelsiz-linux-x64.tar.gz) · [Tüm sürümler](https://github.com/yusuferdemyamali/engelsiz/releases) · [Hata bildir / öneri paylaş](https://github.com/yusuferdemyamali/engelsiz/issues/new/choose)
+[Windows için indir](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.5/Engelsiz-Setup.exe) · [Linux paketini indir](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.5/engelsiz-linux-x64.tar.gz) · [Tüm sürümler](https://github.com/yusuferdemyamali/engelsiz/releases) · [Hata bildir / öneri paylaş](https://github.com/yusuferdemyamali/engelsiz/issues/new/choose)
 
-**Yayın durumu:** Eğitim Merkezi ve Çeviri `main` dalında hazırdır; yeni `v0.1.0-alpha.5` paketleri hazırlanıyor. Yukarıdaki `alpha.3` indirmeleri bu iki modülü içermez.
+**Yayın durumu:** `v0.1.0-alpha.5` paketleri hazırdır ve Eğitim Merkezi ile Çeviri'yi içerir.
 
 Engelsiz, seçtiğin bilgi kaynaklarını kendi bilgisayarında saklayan açık kaynaklı bir uygulamadır. İndirip kurduğun içerikler bağlantı olmadan açılır. Go uygulaması, yerel React arayüzünü varsayılan tarayıcında açar; ZIM arşivlerini paketlenen Kiwix runtime’ı sunar. PDF ve doğrulanmış HTML5 eğitim içerikleri de uygulama içinden okunur/çalıştırılır.
 
@@ -31,20 +31,20 @@ Arayüz ve font dosyaları uygulamaya dahildir. Uygulama yalnızca `127.0.0.1` �
 
 | Platform | Durum |
 | --- | --- |
-| Linux x86_64 | [v0.1.0-alpha.3 ön sürümü hazır](https://github.com/yusuferdemyamali/engelsiz/releases/tag/v0.1.0-alpha.3) |
-| Windows x86_64 | [v0.1.0-alpha.3 kurulum paketini indir](https://github.com/yusuferdemyamali/engelsiz/releases/tag/v0.1.0-alpha.3) |
+| Linux x86_64 | [v0.1.0-alpha.5 ön sürümü hazır](https://github.com/yusuferdemyamali/engelsiz/releases/tag/v0.1.0-alpha.5) |
+| Windows x86_64 | [v0.1.0-alpha.5 kurulum paketini indir](https://github.com/yusuferdemyamali/engelsiz/releases/tag/v0.1.0-alpha.5) |
 
-Windows paketi proje sahibi tarafından Windows 11 x86_64 üzerinde test edildi; Windows 10 henüz test edilmedi. Linux için kernel 4.4+ ve bir masaüstü tarayıcısı/opener gerekir. Go, Node, SQLite veya Kiwix’i ayrıca kurman gerekmez. Bu bir alpha yayınıdır; [tam platform kabul testleri](docs/release-validation.md) sürüyor.
+Windows kurulum paketi için CI'da sessiz kurulum/çeviri/kaldırma kontrolleri geçti; Windows 10 henüz test edilmedi. Linux için kernel 4.4+ ve bir masaüstü tarayıcısı/opener gerekir. Go, Node, SQLite veya Kiwix’i ayrıca kurman gerekmez. Bu bir alpha yayınıdır; [tam platform kabul testleri](docs/release-validation.md) sürüyor.
 
 ### Windows
 
-1. [Engelsiz-Setup.exe](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.3/Engelsiz-Setup.exe) ve [SHA-256 dosyasını](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.3/Engelsiz-Setup.exe.sha256) indir. PowerShell’de `Get-FileHash .\Engelsiz-Setup.exe -Algorithm SHA256` çıktısını SHA-256 dosyasındaki değerle karşılaştır.
+1. [Engelsiz-Setup.exe](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.5/Engelsiz-Setup.exe) ve [SHA-256 dosyasını](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.5/Engelsiz-Setup.exe.sha256) indir. PowerShell’de `Get-FileHash .\Engelsiz-Setup.exe -Algorithm SHA256` çıktısını SHA-256 dosyasındaki değerle karşılaştır.
 2. Kurulum dosyasını çalıştır ve Başlat menüsünden Engelsiz’i aç. Yönetici izni veya ayrıca Go, Node, SQLite ya da Kiwix kurulumu gerekmez.
 3. Bilgi Paketleri bölümünden bir arşiv indirip kur; ardından Ara bölümünden arama yap. Haritalar bölümünden il seçip harita indir; çevrimdışıyken Haritayı aç ile görüntüle. Kaldırma işlemi indirilen içerikleri ve ayarları korur.
 
 ### Linux
 
-1. [Linux arşivini](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.3/engelsiz-linux-x64.tar.gz) ve [SHA-256 dosyasını](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.3/engelsiz-linux-x64.tar.gz.sha256) aynı klasöre indir.
+1. [Linux arşivini](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.5/engelsiz-linux-x64.tar.gz) ve [SHA-256 dosyasını](https://github.com/yusuferdemyamali/engelsiz/releases/download/v0.1.0-alpha.5/engelsiz-linux-x64.tar.gz.sha256) aynı klasöre indir.
 2. O klasörde doğrula, arşivi aç ve uygulamayı başlat:
 
    ```sh
@@ -55,7 +55,7 @@ Windows paketi proje sahibi tarafından Windows 11 x86_64 üzerinde test edildi;
 
 3. Açılan arayüzde **Bilgi Paketleri** bölümünden bir Wikipedia arşivi seçip indir ve kur. Kurulu içerikte **Ara** bölümünden arama yapabilirsin. **Haritalar** bölümünde il arayıp harita indirebilir, bağlantı kapalıyken görüntüleyebilirsin (il başına yaklaşık 7–80 MB).
 
-Wikipedia verisi uygulama paketine dahil değildir. İlk içerik indirmesi için internet ve seçtiğin arşiv boyutuna uygun boş disk alanı gerekir. Paketler, Kiwix’in karşılık gelen kaynak kodlarını ve lisanslarını da içerir; Linux arşivi yaklaşık 318 MiB, Windows installer yaklaşık 253 MiB’dir.
+Wikipedia verisi uygulama paketine dahil değildir. İlk içerik indirmesi için internet ve seçtiğin arşiv boyutuna uygun boş disk alanı gerekir. Paketler, Kiwix’in karşılık gelen kaynak kodlarını ve lisanslarını da içerir; Linux arşivi yaklaşık 426 MiB, Windows installer yaklaşık 277 MiB’dir.
 
 Terminalde yazdırılan yerel adresi gerektiğinde elle açabilirsin. Varsayılan port `17321`’dir; doluysa uygulama uygun başka bir loopback portu seçer. Uygulamayı terminalde `Ctrl+C` ile kapatabilirsin.
 
@@ -83,7 +83,7 @@ Linux’ta içerik ve veritabanı varsayılan olarak `~/.local/share/engelsiz`, 
 2. İndirme bu sayfadayken tamamlanırsa kurulum başlar. Sayfadan ayrıldıysan geri dönüp **Kur** seç. İndirmeler bölümündeki duraklat/devam et/tekrar dene davranışları korunur.
 3. Metni yaz veya yapıştır; **Çevir** ya da `Ctrl+Enter` kullan. **Yönü değiştir**, **Temizle** ve **Sonucu kopyala** kontrolleri aynı sayfadadır. Bir istek en fazla 5.000 Unicode karakter içerir.
 
-Kurulumdan sonra bağlantı gerekmez. Metinler cihazdaki Argos motorunda işlenir; sunucuya gönderilmez, geçmişe veya loga yazılmaz. Python/pip kurulumu gerekmez: motor, yeni dağıtımın `runtime/translation` dizinine dahil edilir. Modeller normal kullanıcı veri dizinindeki `content/translation` altında saklanır. Doğrulanan Linux adayında çeviri için glibc 2.35+ gerekir; Windows native kabulü henüz yapılmadı. [Model kaynakları ve lisans sınırları](docs/translation-models.md) · [Teknik teslim ve test raporu](docs/offline-translation-delivery.md).
+Kurulumdan sonra bağlantı gerekmez. Metinler cihazdaki Argos motorunda işlenir; sunucuya gönderilmez, geçmişe veya loga yazılmaz. Python/pip kurulumu gerekmez: motor, yeni dağıtımın `runtime/translation` dizinine dahil edilir. Modeller normal kullanıcı veri dizinindeki `content/translation` altında saklanır. Ana uygulama, Kiwix ve PMTiles tamamen statiktir ve glibc gerektirmez; çevrimdışı çeviri motoru için glibc 2.38+ gerekir (Ubuntu 23.04+/Debian 13+/Fedora 38+ dönemi dağıtımlar). Windows native kabulü henüz yapılmadı. [Model kaynakları ve lisans sınırları](docs/translation-models.md) · [Teknik teslim ve test raporu](docs/offline-translation-delivery.md).
 
 ## Geliştirme ve katkı
 
