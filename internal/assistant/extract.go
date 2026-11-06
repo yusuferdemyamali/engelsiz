@@ -548,7 +548,11 @@ func extractTarGz(ctx context.Context, artifact *os.File, size int64, stagingRoo
 }
 
 // createSafeLinks creates validated symlinks inside stagingRoot and
-// re-checks that every link resolves inside the staging tree.
+// re-checks that every link resolves inside the staging tree. Links are
+// created in two phases so safe forward/chained references (a link whose
+// target is another link listed later in the archive, as shipped by the
+// real llama.cpp tarballs) do not fail: phase 1 creates every entry after
+// lexical validation, phase 2 resolves every chain once all entries exist.
 func createSafeLinks(stagingRoot string, links []stagedMember) error {
 	for _, m := range links {
 		if !m.isLink || !validCleanName(m.name) || !validLinkTarget(m.name, m.target) {
@@ -563,6 +567,9 @@ func createSafeLinks(stagingRoot string, links []stagedMember) error {
 		if err := os.Symlink(m.target, dst); err != nil {
 			return ErrVerify
 		}
+	}
+	for _, m := range links {
+		dst := filepath.Join(stagingRoot, filepath.FromSlash(m.name))
 		resolved, err := filepath.EvalSymlinks(dst)
 		if err != nil {
 			return ErrVerify

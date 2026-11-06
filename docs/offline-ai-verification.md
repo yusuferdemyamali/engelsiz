@@ -47,3 +47,9 @@ Tur sayısı: **1**. Son review: **temiz**. OpenSpec: **yok** (çalışma diff'i
 Reviewer sonucu: “Yüksek güvenli bug/güvenlik/regression bulgusu bulunamadı.” Temiz sonuç nedeniyle debug döngüsü başlatılmadı. Öncesindeki artifact doğrulamalarında yanlış revision aktarımı, tek etkin modelin kaldırılamaması, nested runtime yolu, kapanışta inference bekleme, public health endpoint'ine dayanan kimlik varsayımı, React render sırasında stream iptali, encoded href separator, ilgisiz HTML ve context bütçesi sorunları testlerle düzeltildi.
 
 Test ortamı Linux amd64, Go 1.26.0, Node 26.12.1, yaklaşık 15,3 GiB toplam RAM'dir. Bu değerler test makinesini tanımlar; modelin ölçülmüş RAM gereksinimi değildir. Gerçek model tepe RSS, token/s ve ilk token süresi ölçülmemiştir.
+
+## Gerçek motor kurulumu sonrası düzeltme
+
+İlk teslimden sonra kullanıcı motoru indirdi. Gerçek Linux b12174 arşivinin 23.047.184 bayt ve katalogla aynı SHA-256 olduğu doğrulandı. Kurulum hatasının nedeni bozuk indirme değil, arşivde hedefinden önce sıralanan zincir sembolik bağlantılardı. Bağlantılar artık önce güvenli biçimde oluşturuluyor, ardından bütün zincirler staging sınırı içinde çözümlenerek doğrulanıyor; hash veya path güvenliği gevşetilmedi.
+
+`TestChainedSymlinkForwardOrder` düzeltmeden önce başarısız, sonra başarılı oldu. Asistanın race testleri ve `go test ./internal/assistant ./internal/api ./internal/app` geçti. Kullanıcının mevcut dosyası yeniden indirilmeden kuruldu: canlı API `runtime.status=ready`, `available=true`, `error=null` döndü. Gerçek kurulu `llama-server --version` exit 0 ile `0.9.0-dev (build 12174, commit 18ab62a8e)` bildirdi. Bunlar gerçek Linux motor kurulum/çalıştırma kanıtıdır; henüz gerçek model yanıt kalitesi veya inference performansı ölçümü değildir.
