@@ -4188,6 +4188,14 @@
         {
           "origins": [
             {
+              "source": "go1.26.0/src/archive/tar/stat_actime1.go",
+              "sourceSha256": "8f678b3a629a52d34a4e9eeea348daa9a758c43ce113de69bc3c6829319f7685"
+            },
+            {
+              "source": "go1.26.0/src/archive/tar/stat_unix.go",
+              "sourceSha256": "8e6af0a625af68056748cf1dce8a5d6b0f675be7a12c789b6510eb602f87bd16"
+            },
+            {
               "source": "go1.26.0/src/bytes/reader.go",
               "sourceSha256": "5b42a3100971836c10b1e0d3699b46cffd41c8be23d09e1642ee42ff795dc6ab"
             },
@@ -5315,6 +5323,18 @@
         },
         {
           "origins": [
+            {
+              "source": "go1.26.0/src/archive/tar/common.go",
+              "sourceSha256": "4cd57ac0332097a3fa3af963e3a6a33beba52a4b82929c533d181a0c6cf055dc"
+            },
+            {
+              "source": "go1.26.0/src/archive/tar/reader.go",
+              "sourceSha256": "3f4350c66fff23ce7a8c18da2d6448a6e6840afe84b32a643f6fbec37c6b4962"
+            },
+            {
+              "source": "go1.26.0/src/archive/tar/writer.go",
+              "sourceSha256": "dd95f4a2c6abc1cb4e43686483c485fa5e120eaf89c7d112b7f2f43a376dcc25"
+            },
             {
               "source": "go1.26.0/src/bufio/bufio.go",
               "sourceSha256": "0393162eb1732d74ec5efe88760df58186f6847c525e577b297e8649c679580b"
@@ -7156,6 +7176,14 @@
               "sourceSha256": "ac416ad4fba7f9901c737a203950d5d57220d1401e4bc7f0a2420389b88a86cd"
             },
             {
+              "source": "go1.26.0/src/html/entity.go",
+              "sourceSha256": "4e6dd013ad9d909f4f8a93d200567c5fd88a2cc1d12b1c2046b3fd199b373ec1"
+            },
+            {
+              "source": "go1.26.0/src/html/escape.go",
+              "sourceSha256": "c3cf95cb15e3091bf25bc737711e14d252573812595d0d86e01192312df9938b"
+            },
+            {
               "source": "go1.26.0/src/internal/filepathlite/path_unix.go",
               "sourceSha256": "91b9b7d3719089cf1d6decc8cae667fe7ee32230b43d567def169d0ff66505af"
             },
@@ -8726,6 +8754,10 @@
               "sourceSha256": "e93e23d254d43872f9d14fcda58ddd8999791b8b22471180c79a46c8238228d8"
             },
             {
+              "source": "go1.26.0/src/os/user/lookup_stubs.go",
+              "sourceSha256": "328aa8d8792052abba2cfae54ca005c3f28d495b91f23bf4886f3129d5b8b125"
+            },
+            {
               "source": "go1.26.0/src/os/user/user.go",
               "sourceSha256": "e8e9a60b9455ffc3658b861789b525b4d1e85ff91d0af992eeac662b10ff91db"
             },
@@ -9014,6 +9046,14 @@
         {
           "origins": [
             {
+              "source": "go1.26.0/src/archive/tar/format.go",
+              "sourceSha256": "5194151b1052559f84ebefb2dfa66608b803b5014391349289212d1cf13c4803"
+            },
+            {
+              "source": "go1.26.0/src/archive/tar/strconv.go",
+              "sourceSha256": "f8e4a9f0a9031a1c1e9df9ab94207983bc8775c4db15ce230844b6061fd20893"
+            },
+            {
               "source": "go1.26.0/src/compress/flate/deflatefast.go",
               "sourceSha256": "778d7457e4c48d2f6133d22e9f08c72e3299c0cb594c02d44cfc4d229cf05b08"
             },
@@ -9104,6 +9144,10 @@
             {
               "source": "go1.26.0/src/os/stat_unix.go",
               "sourceSha256": "fa12fa05805074520f72342648764d156193805d6ddfa663af938145769a204a"
+            },
+            {
+              "source": "go1.26.0/src/os/user/lookup_unix.go",
+              "sourceSha256": "c6d2fc86202541bcf2e9ce470f92bcd6b1e49cc5cf4c0346e01bc313062b1f38"
             },
             {
               "source": "go1.26.0/src/os/wait_waitid.go",
@@ -9508,6 +9552,10 @@
               "sourceSha256": "863347fc0f8b78feca2ef31b87894e4c121738121a78a411ac132be9eff20455"
             },
             {
+              "source": "go1.26.0/src/os/user/listgroups_unix.go",
+              "sourceSha256": "90f0a08d3529e110fae60b4dd58b9c24a412ea221b893c6f2a3fd9a516b903cc"
+            },
+            {
               "source": "go1.26.0/src/reflect/abi.go",
               "sourceSha256": "a62034c1299fd4ba11a40ca398345f317038c40bb6c774daa7594ccf12816d9f"
             },
@@ -9722,6 +9770,7 @@
   "goModuleCacheVerification": "go mod verify passed before collection",
   "goPackages": {
     "linux-amd64": [
+      "archive/tar",
       "archive/zip",
       "bufio",
       "bytes",
@@ -9811,6 +9860,9 @@
       "engelsiz/cmd/engelsiz",
       "engelsiz/internal/api",
       "engelsiz/internal/app",
+      "engelsiz/internal/assistant",
+      "engelsiz/internal/assistant/engine",
+      "engelsiz/internal/assistant/rag",
       "engelsiz/internal/config",
       "engelsiz/internal/database",
       "engelsiz/internal/download",
@@ -9831,6 +9883,7 @@
       "golang.org/x/sys/unix",
       "hash",
       "hash/crc32",
+      "html",
       "internal/abi",
       "internal/asan",
       "internal/bisect",
@@ -9909,6 +9962,7 @@
       "os",
       "os/exec",
       "os/signal",
+      "os/user",
       "path",
       "path/filepath",
       "reflect",
@@ -9948,6 +10002,7 @@
       "weak"
     ],
     "windows-amd64": [
+      "archive/tar",
       "archive/zip",
       "bufio",
       "bytes",
@@ -10037,6 +10092,9 @@
       "engelsiz/cmd/engelsiz",
       "engelsiz/internal/api",
       "engelsiz/internal/app",
+      "engelsiz/internal/assistant",
+      "engelsiz/internal/assistant/engine",
+      "engelsiz/internal/assistant/rag",
       "engelsiz/internal/config",
       "engelsiz/internal/database",
       "engelsiz/internal/download",
@@ -10058,6 +10116,7 @@
       "golang.org/x/sys/windows",
       "hash",
       "hash/crc32",
+      "html",
       "internal/abi",
       "internal/asan",
       "internal/bisect",
@@ -10187,7 +10246,7 @@
     ]
   },
   "inputs": {
-    "frontend/package-lock.json": "3b2763a79e180eec132d20b3be8c43ecacc8f7d1ed015e455bed3c115139d593",
+    "frontend/package-lock.json": "41679831e4d0e3529ca3bbb594a00baba9a592f09431fb459608bf03b380ec63",
     "frontend/tailwind.config.js": "13a666df112e383bae888a16ae34e8769cdd92d0daca566cd244067b40f88609",
     "go.mod": "6615e9cdf2fb9e21d13eaa349cd07bd2d1ee95a45bf41b0ebc2ae080df683e10",
     "go.sum": "3ca6de191cbcf41056b3b2c7abdcbe4b55c7ececa358c900df16bad0a700ee95"

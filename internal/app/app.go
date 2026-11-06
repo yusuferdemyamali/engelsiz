@@ -198,6 +198,17 @@ func Run(ctx context.Context, opts Options) (runErr error) {
 	activation.start()
 	defer activation.close()
 
+	// Assistant is optional: a missing backend only disables the assistant
+	// surface (typed 503s) and never prevents the app from opening, and no
+	// model or runtime download starts on its own. Its Close runs before the
+	// download manager closes.
+	assistantRT := openAssistant(logger, db, dirs.DataRoot, manager, packageService, educationService, activation, activation)
+	defer func() {
+		if err := assistantRT.close(); err != nil {
+			runErr = errors.Join(runErr, fmt.Errorf("close assistant: %w", err))
+		}
+	}()
+
 	ln, port, err := ListenLoopback(PreferredPort)
 	if err != nil {
 		logger.Printf("listen failed: %v", err)
@@ -222,6 +233,9 @@ func Run(ctx context.Context, opts Options) (runErr error) {
 	educationHandler := api.EducationHandler(educationService, manager, packageService, educationHref)
 	mux.HandleFunc("/api/education", educationHandler)
 	mux.HandleFunc("/api/education/", educationHandler)
+	assistantHandler := assistantRT.handler()
+	mux.HandleFunc("/api/assistant", assistantHandler)
+	mux.HandleFunc("/api/assistant/", assistantHandler)
 	mux.HandleFunc("/education/content/", api.EducationContentHandler(educationService))
 	mux.HandleFunc("/api/catalog", api.CatalogHandler(provider, logger))
 	mux.HandleFunc("/api/packages", api.PackagesHandler(packageService))

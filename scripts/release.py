@@ -680,7 +680,7 @@ def main():
                         help='Pinned translation runtime inventory (binary, protocol, packages, glibc ceiling)')
     parser.add_argument('--compliance', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
-    parser.add_argument('--version', default='0.1.0')
+    parser.add_argument('--version', default='1.0.0')
     args = parser.parse_args()
     if not re.fullmatch(r'\d+\.\d+\.\d+(?:-[A-Za-z0-9.]+)?', args.version):
         raise ValueError('Invalid release version')
@@ -768,6 +768,8 @@ def main():
             pmtiles_notices(stage / 'LICENSES/pmtiles-notices', pmtiles_lock, args.platform)
             shutil.copy2(ROOT / 'LICENSE', stage / 'LICENSES/Engelsiz-LICENSE')
             shutil.copy2(ROOT / 'third_party/README.md', stage / 'LICENSES/THIRD-PARTY-NOTICES.md')
+            shutil.copy2(ROOT / 'third_party/assistant-notices.md', stage / 'LICENSES/assistant-notices.md')
+            shutil.copy2(ROOT / 'docs/offline-ai.md', stage / 'AI-README.md')
             map_asset_notices(stage)
             shutil.copy2(ROOT / f'packaging/{target_os}/README.txt', stage / 'README.txt')
             output.mkdir(parents=True, exist_ok=True)

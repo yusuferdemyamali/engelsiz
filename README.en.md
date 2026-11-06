@@ -15,6 +15,8 @@ An open-source, offline-first knowledge hub with local translation and education
 
 **Release status:** `v0.1.0-alpha.5` packages are available and include Education and Translation.
 
+**Development target:** `1.0.0` adds an optional, fully local AI assistant. The published packages above do not contain it; a 1.0.0 package has not been published. See [setup and limitations](docs/offline-ai.md) (Turkish).
+
 Engelsiz keeps the resources you choose on your own computer. Installed content opens without a connection. A Go application opens its locally bundled React interface in your default browser; the bundled Kiwix runtime serves ZIM archives. PDFs and verified HTML5 learning resources also open inside the application. The interface is in Turkish.
 
 ## Features
@@ -24,6 +26,7 @@ Engelsiz keeps the resources you choose on your own computer. Installed content 
 - **Maps:** download any of the 81 provinces independently; zoom, Turkish labels and attribution work locally.
 - **Translation:** optional models provide Turkish ↔ English translation through the local Argos engine; text stays on your device.
 - **Education:** discover, download, open and remove resources in Disaster & First Aid, Survival & Practical Skills, Mathematics & Science, and Interactive Science Lab. Supports PDFs, the Turkish Wikibooks ZIM and three Turkish PhET simulations.
+- **AI Assistant (1.0.0):** optional Qwen3 GGUF models and llama.cpp provide local Turkish answers with genuine installed-source references. No AI downloads occur on first launch. See [verification and hardware limitations](docs/offline-ai-verification.md).
 
 The interface and font files are bundled locally. The application listens only on `127.0.0.1`; no account is needed to open the interface.
 
@@ -94,7 +97,7 @@ Bug reports, installation tests, documentation, translations, and code contribut
 - [Offline Education Center: sources, licensing and tests](docs/offline-education-center.md)
 - [Packaging and third-party sources](third_party/README.md)
 - [Open work and roadmap](https://github.com/yusuferdemyamali/engelsiz/issues)
-- [Long-term vision, in Turkish](docs/vision.md): more open learning resources and local AI; AI question-answering is not implemented.
+- [Long-term vision, in Turkish](docs/vision.md): more open learning resources and local AI. The 1.0.0 assistant has a [separate scope document](docs/offline-ai.md).
 
 ## License and acknowledgements
 

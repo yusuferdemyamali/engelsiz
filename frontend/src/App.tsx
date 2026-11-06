@@ -4,6 +4,7 @@ import { EducationView } from "./education"
 import { PackagesView } from "./packages"
 import { SearchView } from "./search"
 import { TranslationView } from "./translation"
+const AssistantView = lazy(() => import("./assistant").then((module) => ({ default: module.AssistantView })))
 const MapsView = lazy(() => import("./maps").then((module) => ({ default: module.MapsView })))
 
 const variants = [
@@ -88,6 +89,7 @@ const navEntries = [
   { id: "maps", label: "Haritalar", code: "05" },
   { id: "translation", label: "Çeviri", code: "06" },
   { id: "education", label: "Eğitim", code: "07" },
+  { id: "assistant", label: "Asistan", code: "08" },
 ] as const
 
 type ViewId = (typeof navEntries)[number]["id"]
@@ -184,7 +186,7 @@ export default function App() {
           </div>
         </header>
 
-        <nav aria-label="Ana menü" className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-7">
+        <nav aria-label="Ana menü" className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-8">
           {navEntries.map((entry) => {
             const active = view === entry.id
             return (
@@ -205,7 +207,7 @@ export default function App() {
         <p role="status" className={notice ? "terminal-panel mt-4 border-olive/40 px-4 py-3 text-sm leading-6 text-parchment" : "sr-only"}>{notice}</p>
 
         <main className="terminal-panel mt-4 px-5 py-6 sm:px-7 sm:py-8">
-          {view === "maps" ? <Suspense fallback={<p role="status" className="text-sm text-sand">Haritalar yükleniyor…</p>}><MapsView /></Suspense> : view === "search" ? <SearchView onOpenPackages={() => setView("packages")} /> : view === "downloads" ? <DownloadsView refreshKey={downloadRefresh} onOpenTranslation={() => setView("translation")} /> : view === "translation" ? <TranslationView onOpenDownloads={() => setView("downloads")} /> : view === "packages" ? <PackagesView onOpenDownloads={() => setView("downloads")} /> : view === "education" ? <EducationView onOpenPackages={() => setView("packages")} /> : (
+          {view === "maps" ? <Suspense fallback={<p role="status" className="text-sm text-sand">Haritalar yükleniyor…</p>}><MapsView /></Suspense> : view === "search" ? <SearchView onOpenPackages={() => setView("packages")} /> : view === "downloads" ? <DownloadsView refreshKey={downloadRefresh} onOpenTranslation={() => setView("translation")} /> : view === "translation" ? <TranslationView onOpenDownloads={() => setView("downloads")} /> : view === "packages" ? <PackagesView onOpenDownloads={() => setView("downloads")} /> : view === "education" ? <EducationView onOpenPackages={() => setView("packages")} /> : view === "assistant" ? <Suspense fallback={<p role="status" className="text-sm text-sand">Asistan yükleniyor…</p>}><AssistantView /></Suspense> : (
           <section aria-labelledby="catalog-heading">
             <p className="terminal-label">01 / Katalog</p>
             <h2 id="catalog-heading" className="mt-2 font-display text-4xl tracking-wide text-parchment">BİLGİ PAKETLERİ</h2>

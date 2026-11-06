@@ -49,3 +49,7 @@ A separately source-built Linux candidate is now available locally under `dist/l
 ## PMTiles extractor
 
 Official go-pmtiles 1.31.2 release archives and the generated dependency notice inventory are pinned in `pmtiles-lock.json`. The release builder requires `--pmtiles-archive PATH` or `--download-pmtiles`, verifies the archive, stages the executable and upstream license under `runtime/pmtiles/`, and packages `pmtiles-notices/` under LICENSES. See `pmtiles-notices/README.md` for source-graph and notice verification. This does not bypass the Kiwix corresponding-source gate above.
+
+## Optional AI assistant
+
+AI models and the CPU llama.cpp runtime are explicitly downloaded by the user, not bundled or required at application startup. See [component sources and license boundaries](assistant-notices.md) and [pinned model/runtime metadata](../docs/offline-ai.md). Existing Kiwix/PMTiles/translation distribution gates remain unchanged.

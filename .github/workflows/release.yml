@@ -15,7 +15,7 @@ on:
         default: ''
       version:
         description: Candidate version
-        default: 0.1.0
+        default: 1.0.0
         type: string
 permissions:
   contents: read
@@ -59,7 +59,7 @@ jobs:
         run: |
           go test ./...
           go vet ./...
-          go test -race ./internal/app ./internal/packages ./internal/download ./internal/runtime/kiwix ./internal/translation ./internal/education ./internal/api
+          go test -race ./internal/app ./internal/packages ./internal/download ./internal/runtime/kiwix ./internal/translation ./internal/education ./internal/api ./internal/assistant/...
       - name: Packaging safety tests
         run: python -m unittest discover -s scripts/tests -v
       - uses: actions/setup-python@v5

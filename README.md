@@ -15,6 +15,8 @@ An offline-first knowledge hub with Turkish Wikipedia, Türkiye maps, local tran
 
 **Yayın durumu:** `v0.1.0-alpha.5` paketleri hazırdır ve Eğitim Merkezi ile Çeviri'yi içerir.
 
+**Geliştirme hedefi:** `1.0.0`, isteğe bağlı tamamen yerel AI asistanını ekler. Yukarıdaki yayımlanmış paketler bu yeni özelliği içermez; 1.0.0 paketi henüz yayımlanmış değildir. [Asistan kurulumu ve sınırları](docs/offline-ai.md).
+
 Engelsiz, seçtiğin bilgi kaynaklarını kendi bilgisayarında saklayan açık kaynaklı bir uygulamadır. İndirip kurduğun içerikler bağlantı olmadan açılır. Go uygulaması, yerel React arayüzünü varsayılan tarayıcında açar; ZIM arşivlerini paketlenen Kiwix runtime’ı sunar. PDF ve doğrulanmış HTML5 eğitim içerikleri de uygulama içinden okunur/çalıştırılır.
 
 ## Neler yapabilirsin?
@@ -24,6 +26,7 @@ Engelsiz, seçtiğin bilgi kaynaklarını kendi bilgisayarında saklayan açık 
 - **Haritalar:** 81 ili ayrı ayrı indir ve bağlantısız aç. Yakınlaştırma, Türkçe etiketler ve kaynak gösterimi yereldir.
 - **Çeviri:** İsteğe bağlı modellerle Türkçe ↔ İngilizce metin çevir; metinler cihazdaki Argos motorunda kalır.
 - **Eğitim:** Afet ve İlk Yardım, Hayatta Kalma ve Pratik Bilgiler, Matematik ve Fen, İnteraktif Bilim Laboratuvarı kategorilerinden içerik keşfet, indir, aç ve kaldır. PDF, Türkçe Vikikitap ZIM'i ve üç Türkçe PhET simülasyonu desteklenir.
+- **AI Asistanı (1.0.0):** İsteğe bağlı Qwen3 GGUF modeli ve llama.cpp motoruyla cihazında Türkçe soru sor; kurulu metin kaynaklarından gerçek yerel referanslar al. İlk kurulumda AI indirilmez. [Doğrulama ve donanım sınırları](docs/offline-ai-verification.md).
 
 Arayüz ve font dosyaları uygulamaya dahildir. Uygulama yalnızca `127.0.0.1` üzerinde dinler; arayüzü açmak için bir hesap gerekmez.
 
@@ -94,7 +97,7 @@ Hata raporları, kurulum testleri, dokümantasyon, çeviri ve kod katkıları i�
 - [Offline Eğitim Merkezi: kaynaklar, lisanslar ve testler](docs/offline-education-center.md)
 - [Güvenli paketleme ve üçüncü taraf kaynakları](third_party/README.md)
 - [Açık işler ve yol haritası](https://github.com/yusuferdemyamali/engelsiz/issues)
-- [Uzun vadeli vizyon](docs/vision.md): daha fazla açık eğitim kaynağı ve yerel yapay zekâ; yapay zekâ soru-cevap özelliği henüz uygulanmamıştır.
+- [Uzun vadeli vizyon](docs/vision.md): daha fazla açık eğitim kaynağı ve yerel yapay zekâ. 1.0.0 yerel asistanının kapsamı [ayrı belgelenir](docs/offline-ai.md).
 
 ## Lisans ve teşekkür
 
